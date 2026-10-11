@@ -1,0 +1,214 @@
+import { useEffect, useState } from 'react';
+import { ReloadPrompt } from './components/ReloadPrompt';
+import { Welcome } from './components/Welcome';
+import { TOPICS, getTopic } from './content/curriculum';
+import { Planner } from './features/Planner';
+import { Progress } from './features/Progress';
+import { Rotation } from './features/Rotation';
+import { Worksheets } from './features/Worksheets';
+import { usePersisted } from './hooks';
+import { LANGS, t } from './i18n';
+import { GRADES, type Grade, type Lang } from './types';
+
+type Tab = 'plan' | 'ws' | 'rot' | 'prog';
+const TABS: Tab[] = ['plan', 'ws', 'rot', 'prog'];
+
+export function App() {
+  const [lang, setLang] = usePersisted<Lang>('lang', 'en');
+  const [topicId, setTopicId] = usePersisted('topic', TOPICS[0].id);
+  const [grades, setGrades] = usePersisted<Grade[]>('grades', [1, 3, 5]);
+  const [tab, setTab] = useState<Tab>('plan');
+  const [showWelcome, setShowWelcome] = usePersisted<boolean>('welcome_seen', false);
+  const [manualWelcome, setManualWelcome] = useState(false);
+
+  // PWA Install state
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showInstallModal, setShowInstallModal] = useState(false);
+  const [offlineReady, setOfflineReady] = useState(false);
+  const isIOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+
+  useEffect(() => {
+    if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+      if (navigator.serviceWorker.controller) {
+        setOfflineReady(true);
+      }
+      navigator.serviceWorker.ready.then(() => {
+        setOfflineReady(true);
+      }).catch(() => {});
+    }
+  }, []);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const choice = await deferredPrompt.userChoice;
+      if (choice.outcome === 'accepted') {
+        setDeferredPrompt(null);
+      }
+    } else {
+      setShowInstallModal(true);
+    }
+  };
+
+  const topic = getTopic(topicId);
+  const toggle = (g: Grade) => setGrades(grades.includes(g) ? grades.filter((x) => x !== g) : [...grades, g]);
+
+  const isWelcomeOpen = !showWelcome || manualWelcome;
+
+  const installLabel = lang === 'hi' ? '📲 ऐप इंस्टॉल करें' : lang === 'mr' ? '📲 ॲप इन्स्टॉल करा' : '📲 Install App';
+
+  return (
+    <>
+      <ReloadPrompt lang={lang} />
+      {isWelcomeOpen && (
+        <Welcome
+          lang={lang}
+          onClose={() => {
+            setShowWelcome(true);
+            setManualWelcome(false);
+          }}
+        />
+      )}
+
+      {showInstallModal && (
+        <div className="install-modal-backdrop" onClick={() => setShowInstallModal(false)}>
+          <div className="install-modal" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="install-title">
+            <h3 id="install-title">📲 {lang === 'hi' ? 'ऐप इंस्टॉल करें' : lang === 'mr' ? 'ॲप इन्स्टॉल करा' : 'Install for Offline Use'}</h3>
+            {isIOS ? (
+              <div>
+                <p>
+                  {lang === 'hi'
+                    ? 'iOS Safari में इसे होम स्क्रीन पर जोड़ने के लिए:'
+                    : lang === 'mr'
+                    ? 'iOS Safari मध्ये हे होम स्क्रीनवर जोडण्यासाठी:'
+                    : 'To install on iPhone / iPad Safari:'}
+                </p>
+                <ol>
+                  <li>
+                    {lang === 'hi'
+                      ? 'Safari के निचले हिस्से में शेयर बटन (चौकोर बॉक्स + ऊपर तीर ⎋) पर टैप करें।'
+                      : lang === 'mr'
+                      ? 'Safari मधील शेअर बटणावर (⎋) टॅप करा.'
+                      : 'Tap the Share button (⎋) at the bottom of Safari.'}
+                  </li>
+                  <li>
+                    {lang === 'hi'
+                      ? "'Add to Home Screen' (+) चुनें।"
+                      : lang === 'mr'
+                      ? "'Add to Home Screen' (+) निवडा."
+                      : "Scroll down and select 'Add to Home Screen' (+)."}
+                  </li>
+                  <li>
+                    {lang === 'hi'
+                      ? "ऊपर दाईं ओर 'Add' पर टैप करें। अब ऐप बिना इंटरनेट चलेगा!"
+                      : lang === 'mr'
+                      ? "वरच्या उजव्या बाजूला 'Add' टॅप करा. ॲप पूर्णपणे ऑफलाइन चालेल!"
+                      : "Tap 'Add' in the top right corner. The app will work completely offline!"}
+                  </li>
+                </ol>
+              </div>
+            ) : (
+              <div>
+                <p>
+                  {lang === 'hi'
+                    ? 'Chrome या Edge में मेन्यू (⋮) खोलें और "ऐप इंस्टॉल करें" या "Add to Home screen" चुनें।'
+                    : lang === 'mr'
+                    ? 'Chrome किंवा Edge मध्ये मेन्यू (⋮) उघडा आणि "ॲप इन्स्टॉल करा" किंवा "Add to Home screen" निवडा.'
+                    : 'Open your browser menu (⋮) and tap "Install app" or "Add to Home screen" to use this app offline.'}
+                </p>
+              </div>
+            )}
+            <div style={{ textAlign: 'right', marginTop: 16 }}>
+              <button type="button" className="primary" onClick={() => setShowInstallModal(false)}>
+                {lang === 'hi' ? 'समझ गया' : lang === 'mr' ? 'समजले' : 'Got it'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <header className="no-print">
+        <div className="header-title">
+          <h1>{t(lang, 'appTitle')}</h1>
+          <span
+            className={`offline-chip ${offlineReady ? 'ready' : 'pending'}`}
+            title={offlineReady ? 'Service Worker cached: offline ready' : 'Service Worker active'}
+            role="status"
+          >
+            {offlineReady
+              ? `🟢 ${lang === 'hi' ? 'ऑफलाइन तैयार' : lang === 'mr' ? 'ऑफलाइन तयार' : 'Offline Ready'}`
+              : `🟢 ${lang === 'hi' ? 'ऑफलाइन सक्षम' : lang === 'mr' ? 'ऑफलाइन सक्षम' : 'Offline Ready'}`}
+          </span>
+        </div>
+        <div className="header-controls">
+          <button type="button" className="install-btn" onClick={handleInstallClick} title="Install PWA">
+            {installLabel}
+          </button>
+          <button type="button" className="help-btn" onClick={() => setManualWelcome(true)} title="Help / Guide">
+            ❓ {lang === 'hi' ? 'मार्गदर्शिका' : lang === 'mr' ? 'मार्गदर्शिका' : 'Guide'}
+          </button>
+          <label className="lang">
+            {t(lang, 'language')}{' '}
+            <select value={lang} onChange={(e) => setLang(e.target.value as Lang)} aria-label={t(lang, 'language')}>
+              {LANGS.map((l) => (
+                <option key={l.id} value={l.id}>
+                  {l.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+      </header>
+      <main>
+        <div className="bar no-print">
+          <label>
+            {t(lang, 'topic')}:{' '}
+            <select value={topicId} onChange={(e) => setTopicId(e.target.value)}>
+              {TOPICS.map((x) => (
+                <option key={x.id} value={x.id}>
+                  {x.title[lang]}
+                </option>
+              ))}
+            </select>
+          </label>
+          {topic.reviewed?.[lang] === false && (
+            <span
+              className="chip unreviewed-badge"
+              title="Translation needs native-speaker teacher review"
+              style={{ background: '#fff3cd', color: '#856404', borderColor: '#ffeeba', fontWeight: 600, fontSize: '0.82rem' }}
+            >
+              ⚠️ {lang === 'hi' ? 'अनुवाद समीक्षा प्रतीक्षित' : lang === 'mr' ? 'भाषांतर तपासणी आवश्यक' : 'Translation needs review'}
+            </span>
+          )}
+          <span role="group" aria-label={t(lang, 'grades')} className="chips">
+            {GRADES.map((g) => (
+              <button key={g} type="button" className="chip" aria-pressed={grades.includes(g)} onClick={() => toggle(g)}>
+                Grade {g}
+              </button>
+            ))}
+          </span>
+        </div>
+        <nav className="tabs no-print" role="tablist">
+          {TABS.map((k) => (
+            <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}>
+              {t(lang, `tab_${k}` as const)}
+            </button>
+          ))}
+        </nav>
+        {tab === 'plan' && <Planner lang={lang} topic={topic} grades={grades} />}
+        {tab === 'ws' && <Worksheets lang={lang} topic={topic} grades={grades} />}
+        {tab === 'rot' && <Rotation lang={lang} topic={topic} grades={grades} />}
+        {tab === 'prog' && <Progress lang={lang} topic={topic} grades={grades} />}
+      </main>
+    </>
+  );
+}

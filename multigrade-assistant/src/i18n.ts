@@ -1,0 +1,55 @@
+import type { Lang } from './types';
+
+const en = {
+  appTitle: 'Multi-Grade Teaching Assistant', topic: 'Topic', grades: 'Grades', language: 'Language',
+  tab_plan: 'Plan', tab_ws: 'Worksheets', tab_rot: 'Rotation', tab_prog: 'Progress',
+  theme: 'Shared theme', outcome: 'Learning outcome', opening: 'Whole-class opening',
+  teacherLed: 'With teacher', independent: 'Independent work', materials: 'Materials', minutes: 'min',
+  buddy: 'Peer buddy: Grade', noGrades: 'Select at least one grade above.', warnings: 'Check these',
+  print: 'Print', answerKey: 'Answer key', showKey: 'Show answer key', regenerate: 'New questions', seed: 'Seed',
+  differentiate: 'Group by level within each grade', name: 'Name', date: 'Date', students: 'Students',
+  period: 'Period length (min)', start: 'Start', pause: 'Pause', next: 'Next slot', reset: 'Reset',
+  demo: 'Demo mode (1 min = 1 sec)', nowTeaching: 'Teaching now', selfWork: 'Self-work', done: 'All slots done',
+  addStudent: 'Add student', remove: 'Remove', score: 'Score %', export: 'Export backup', import: 'Import backup',
+  emptyProgress: 'No students yet. Add children to track progress.', summary: 'Class summary',
+  'st_not-started': 'Not started', 'st_needs-help': 'Needs help', st_done: 'Done',
+  tier_support: 'Support', tier_core: 'Core', tier_stretch: 'Stretch', suggested: 'Suggested level',
+  noKid: 'Add students in Progress to get level-wise worksheets.',
+};
+type Dict = typeof en;
+const hi: Partial<Dict> = {
+  appTitle: 'बहु-कक्षा शिक्षण सहायक', topic: 'विषय', grades: 'कक्षाएँ', language: 'भाषा',
+  tab_plan: 'योजना', tab_ws: 'वर्कशीट', tab_rot: 'रोटेशन', tab_prog: 'प्रगति',
+  theme: 'साझा विषय-वस्तु', outcome: 'अधिगम परिणाम', opening: 'पूरी कक्षा की शुरुआत',
+  teacherLed: 'शिक्षक के साथ', independent: 'स्वयं अध्ययन', materials: 'सामग्री', minutes: 'मिनट',
+  buddy: 'साथी सहायक: कक्षा', noGrades: 'ऊपर से कम से कम एक कक्षा चुनें।', warnings: 'ध्यान दें',
+  print: 'प्रिंट करें', answerKey: 'उत्तर कुंजी', showKey: 'उत्तर कुंजी दिखाएँ', regenerate: 'नए प्रश्न', seed: 'सीड',
+  differentiate: 'कक्षा के भीतर स्तर अनुसार समूह', name: 'नाम', date: 'दिनांक', students: 'विद्यार्थी',
+  period: 'कालखंड (मिनट)', start: 'शुरू करें', pause: 'रोकें', next: 'अगला स्लॉट', reset: 'रीसेट',
+  demo: 'डेमो मोड (1 मिनट = 1 सेकंड)', nowTeaching: 'अभी पढ़ा रहे हैं', selfWork: 'स्वयं कार्य', done: 'सभी स्लॉट पूरे',
+  addStudent: 'बच्चा जोड़ें', remove: 'हटाएँ', score: 'अंक %', export: 'बैकअप सहेजें', import: 'बैकअप लोड करें',
+  emptyProgress: 'अभी कोई बच्चा नहीं। प्रगति देखने के लिए जोड़ें।', summary: 'कक्षा सारांश',
+  'st_not-started': 'शुरू नहीं', 'st_needs-help': 'मदद चाहिए', st_done: 'पूर्ण',
+  tier_support: 'सहायता', tier_core: 'मूल', tier_stretch: 'चुनौती', suggested: 'सुझाया स्तर',
+  noKid: 'स्तर अनुसार वर्कशीट के लिए प्रगति में बच्चे जोड़ें।',
+};
+const mr: Partial<Dict> = {
+  appTitle: 'बहु-इयत्ता शिक्षण सहाय्यक', topic: 'विषय', grades: 'इयत्ता', language: 'भाषा',
+  tab_plan: 'नियोजन', tab_ws: 'कार्यपत्रिका', tab_rot: 'आवर्तन', tab_prog: 'प्रगती',
+  theme: 'समान संकल्पना', outcome: 'अध्ययन निष्पत्ती', opening: 'संपूर्ण वर्गाची सुरुवात',
+  teacherLed: 'शिक्षकांसोबत', independent: 'स्वयं अध्ययन', materials: 'साहित्य', minutes: 'मिनिटे',
+  buddy: 'सहाध्यायी मदतनीस: इयत्ता', noGrades: 'वरून किमान एक इयत्ता निवडा.', warnings: 'लक्ष द्या',
+  print: 'प्रिंट करा', answerKey: 'उत्तरसूची', showKey: 'उत्तरसूची दाखवा', regenerate: 'नवीन प्रश्न', seed: 'सीड',
+  differentiate: 'इयत्तेतच स्तरानुसार गट', name: 'नाव', date: 'दिनांक', students: 'विद्यार्थी',
+  period: 'तासिका (मिनिटे)', start: 'सुरू करा', pause: 'थांबवा', next: 'पुढील स्लॉट', reset: 'रीसेट',
+  demo: 'डेमो मोड (1 मिनिट = 1 सेकंद)', nowTeaching: 'आता शिकवत आहे', selfWork: 'स्वयं कार्य', done: 'सर्व स्लॉट पूर्ण',
+  addStudent: 'विद्यार्थी जोडा', remove: 'काढा', score: 'गुण %', export: 'बॅकअप जतन करा', import: 'बॅकअप लोड करा',
+  emptyProgress: 'अजून विद्यार्थी नाहीत. प्रगती पाहण्यासाठी जोडा.', summary: 'वर्ग सारांश',
+  'st_not-started': 'सुरू नाही', 'st_needs-help': 'मदत हवी', st_done: 'पूर्ण',
+  tier_support: 'सहाय्य', tier_core: 'मूळ', tier_stretch: 'आव्हान', suggested: 'सुचवलेला स्तर',
+  noKid: 'स्तरानुसार कार्यपत्रिकेसाठी प्रगतीमध्ये विद्यार्थी जोडा.',
+};
+export type Key = keyof Dict;
+const STR: Record<Lang, Partial<Dict>> = { en, hi, mr };
+export const t = (lang: Lang, key: Key): string => STR[lang][key] ?? en[key];
+export const LANGS: { id: Lang; label: string }[] = [{ id: 'en', label: 'English' }, { id: 'hi', label: 'हिन्दी' }, { id: 'mr', label: 'मराठी' }];
