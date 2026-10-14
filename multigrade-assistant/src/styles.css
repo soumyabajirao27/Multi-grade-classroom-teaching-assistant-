@@ -105,7 +105,7 @@ h1, h2, h3, h4 {
 header {
   background: linear-gradient(135deg, var(--board), #12332c);
   color: var(--on);
-  padding: 14px 20px;
+  padding: 12px 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -118,13 +118,41 @@ header {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .header-controls {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
+}
+
+@media (max-width: 1024px) {
+  header {
+    padding: 10px 14px;
+  }
+
+  .header-title h1 {
+    font-size: 1.25rem;
+  }
+
+  .header-controls {
+    gap: 6px;
+  }
+}
+
+@media (max-width: 800px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .header-controls {
+    width: 100%;
+    justify-content: flex-start;
+  }
 }
 
 /* Segmented Switches for Theme and Lang */
@@ -461,17 +489,25 @@ button,
 button:hover,
 .filebtn:hover {
   background: var(--bg);
+  border-color: var(--board);
   transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 button:active,
 .filebtn:active {
-  transform: translateY(0);
+  transform: translateY(1px);
+  box-shadow: var(--shadow-sm);
 }
 
+button:focus-visible,
+.chip:focus-visible,
+.filebtn:focus-visible,
+input:focus-visible,
+select:focus-visible,
 :focus-visible {
   outline: 3px solid var(--acc);
-  outline-offset: 1px;
+  outline-offset: 2px;
 }
 
 .primary {
@@ -484,6 +520,12 @@ button:active,
 .primary:hover {
   background: var(--acc-hover);
   border-color: var(--acc-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.primary:active {
+  transform: translateY(1px);
 }
 
 .chips {
@@ -496,6 +538,18 @@ button:active,
   border-radius: 20px;
   padding: 6px 14px;
   font-size: 0.9rem;
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+}
+
+.chip:hover {
+  background: var(--bg);
+  border-color: var(--board);
+  transform: translateY(-1px);
+}
+
+.chip:active {
+  transform: translateY(1px);
 }
 
 .chip[aria-pressed='true'] {
@@ -503,6 +557,11 @@ button:active,
   color: var(--on);
   border-color: var(--board);
   box-shadow: var(--shadow-sm);
+}
+
+.chip[aria-pressed='true']:hover {
+  background: var(--board-dark);
+  border-color: var(--board-dark);
 }
 
 .tabs {
@@ -633,10 +692,8 @@ button:active,
   font-size: 0.9rem;
   line-height: 1.4;
   color: var(--ink);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   flex: 1;
+  word-break: break-word;
 }
 
 .two {
