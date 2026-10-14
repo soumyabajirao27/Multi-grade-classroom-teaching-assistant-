@@ -5,14 +5,47 @@ import { beep } from '../hooks';
 import { t } from '../i18n';
 import { resolveL10n, type Grade, type Lang, type Topic } from '../types';
 
-export function Rotation({ lang, topic, grades }: { lang: Lang; topic: Topic; grades: Grade[] }) {
-  const [total, setTotal] = useState(40);
+interface RotationProps {
+  lang: Lang;
+  topic: Topic;
+  grades: Grade[];
+  periodTotal?: number;
+  onPeriodChange?: (val: number) => void;
+  passes?: 1 | 2;
+  onPassesChange?: (val: 1 | 2) => void;
+  openingMinutes?: number;
+}
+
+export function Rotation({
+  lang,
+  topic,
+  grades,
+  periodTotal,
+  onPeriodChange,
+  passes: propPasses,
+  onPassesChange,
+  openingMinutes = 5,
+}: RotationProps) {
+  const [localTotal, setLocalTotal] = useState(40);
+  const total = periodTotal !== undefined ? periodTotal : localTotal;
+  const setTotal = (val: number) => {
+    if (onPeriodChange) onPeriodChange(val);
+    else setLocalTotal(val);
+  };
+
+  const [localPasses, setLocalPasses] = useState<1 | 2>(1);
+  const rawPasses = propPasses !== undefined ? propPasses : localPasses;
+  const setPasses = (val: 1 | 2) => {
+    if (onPassesChange) onPassesChange(val);
+    else setLocalPasses(val);
+  };
+
+  const passes: 1 | 2 = grades.length <= 1 ? 1 : rawPasses;
   const [demo, setDemo] = useState(false);
-  const [passes, setPasses] = useState<1 | 2>(1);
 
   const plan = useMemo(
-    () => buildRotation(topic, grades, total, 5, passes),
-    [topic, grades, total, passes]
+    () => buildRotation(topic, grades, total, openingMinutes, passes),
+    [topic, grades, total, openingMinutes, passes]
   );
   const unit = demo ? 1000 : 60000;
 

@@ -8,7 +8,23 @@ import { buildRotation } from '../engine/rotation';
 import { t } from '../i18n';
 import { TIERS, resolveL10n, type Grade, type Lang, type Tier, type Topic, type Worksheet } from '../types';
 
-export function Worksheets({ lang, topic, grades }: { lang: Lang; topic: Topic; grades: Grade[] }) {
+interface WorksheetsProps {
+  lang: Lang;
+  topic: Topic;
+  grades: Grade[];
+  periodTotal?: number;
+  passes?: 1 | 2;
+  openingMinutes?: number;
+}
+
+export function Worksheets({
+  lang,
+  topic,
+  grades,
+  periodTotal = 40,
+  passes = 1,
+  openingMinutes = 5,
+}: WorksheetsProps) {
   const students = useLiveQuery(() => db.students.toArray(), [], []);
   const records = useLiveQuery(() => db.records.where('topicId').equals(topic.id).toArray(), [topic.id], []);
   const [seed, setSeed] = useState('class-1');
@@ -16,6 +32,8 @@ export function Worksheets({ lang, topic, grades }: { lang: Lang; topic: Topic; 
   const [key, setKey] = useState(false);
   const [includeSchedule, setIncludeSchedule] = useState(true);
   const [includeQuickStart, setIncludeQuickStart] = useState(true);
+
+  const effectivePasses: 1 | 2 = grades.length <= 1 ? 1 : passes;
 
   const sheets = useMemo(() => {
     const out: Worksheet[] = [];
@@ -37,8 +55,12 @@ export function Worksheets({ lang, topic, grades }: { lang: Lang; topic: Topic; 
 
   const rotation = useMemo(() => {
     if (!grades.length) return null;
-    return buildRotation(topic, grades, 45, 5, 2);
-  }, [topic, grades]);
+    return buildRotation(topic, grades, periodTotal, openingMinutes, effectivePasses);
+  }, [topic, grades, periodTotal, openingMinutes, effectivePasses]);
+
+  const actualOpening = rotation?.opening ?? openingMinutes;
+  const actualPeriodTotal = rotation?.total ?? periodTotal;
+  const rotationSlotsEnd = rotation?.slots.length ? rotation.slots[rotation.slots.length - 1].end : actualPeriodTotal;
 
   const handlePrintPack = () => {
     setIncludeSchedule(true);
@@ -116,10 +138,10 @@ export function Worksheets({ lang, topic, grades }: { lang: Lang; topic: Topic; 
               <div style={{ border: '2px solid #1b4940', borderRadius: 8, padding: 14, background: '#f4f9f7' }}>
                 <h3 style={{ margin: '0 0 6px 0', color: '#1b4940', fontSize: '1.15rem' }}>
                   {lang === 'hi'
-                    ? 'चरण 1: साझा हुक और विषय परिचय (0 - 5 मिनट)'
+                    ? `चरण 1: साझा हुक और विषय परिचय (0 - ${actualOpening} मिनट)`
                     : lang === 'mr'
-                    ? 'पायरी १: एकत्रित हुक आणि संकल्पना परिचय (० - ५ मिनिटे)'
-                    : 'Step 1: Whole-Class Hook & Common Theme (0 - 5 min)'}
+                    ? `पायरी १: एकत्रित हुक आणि संकल्पना परिचय (० - ${actualOpening} मिनिटे)`
+                    : `Step 1: Whole-Class Hook & Common Theme (0 - ${actualOpening} min)`}
                 </h3>
                 <p style={{ margin: 0, fontSize: '0.95rem', lineHeight: 1.5 }}>
                   {lang === 'hi'
@@ -136,10 +158,10 @@ export function Worksheets({ lang, topic, grades }: { lang: Lang; topic: Topic; 
               <div style={{ border: '2px solid #2471a3', borderRadius: 8, padding: 14, background: '#f3f8fc' }}>
                 <h3 style={{ margin: '0 0 6px 0', color: '#2471a3', fontSize: '1.15rem' }}>
                   {lang === 'hi'
-                    ? 'चरण 2: चक्रीय शिक्षण और स्तरित कार्यपत्रक (5 - 40 मिनट)'
+                    ? `चरण 2: चक्रीय शिक्षण और स्तरित कार्यपत्रक (${actualOpening} - ${rotationSlotsEnd} मिनट)`
                     : lang === 'mr'
-                    ? 'पायरी २: चक्रीय मार्गदर्शन आणि स्तरित कार्यपत्रिका (५ - ४० मिनिटे)'
-                    : 'Step 2: Rotational Teaching & Differentiated Practice (5 - 40 min)'}
+                    ? `पायरी २: चक्रीय मार्गदर्शन आणि स्तरित कार्यपत्रिका (${actualOpening} - ${rotationSlotsEnd} मिनिटे)`
+                    : `Step 2: Rotational Teaching & Differentiated Practice (${actualOpening} - ${rotationSlotsEnd} min)`}
                 </h3>
                 <p style={{ margin: 0, fontSize: '0.95rem', lineHeight: 1.5 }}>
                   {lang === 'hi'
@@ -153,10 +175,10 @@ export function Worksheets({ lang, topic, grades }: { lang: Lang; topic: Topic; 
               <div style={{ border: '2px solid #7d3c98', borderRadius: 8, padding: 14, background: '#faf5fc' }}>
                 <h3 style={{ margin: '0 0 6px 0', color: '#7d3c98', fontSize: '1.15rem' }}>
                   {lang === 'hi'
-                    ? 'चरण 3: जाँच, प्रगति दर्ज और समापन (40 - 45 मिनट)'
+                    ? `चरण 3: जाँच, प्रगति दर्ज और समापन (${rotationSlotsEnd} - ${actualPeriodTotal} मिनट)`
                     : lang === 'mr'
-                    ? 'पायरी ३: तपासणी, प्रगती नोंद आणि सांगता (४० - ४५ मिनिटे)'
-                    : 'Step 3: Review, Record Progress & Wrap-up (40 - 45 min)'}
+                    ? `पायरी ३: तपासणी, प्रगती नोंद आणि सांगता (${rotationSlotsEnd} - ${actualPeriodTotal} मिनिटे)`
+                    : `Step 3: Review, Record Progress & Wrap-up (${rotationSlotsEnd} - ${actualPeriodTotal} min)`}
                 </h3>
                 <p style={{ margin: 0, fontSize: '0.95rem', lineHeight: 1.5 }}>
                   {lang === 'hi'
@@ -187,7 +209,7 @@ export function Worksheets({ lang, topic, grades }: { lang: Lang; topic: Topic; 
                   {resolveL10n(topic.title, lang)} — {lang === 'hi' ? 'कक्षा रोटेशन तालिका' : lang === 'mr' ? 'वर्ग रोटेशन वेळापत्रक' : 'Classroom Rotation Schedule'}
                 </h2>
                 <div style={{ color: '#444', fontSize: '0.9rem', marginTop: 4 }}>
-                  {lang === 'hi' ? 'कक्षाएं' : lang === 'mr' ? 'इयत्ता' : 'Grades'}: {grades.map((g) => `Grade ${g}`).join(', ')} • 45{' '}
+                  {lang === 'hi' ? 'कक्षाएं' : lang === 'mr' ? 'इयत्ता' : 'Grades'}: {grades.map((g) => `Grade ${g}`).join(', ')} • {actualPeriodTotal}{' '}
                   {lang === 'hi' ? 'मिनट' : lang === 'mr' ? 'मिनिटे' : 'min'}
                 </div>
               </div>
@@ -197,18 +219,22 @@ export function Worksheets({ lang, topic, grades }: { lang: Lang; topic: Topic; 
               </div>
             </div>
 
-            <div style={{ marginBottom: 12, padding: 8, background: '#f5f5f5', borderRadius: 4, fontSize: '0.9rem' }}>
-              <strong>0:00 - 5:00 ({lang === 'hi' ? 'साझा शुरुआत' : lang === 'mr' ? 'एकत्रित सुरुवात' : 'Whole-class Opening Hook'}):</strong>{' '}
-              {resolveL10n(topic.hook, lang)}
-            </div>
+            {actualOpening > 0 && (
+              <div style={{ marginBottom: 12, padding: 8, background: '#f5f5f5', borderRadius: 4, fontSize: '0.9rem' }}>
+                <strong>0:00 - {actualOpening}:00 ({lang === 'hi' ? 'साझा शुरुआत' : lang === 'mr' ? 'एकत्रित सुरुवात' : 'Whole-class Opening Hook'}):</strong>{' '}
+                {resolveL10n(topic.hook, lang)}
+              </div>
+            )}
 
             <table className="print-pack-table">
               <thead>
                 <tr>
-                  <th style={{ width: '12%' }}>{lang === 'hi' ? 'समय' : lang === 'mr' ? 'वेळ' : 'Time'}</th>
-                  <th style={{ width: '15%' }}>{lang === 'hi' ? 'प्रत्यक्ष मार्गदर्शन' : lang === 'mr' ? 'प्रत्यक्ष शिकवणे' : 'Direct Teacher'}</th>
-                  <th style={{ width: '40%' }}>{lang === 'hi' ? 'शिक्षक चरण व अवलोकन' : lang === 'mr' ? 'शिक्षक पायऱ्या व निरीक्षण' : 'Teacher Steps & Checklist'}</th>
-                  <th style={{ width: '33%' }}>{lang === 'hi' ? 'अन्य कक्षाओं का स्वाध्याय' : lang === 'mr' ? 'इतर इयत्तांचा स्वाध्याय' : 'Other Grades Solo/Peer Task'}</th>
+                  <th style={{ width: grades.length > 1 ? '12%' : '18%' }}>{lang === 'hi' ? 'समय' : lang === 'mr' ? 'वेळ' : 'Time'}</th>
+                  <th style={{ width: grades.length > 1 ? '15%' : '22%' }}>{lang === 'hi' ? 'प्रत्यक्ष मार्गदर्शन' : lang === 'mr' ? 'प्रत्यक्ष शिकवणे' : 'Direct Teacher'}</th>
+                  <th style={{ width: grades.length > 1 ? '40%' : '60%' }}>{lang === 'hi' ? 'शिक्षक चरण व अवलोकन' : lang === 'mr' ? 'शिक्षक पायऱ्या व निरीक्षण' : 'Teacher Steps & Checklist'}</th>
+                  {grades.length > 1 && (
+                    <th style={{ width: '33%' }}>{lang === 'hi' ? 'अन्य कक्षाओं का स्वाध्याय' : lang === 'mr' ? 'इतर इयत्तांचा स्वाध्याय' : 'Other Grades Solo/Peer Task'}</th>
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -235,16 +261,18 @@ export function Worksheets({ lang, topic, grades }: { lang: Lang; topic: Topic; 
                           </div>
                         )}
                       </td>
-                      <td style={{ fontSize: '0.85rem' }}>
-                        {otherGrades.map((og) => {
-                          const ogData = topic.grades[og];
-                          return (
-                            <div key={og} style={{ marginBottom: 4 }}>
-                              <strong>G{og}:</strong> {resolveL10n(ogData.independent.title, lang)} — {resolveL10n(ogData.independent.instructions, lang)}
-                            </div>
-                          );
-                        })}
-                      </td>
+                      {grades.length > 1 && (
+                        <td style={{ fontSize: '0.85rem' }}>
+                          {otherGrades.map((og) => {
+                            const ogData = topic.grades[og];
+                            return (
+                              <div key={og} style={{ marginBottom: 4 }}>
+                                <strong>G{og}:</strong> {resolveL10n(ogData.independent.title, lang)} — {resolveL10n(ogData.independent.instructions, lang)}
+                              </div>
+                            );
+                          })}
+                        </td>
+                      )}
                     </tr>
                   );
                 })}

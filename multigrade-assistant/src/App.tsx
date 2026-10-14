@@ -26,6 +26,10 @@ export function App() {
   const [showTopicPicker, setShowTopicPicker] = useState(false);
   const [themeMode, setThemeMode] = usePersisted<ThemeMode>('theme', 'auto');
   const [systemDark, setSystemDark] = useState<boolean>(() => getSystemPrefersDark());
+  const [periodTotal, setPeriodTotal] = usePersisted<number>('period_total', 40);
+  const [rotationPasses, setRotationPasses] = usePersisted<1 | 2>('rotation_passes', 1);
+
+  const effectivePasses: 1 | 2 = grades.length <= 1 ? 1 : rotationPasses;
 
   useEffect(() => {
     if (typeof window === 'undefined' || !window.matchMedia) return;
@@ -301,8 +305,28 @@ export function App() {
           ))}
         </nav>
         {tab === 'plan' && <Planner lang={lang} topic={topic} grades={grades} />}
-        {tab === 'ws' && <Worksheets lang={lang} topic={topic} grades={grades} />}
-        {tab === 'rot' && <Rotation lang={lang} topic={topic} grades={grades} />}
+        {tab === 'ws' && (
+          <Worksheets
+            lang={lang}
+            topic={topic}
+            grades={grades}
+            periodTotal={periodTotal}
+            passes={effectivePasses}
+            openingMinutes={5}
+          />
+        )}
+        {tab === 'rot' && (
+          <Rotation
+            lang={lang}
+            topic={topic}
+            grades={grades}
+            periodTotal={periodTotal}
+            onPeriodChange={setPeriodTotal}
+            passes={rotationPasses}
+            onPassesChange={setRotationPasses}
+            openingMinutes={5}
+          />
+        )}
         {tab === 'prog' && <Progress lang={lang} topic={topic} grades={grades} />}
       </main>
     </>

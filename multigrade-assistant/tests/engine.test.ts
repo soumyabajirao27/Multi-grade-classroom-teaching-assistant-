@@ -10,7 +10,7 @@ import { buildSessionPlan } from '../src/engine/planner';
 import { allocate, buildRotation, calculateRemainingMs } from '../src/engine/rotation';
 import { suggestTier } from '../src/engine/progress';
 import { MAX_SOLO_MINUTES } from '../src/engine/rules';
-import { GRADES, TIERS, resolveL10n, type Lang } from '../src/types';
+import { GRADES, TIERS, resolveL10n, type Grade, type Lang } from '../src/types';
 
 const math = TOPICS.find((t) => t.id === 'math-market')!;
 
@@ -445,6 +445,40 @@ describe('topic title cleaning', () => {
     expect(cleanTopicTitle('पाणी (परिसर अभ्यास)')).toBe('पाणी');
     expect(cleanTopicTitle('बाज़ार में संख्याएँ (गणित)')).toBe('बाज़ार में संख्याएँ');
     expect(cleanTopicTitle('बाजारातील संख्या (गणित)')).toBe('बाजारातील संख्या');
+  });
+});
+
+describe('quick start and rotation schedule time synchronization', () => {
+  it('quick start stage times equal rotation plan times for several period lengths', () => {
+    const testPeriods = [30, 40, 45, 60, 90];
+    const testGradesList: Grade[][] = [[1, 3, 5], [2, 4], [1]];
+    const openingMinutes = 5;
+
+    for (const period of testPeriods) {
+      for (const grades of testGradesList) {
+        for (const passes of [1, 2] as const) {
+          const effectivePasses = grades.length <= 1 ? 1 : passes;
+          const plan = buildRotation(math, grades, period, openingMinutes, effectivePasses);
+
+          const expectedOpening = plan.opening;
+          const expectedTotal = plan.total;
+          const expectedSlotsEnd = plan.slots.length ? plan.slots[plan.slots.length - 1].end : expectedTotal;
+
+          // Step 1: 0 to opening
+          expect(expectedOpening).toBeLessThanOrEqual(period);
+          // Step 2: opening to rotation slots end
+          expect(expectedSlotsEnd).toBeLessThanOrEqual(expectedTotal);
+          expect(expectedSlotsEnd).toBeGreaterThanOrEqual(expectedOpening);
+          // Step 3: slots end to total period duration
+          expect(expectedTotal).toBe(period);
+          // The rotation plan slots match the continuous interval from opening to slots end
+          if (plan.slots.length > 0) {
+            expect(plan.slots[0].start).toBe(expectedOpening);
+            expect(plan.slots[plan.slots.length - 1].end).toBe(expectedSlotsEnd);
+          }
+        }
+      }
+    }
   });
 });
 
