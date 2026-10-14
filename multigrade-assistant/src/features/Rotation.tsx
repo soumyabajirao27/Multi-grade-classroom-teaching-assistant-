@@ -137,6 +137,8 @@ export function Rotation({
     ? (lang === 'hi' ? 'कालांश समाप्त हो गया।' : lang === 'mr' ? 'तासिका पूर्ण झाली.' : 'Period finished.')
     : `${t(lang, 'nowTeaching')}: Grade ${cur?.grade}${cur?.pass ? ` (Pass ${cur.pass})` : ''}`;
 
+  const isMultiGrade = grades.length > 1;
+
   return (
     <div>
       {/* Screen reader polite announcement */}
@@ -165,13 +167,19 @@ export function Rotation({
           />{' '}
           {t(lang, 'demo')}
         </label>
-        <label>
+        <label style={{ opacity: !isMultiGrade ? 0.65 : 1 }}>
           <input
             type="checkbox"
             checked={passes === 2}
+            disabled={!isMultiGrade}
             onChange={(e) => setPasses(e.target.checked ? 2 : 1)}
           />{' '}
           {lang === 'hi' ? 'दो फेरे (2 Passes)' : lang === 'mr' ? 'दोन फेऱ्या (2 Passes)' : '2 Passes'}
+          {!isMultiGrade && (
+            <span style={{ fontSize: '0.8rem', color: 'var(--mute)', marginLeft: 6, fontStyle: 'italic' }}>
+              ({lang === 'hi' ? '२ या अधिक कक्षाओं की आवश्यकता है' : lang === 'mr' ? '२ किंवा अधिक वर्गांची आवश्यकता आहे' : 'Needs 2 or more grades'})
+            </span>
+          )}
         </label>
       </div>
 
@@ -186,58 +194,130 @@ export function Rotation({
         </div>
       )}
 
-      <div className="card timer">
-        <div className="small">
-          {finished
-            ? t(lang, 'done')
-            : `${t(lang, 'nowTeaching')}: Grade ${cur?.grade}${cur?.pass ? ` · Pass ${cur.pass}` : ''}`}
-        </div>
-        <CircularTimer timeLeft={remainSeconds} totalTime={totalSlotSeconds} isRunning={running} />
-        <div className="bar" style={{ justifyContent: 'center' }}>
-          <button type="button" className="primary" onClick={toggle} style={{ minWidth: 90 }}>
-            {running ? t(lang, 'pause') : t(lang, 'start')}
-          </button>
-          <button
-            type="button"
-            onClick={() => idx + 1 < plan.slots.length && go(idx + 1, running)}
-            disabled={idx + 1 >= plan.slots.length}
-          >
-            {t(lang, 'next')}
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setFinished(false);
-              go(0, false);
-            }}
-          >
-            {t(lang, 'reset')}
-          </button>
+      {/* Top compact timer & teaching panel */}
+      <div className="card rotation-top-panel">
+        <div className="rotation-banner" role="status">
+          <span className="rotation-badge" style={{ background: cur ? `var(--g${cur.grade})` : 'var(--board)' }}>
+            {finished
+              ? (lang === 'hi' ? 'पूर्ण' : lang === 'mr' ? 'पूर्ण' : 'Done')
+              : cur
+              ? `Grade ${cur.grade}`
+              : 'Class'}
+          </span>
+          <span className="rotation-banner-text">
+            {finished
+              ? t(lang, 'done')
+              : `${t(lang, 'nowTeaching')}: Grade ${cur?.grade}${cur?.pass ? ` · Pass ${cur.pass}` : ''} (${cur?.minutes} min)`}
+          </span>
         </div>
 
-        {/* Active grade guidance */}
-        {curGradePlan && !finished && (
-          <div style={{ marginTop: 14, textAlign: 'left', borderTop: '1px solid var(--line)', paddingTop: 10 }}>
-            {curGradePlan.checklist && curGradePlan.checklist.length > 0 && (
-              <div className="small" style={{ marginBottom: 6 }}>
-                <b>📋 {lang === 'hi' ? 'शिक्षक जाँच सूची' : lang === 'mr' ? 'शिक्षक तपासणी' : 'Checklist'}:</b>
-                <ul style={{ margin: '4px 0', paddingLeft: 18 }}>
-                  {curGradePlan.checklist.map((c, i) => (
-                    <li key={i}>{resolveL10n(c, lang)}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {curGradePlan.earlyFinisher && (
-              <div className="small" style={{ color: 'var(--ok)' }}>
-                <b>⭐ {lang === 'hi' ? 'जल्दी पूरा करने वालों के लिए' : lang === 'mr' ? 'लवकर पूर्ण करणाऱ्यांसाठी' : 'Early Finisher'}:</b>{' '}
-                {resolveL10n(curGradePlan.earlyFinisher, lang)}
+        <div className="rotation-timer-row">
+          <CircularTimer
+            timeLeft={remainSeconds}
+            totalTime={totalSlotSeconds}
+            isRunning={running}
+            grade={cur?.grade}
+          />
+
+          <div className="rotation-controls-col">
+            <div className="rotation-btn-group">
+              <button
+                type="button"
+                className="primary"
+                onClick={toggle}
+                style={{ minWidth: 100, minHeight: 44, fontWeight: 700 }}
+              >
+                {running ? t(lang, 'pause') : t(lang, 'start')}
+              </button>
+              <button
+                type="button"
+                onClick={() => idx + 1 < plan.slots.length && go(idx + 1, running)}
+                disabled={idx + 1 >= plan.slots.length}
+                style={{ minHeight: 44 }}
+              >
+                {t(lang, 'next')}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setFinished(false);
+                  go(0, false);
+                }}
+                style={{ minHeight: 44 }}
+              >
+                {t(lang, 'reset')}
+              </button>
+            </div>
+
+            {/* Compact guidance inside panel */}
+            {curGradePlan && !finished && (
+              <div className="rotation-cur-guidance">
+                {curGradePlan.checklist && curGradePlan.checklist.length > 0 && (
+                  <div className="small">
+                    <b>📋 {lang === 'hi' ? 'शिक्षक जाँच सूची' : lang === 'mr' ? 'शिक्षक तपासणी' : 'Checklist'}:</b>
+                    <ul style={{ margin: '4px 0', paddingLeft: 18 }}>
+                      {curGradePlan.checklist.map((c, i) => (
+                        <li key={i}>{resolveL10n(c, lang)}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {curGradePlan.earlyFinisher && (
+                  <div className="small" style={{ color: 'var(--ok)', marginTop: 4 }}>
+                    <b>⭐ {lang === 'hi' ? 'जल्दी पूरा करने वालों के लिए' : lang === 'mr' ? 'लवकर पूर्ण करणाऱ्यांसाठी' : 'Early Finisher'}:</b>{' '}
+                    {resolveL10n(curGradePlan.earlyFinisher, lang)}
+                  </div>
+                )}
               </div>
             )}
           </div>
-        )}
+        </div>
       </div>
 
+      {/* Visual Timeline with marker for current slot */}
+      <div className="rotation-timeline-card card">
+        <h4 style={{ margin: '0 0 10px 0', fontSize: '0.95rem', color: 'var(--mute)' }}>
+          ⏱️ {lang === 'hi' ? 'समयरेखा' : lang === 'mr' ? 'वेळरेषा' : 'Session Timeline'}
+        </h4>
+        <div className="rotation-timeline-track" role="progressbar" aria-label="Timeline progress">
+          {plan.opening > 0 && (
+            <div
+              className={`timeline-slot timeline-opening ${!finished && running && idx === 0 && cur === undefined ? 'active-slot' : ''}`}
+              style={{ width: `${(plan.opening / plan.total) * 100}%` }}
+              title={`0-${plan.opening}m: Opening`}
+            >
+              <span className="timeline-slot-label">{plan.opening}m</span>
+            </div>
+          )}
+          {plan.slots.map((s, i) => {
+            const isCurrent = !finished && i === idx;
+            return (
+              <div
+                key={i}
+                className={`timeline-slot slot-g${s.grade} ${isCurrent ? 'active-slot' : ''}`}
+                style={{
+                  width: `${(s.minutes / plan.total) * 100}%`,
+                  backgroundColor: `var(--g${s.grade})`,
+                }}
+                title={`${s.start}-${s.end}m: Grade ${s.grade}${s.pass ? ` (P${s.pass})` : ''}`}
+                onClick={() => go(i, running)}
+              >
+                <span className="timeline-slot-label">
+                  G{s.grade}{s.pass ? `·P${s.pass}` : ''}
+                </span>
+                {isCurrent && <span className="timeline-marker" aria-label="Current slot">▼</span>}
+              </div>
+            );
+          })}
+        </div>
+        <div className="timeline-scale">
+          <span>0 min</span>
+          {plan.opening > 0 && <span>{plan.opening}m</span>}
+          <span>{plan.total} min</span>
+        </div>
+      </div>
+
+      {/* Schedule Table */}
       <div className="scroll">
         <table>
           <thead>

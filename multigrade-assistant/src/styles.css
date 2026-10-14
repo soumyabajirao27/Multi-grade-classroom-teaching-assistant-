@@ -762,6 +762,132 @@ th {
   letter-spacing: -0.02em;
 }
 
+/* Rotation Tab Top Panel & Timeline */
+.rotation-top-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.rotation-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+
+.rotation-badge {
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.rotation-banner-text {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.rotation-timer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.rotation-controls-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+  min-width: 260px;
+}
+
+.rotation-btn-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.rotation-cur-guidance {
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+
+.rotation-timeline-card {
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.rotation-timeline-track {
+  display: flex;
+  height: 38px;
+  border-radius: 6px;
+  overflow: visible;
+  position: relative;
+  background: var(--paper);
+  border: 1px solid var(--line);
+}
+
+.timeline-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  border-right: 1px solid rgba(255, 255, 255, 0.4);
+  transition: opacity 0.2s;
+  user-select: none;
+}
+
+.timeline-slot:last-child {
+  border-right: none;
+}
+
+.timeline-opening {
+  background: var(--mute);
+  color: #fff;
+}
+
+.timeline-slot:hover {
+  opacity: 0.9;
+}
+
+.timeline-marker {
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 14px;
+  color: var(--acc);
+  animation: bounce 1s infinite alternate;
+}
+
+@keyframes bounce {
+  from { transform: translateX(-50%) translateY(0); }
+  to { transform: translateX(-50%) translateY(-3px); }
+}
+
+.timeline-scale {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--mute);
+  margin-top: 4px;
+}
+
 /* BarChart Component */
 .barchart-card {
   border-left-color: var(--board);
