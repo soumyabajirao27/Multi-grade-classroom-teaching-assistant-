@@ -434,5 +434,19 @@ describe('theme resolution helper', () => {
   });
 });
 
+describe('topic title cleaning', () => {
+  it('strips bracketed and parenthesized subject suffixes/prefixes in EN, HI, MR', async () => {
+    const { cleanTopicTitle } = await import('../src/cleanTitle');
+    expect(cleanTopicTitle('Water (EVS)')).toBe('Water');
+    expect(cleanTopicTitle('[EVS] Water')).toBe('Water');
+    expect(cleanTopicTitle('Numbers in the Market (Maths)')).toBe('Numbers in the Market');
+    expect(cleanTopicTitle('[Maths] Numbers in the Market')).toBe('Numbers in the Market');
+    expect(cleanTopicTitle('जल (पर्यावरण अध्ययन)')).toBe('जल');
+    expect(cleanTopicTitle('पाणी (परिसर अभ्यास)')).toBe('पाणी');
+    expect(cleanTopicTitle('बाज़ार में संख्याएँ (गणित)')).toBe('बाज़ार में संख्याएँ');
+    expect(cleanTopicTitle('बाजारातील संख्या (गणित)')).toBe('बाजारातील संख्या');
+  });
+});
+
 
 

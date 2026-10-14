@@ -6,6 +6,8 @@ import { Planner } from './features/Planner';
 import { Progress } from './features/Progress';
 import { Rotation } from './features/Rotation';
 import { Worksheets } from './features/Worksheets';
+import { cleanTopicTitle } from './cleanTitle';
+import { TopicPickerModal } from './components/TopicPickerModal';
 import { usePersisted } from './hooks';
 import { LANGS, t } from './i18n';
 import { getSystemPrefersDark, resolveTheme, type ThemeMode } from './theme';
@@ -21,6 +23,7 @@ export function App() {
   const [tab, setTab] = useState<Tab>('plan');
   const [showWelcome, setShowWelcome] = usePersisted<boolean>('welcome_seen', false);
   const [manualWelcome, setManualWelcome] = useState(false);
+  const [showTopicPicker, setShowTopicPicker] = useState(false);
   const [themeMode, setThemeMode] = usePersisted<ThemeMode>('theme', 'auto');
   const [systemDark, setSystemDark] = useState<boolean>(() => getSystemPrefersDark());
 
@@ -77,6 +80,7 @@ export function App() {
   };
 
   const topic = getTopic(topicId);
+  const cleanedTopicTitle = cleanTopicTitle(topic.title[lang] || topic.title.en);
   const toggle = (g: Grade) => setGrades(grades.includes(g) ? grades.filter((x) => x !== g) : [...grades, g]);
 
   const isWelcomeOpen = !showWelcome || manualWelcome;
@@ -95,6 +99,14 @@ export function App() {
           }}
         />
       )}
+
+      <TopicPickerModal
+        isOpen={showTopicPicker}
+        onClose={() => setShowTopicPicker(false)}
+        selectedTopicId={topicId}
+        onSelectTopic={(id) => setTopicId(id)}
+        lang={lang}
+      />
 
       {showInstallModal && (
         <div className="install-modal-backdrop" onClick={() => setShowInstallModal(false)}>
@@ -237,16 +249,33 @@ export function App() {
       </header>
       <main>
         <div className="bar no-print">
-          <label>
-            {t(lang, 'topic')}:{' '}
-            <select value={topicId} onChange={(e) => setTopicId(e.target.value)}>
-              {TOPICS.map((x) => (
-                <option key={x.id} value={x.id}>
-                  {x.title[lang]}
-                </option>
-              ))}
-            </select>
-          </label>
+          <button
+            type="button"
+            className="topic-trigger-btn"
+            onClick={() => setShowTopicPicker(true)}
+            aria-haspopup="dialog"
+            aria-expanded={showTopicPicker}
+            aria-label={`${t(lang, 'topic')}: ${cleanedTopicTitle}`}
+          >
+            <span className="topic-card-icon" aria-hidden="true">
+              {topic.subject === 'math' ? '📐' : '🌱'}
+            </span>
+            <span>{cleanedTopicTitle}</span>
+            <span className={`subject-tag tag-${topic.subject}`}>
+              {topic.subject === 'math'
+                ? lang === 'hi'
+                  ? 'गणित'
+                  : lang === 'mr'
+                  ? 'गणित'
+                  : 'Maths'
+                : lang === 'hi'
+                ? 'पर्यावरण'
+                : lang === 'mr'
+                ? 'परिसर'
+                : 'EVS'}
+            </span>
+            <span className="topic-chevron" aria-hidden="true">▼</span>
+          </button>
           {topic.reviewed?.[lang] === false && (
             <span
               className="chip unreviewed-badge"
