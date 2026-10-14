@@ -411,6 +411,26 @@ describe('accessibility and UI ergonomics', () => {
     // Board header: white on board #1b4940
     const headerRatio = contrast('#ffffff', '#1b4940');
     expect(headerRatio).toBeGreaterThanOrEqual(4.5);
+
+    // Warm paper light mode: ink #1c2b27 on warm paper #FBF6EC
+    const warmPaperRatio = contrast('#1c2b27', '#FBF6EC');
+    expect(warmPaperRatio).toBeGreaterThanOrEqual(4.5);
+  });
+});
+
+describe('theme resolution helper', () => {
+  it('resolves explicit light and dark preferences regardless of system setting', async () => {
+    const { resolveTheme } = await import('../src/theme');
+    expect(resolveTheme('light', false)).toBe('light');
+    expect(resolveTheme('light', true)).toBe('light');
+    expect(resolveTheme('dark', false)).toBe('dark');
+    expect(resolveTheme('dark', true)).toBe('dark');
+  });
+
+  it('resolves auto preference according to system prefers-color-scheme', async () => {
+    const { resolveTheme } = await import('../src/theme');
+    expect(resolveTheme('auto', false)).toBe('light');
+    expect(resolveTheme('auto', true)).toBe('dark');
   });
 });
 

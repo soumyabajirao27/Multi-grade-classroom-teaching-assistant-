@@ -8,6 +8,7 @@ import { Rotation } from './features/Rotation';
 import { Worksheets } from './features/Worksheets';
 import { usePersisted } from './hooks';
 import { LANGS, t } from './i18n';
+import { getSystemPrefersDark, resolveTheme, type ThemeMode } from './theme';
 import { GRADES, type Grade, type Lang } from './types';
 
 type Tab = 'plan' | 'ws' | 'rot' | 'prog';
@@ -20,6 +21,22 @@ export function App() {
   const [tab, setTab] = useState<Tab>('plan');
   const [showWelcome, setShowWelcome] = usePersisted<boolean>('welcome_seen', false);
   const [manualWelcome, setManualWelcome] = useState(false);
+  const [themeMode, setThemeMode] = usePersisted<ThemeMode>('theme', 'auto');
+  const [systemDark, setSystemDark] = useState<boolean>(() => getSystemPrefersDark());
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mql = window.matchMedia('(prefers-color-scheme: dark)');
+    const onChange = (e: MediaQueryListEvent) => setSystemDark(e.matches);
+    mql.addEventListener('change', onChange);
+    return () => mql.removeEventListener('change', onChange);
+  }, []);
+
+  const activeResolvedTheme = resolveTheme(themeMode, systemDark);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', activeResolvedTheme);
+  }, [activeResolvedTheme]);
 
   // PWA Install state
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -150,6 +167,56 @@ export function App() {
           </span>
         </div>
         <div className="header-controls">
+          {/* Segmented Theme Switcher */}
+          <div className="segmented-switch theme-switch" role="group" aria-label="Theme mode">
+            <button
+              type="button"
+              className={themeMode === 'light' ? 'active' : ''}
+              onClick={() => setThemeMode('light')}
+              title="Light Theme"
+              aria-label="Light Theme"
+              aria-pressed={themeMode === 'light'}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="5" />
+                <line x1="12" y1="1" x2="12" y2="3" />
+                <line x1="12" y1="21" x2="12" y2="23" />
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                <line x1="1" y1="12" x2="3" y2="12" />
+                <line x1="21" y1="12" x2="23" y2="12" />
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              className={themeMode === 'auto' ? 'active' : ''}
+              onClick={() => setThemeMode('auto')}
+              title={`Auto Theme (${activeResolvedTheme})`}
+              aria-label={`Auto Theme (${activeResolvedTheme})`}
+              aria-pressed={themeMode === 'auto'}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="2" y="3" width="20" height="14" rx="2" />
+                <line x1="8" y1="21" x2="16" y2="21" />
+                <line x1="12" y1="17" x2="12" y2="21" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              className={themeMode === 'dark' ? 'active' : ''}
+              onClick={() => setThemeMode('dark')}
+              title="Dark Theme"
+              aria-label="Dark Theme"
+              aria-pressed={themeMode === 'dark'}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              </svg>
+            </button>
+          </div>
+
           <button type="button" className="install-btn" onClick={handleInstallClick} title="Install PWA">
             {installLabel}
           </button>

@@ -1,15 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap');
-
 :root {
-  --bg: #f4f7f5;
+  --bg: #FBF6EC;
+  --bg-page: #FBF6EC;
   --card: #ffffff;
   --ink: #1c2b27;
+  --chalk-ink: #22302B;
   --mute: #5d6e68;
   --line: #d3ddd9;
   --board: #1b4940;
+  --chalkboard: #16413A;
   --board-hover: #143932;
   --on: #ffffff;
   --acc: #f2a900;
+  --marigold: #F5A623;
   --acc-hover: #d99700;
   --ok: #1f7a4d;
   --bad: #b3402a;
@@ -25,22 +27,60 @@
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
 
+  --font-heading: 'Baloo 2', system-ui, -apple-system, sans-serif;
+  --font-body: 'Hind', system-ui, -apple-system, sans-serif;
+
   box-sizing: border-box;
 }
 
+[data-theme='light'] {
+  --bg: #FBF6EC;
+  --bg-page: #FBF6EC;
+  --card: #ffffff;
+  --ink: #1c2b27;
+  --chalk-ink: #22302B;
+  --mute: #5d6e68;
+  --line: #d3ddd9;
+  --board: #1b4940;
+  --chalkboard: #16413A;
+  --board-hover: #143932;
+  --on: #ffffff;
+  --acc: #f2a900;
+  --marigold: #F5A623;
+  --acc-hover: #d99700;
+  --ok: #1f7a4d;
+  --bad: #b3402a;
+  --warnbg: #fff4d6;
+}
+
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --bg: #111a17;
     --card: #192622;
     --ink: #e8f0ed;
     --mute: #97a9a2;
     --line: #293a35;
     --board: #276255;
+    --chalkboard: #111a17;
     --board-hover: #1f4f45;
     --warnbg: #383118;
     --ok: #4cc38a;
     --bad: #e5806a;
   }
+}
+
+[data-theme='dark'] {
+  --bg: #111a17;
+  --card: #192622;
+  --ink: #e8f0ed;
+  --mute: #97a9a2;
+  --line: #293a35;
+  --board: #276255;
+  --chalkboard: #111a17;
+  --board-hover: #1f4f45;
+  --warnbg: #383118;
+  --ok: #4cc38a;
+  --bad: #e5806a;
 }
 
 * {
@@ -51,11 +91,15 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font-family: 'Inter', 'Noto Sans Devanagari', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.5;
   padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
   -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
 }
 
 header {
@@ -79,7 +123,47 @@ header {
 .header-controls {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Segmented Switches for Theme and Lang */
+.segmented-switch {
+  display: inline-flex;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 20px;
+  padding: 3px;
+  gap: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.segmented-switch button {
+  background: transparent;
+  color: #d1deda;
+  border: none;
+  border-radius: 16px;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: none;
+  min-height: 32px;
+  min-width: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.18s ease;
+}
+
+.segmented-switch button.active {
+  background: #ffffff;
+  color: #16413A;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.segmented-switch button:hover:not(.active) {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .help-btn {
@@ -533,15 +617,25 @@ th {
   width: 90px;
 }
 
-/* Worksheet Styling */
+/* Worksheet Styling - Fixed Light Tokens for printable/preview sheets */
 .sheet {
-  background: #ffffff;
-  color: #111111;
-  border: 1px solid var(--line);
+  background: #ffffff !important;
+  color: #1a1a1a !important;
+  border: 1px solid #d3ddd9;
   border-radius: 10px;
   padding: 24px;
   margin: 16px 0;
   box-shadow: var(--shadow-sm);
+}
+
+.sheet h3,
+.sheet p,
+.sheet ol,
+.sheet li,
+.sheet span,
+.sheet strong,
+.sheet b {
+  color: #1a1a1a !important;
 }
 
 .sheet li {
@@ -551,7 +645,7 @@ th {
 
 .ln {
   display: inline-block;
-  border-bottom: 1px solid #666;
+  border-bottom: 1.5px solid #333333;
   min-width: 170px;
 }
 
@@ -759,16 +853,20 @@ th {
 
 /* Print Pack Styles */
 .print-pack-schedule {
-  border: 2px solid #000;
+  border: 2px solid #222222;
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 24px;
-  background: #fff;
-  color: #000;
+  background: #ffffff !important;
+  color: #1a1a1a !important;
+}
+
+.print-pack-schedule * {
+  color: #1a1a1a;
 }
 
 .print-pack-header {
-  border-bottom: 2px solid #000;
+  border-bottom: 2px solid #222222;
   padding-bottom: 8px;
   margin-bottom: 12px;
   display: flex;
@@ -780,18 +878,42 @@ th {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.95rem;
+  background: #ffffff !important;
+  color: #1a1a1a !important;
 }
 
 .print-pack-table th,
 .print-pack-table td {
-  border: 1px solid #333;
+  border: 1px solid #333333;
   padding: 8px 10px;
   text-align: left;
+  background: #ffffff !important;
+  color: #1a1a1a !important;
 }
 
 .print-pack-table th {
-  background: #eee;
+  background: #f0f0f0 !important;
+  color: #111111 !important;
   font-weight: 700;
+}
+
+.print-pack-quickstart {
+  background: #ffffff !important;
+  color: #1a1a1a !important;
+  border: 1px solid #d3ddd9;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.print-pack-quickstart * {
+  color: #1a1a1a;
+}
+
+.print-pack-quickstart h2,
+.print-pack-quickstart h3 {
+  color: #111111 !important;
 }
 
 /* Print Stylesheet Overhaul */
