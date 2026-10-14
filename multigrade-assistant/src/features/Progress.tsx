@@ -92,13 +92,18 @@ export function Progress({ lang, topic, grades }: { lang: Lang; topic: Topic; gr
     setExpandedHistory((prev) => ({ ...prev, [studentId]: !prev[studentId] }));
   };
 
+  const hasStudents = students.length > 0;
+  const filteredStudents = students.filter((s) => grades.includes(s.grade));
+
   return (
     <div>
+      {/* Add student bar: focused/highlighted when empty */}
       <form
-        className="bar"
+        className={`bar ${!hasStudents ? 'highlight-add-bar' : ''}`}
         onSubmit={(e) => {
           e.preventDefault();
-          void addStudent(name, grade);
+          if (!name.trim()) return;
+          void addStudent(name.trim(), grade);
           setName('');
         }}
       >
@@ -107,6 +112,7 @@ export function Progress({ lang, topic, grades }: { lang: Lang; topic: Topic; gr
           onChange={(e) => setName(e.target.value)}
           placeholder={t(lang, 'name')}
           aria-label={t(lang, 'name')}
+          autoFocus={!hasStudents}
         />
         <select
           value={grade}
@@ -124,165 +130,208 @@ export function Progress({ lang, topic, grades }: { lang: Lang; topic: Topic; gr
         </button>
       </form>
 
-      <BarChart students={enrichedStudents} grades={[...grades].sort()} />
-
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 14, flexWrap: 'wrap', gap: 8 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <h3 style={{ margin: 0 }}>{t(lang, 'summary')}</h3>
-          <button
-            type="button"
-            className="primary"
-            onClick={() => exportClassReport()}
-            style={{ fontSize: '0.85rem', padding: '4px 10px' }}
-            title="Export CSV: Date, Topic, Grade, Student, Status, Score"
-          >
-            📊 {lang === 'hi' ? 'कक्षा रिपोर्ट निर्यात (CSV)' : lang === 'mr' ? 'वर्ग अहवाल निर्यात (CSV)' : 'Export Class Report (CSV)'}
-          </button>
-        </div>
-        {canUndo() && (
-          <button type="button" onClick={handleUndo} style={{ fontSize: '0.88rem', padding: '4px 10px' }}>
-            ↩️ {lang === 'hi' ? 'अंतिम क्रिया पूर्ववत करें (Undo)' : lang === 'mr' ? 'शेवटची कृती मागे घ्या (Undo)' : 'Undo Last Change'}
-          </button>
-        )}
-      </div>
-
-      <div className="sumgrid">
-        {summary.map((s) => (
-          <div key={s.grade} className={`card g${s.grade}`}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <b>Grade {s.grade}</b>
-              <button
-                type="button"
-                onClick={() => exportClassReport(s.grade as Grade)}
-                title="Export CSV"
-                style={{ fontSize: '0.78rem', padding: '2px 6px', background: 'none', border: '1px solid var(--line)' }}
-              >
-                📥 CSV
-              </button>
-            </div>
-            <div className="meter" aria-label={`${s.done}/${s.total}`}>
-              <span style={{ width: `${s.total ? (100 * s.done) / s.total : 0}%` }} />
-            </div>
-            <div className="small">
-              {s.done}/{s.total} {t(lang, 'st_done')} · {s.needsHelp} {t(lang, 'st_needs-help')}
-            </div>
+      {!hasStudents ? (
+        <div className="card empty-progress-state" style={{ textAlign: 'center', padding: '40px 20px', marginTop: 16 }}>
+          <div style={{ fontSize: '3.5rem', marginBottom: 12 }} aria-hidden="true">
+            🌱
           </div>
-        ))}
-      </div>
+          <h3 style={{ margin: '0 0 8px 0', fontSize: '1.25rem' }}>
+            {lang === 'hi' ? 'कोई विद्यार्थी नहीं जोड़ा गया' : lang === 'mr' ? 'अद्याप कोणतेही विद्यार्थी नाहीत' : 'No Students Added Yet'}
+          </h3>
+          <p style={{ color: 'var(--mute)', maxWidth: 460, margin: '0 auto 16px auto', fontSize: '0.95rem' }}>
+            {t(lang, 'emptyProgress')}
+          </p>
+        </div>
+      ) : (
+        <>
+          <BarChart students={enrichedStudents} grades={[...grades].sort()} />
 
-      {!students.length && <p>{t(lang, 'emptyProgress')}</p>}
-
-      {[...grades].sort().map((g) => {
-        const kids = students.filter((s) => s.grade === g);
-        return kids.length ? (
-          <section key={g} className={`card g${g}`}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3>Grade {g}</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 14, flexWrap: 'wrap', gap: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <h3 style={{ margin: 0 }}>{t(lang, 'summary')}</h3>
               <button
                 type="button"
-                onClick={() => exportClassReport(g as Grade)}
-                style={{ fontSize: '0.85rem' }}
+                className="primary"
+                onClick={() => exportClassReport()}
+                disabled={!hasStudents}
+                style={{ fontSize: '0.85rem', padding: '4px 10px' }}
+                title="Export CSV: Date, Topic, Grade, Student, Status, Score"
               >
-                📥 {lang === 'hi' ? `कक्षा ${g} CSV निर्यात` : lang === 'mr' ? `इयत्ता ${g} CSV निर्यात` : `Export Grade ${g} CSV`}
+                📊 {lang === 'hi' ? 'कक्षा रिपोर्ट निर्यात (CSV)' : lang === 'mr' ? 'वर्ग अहवाल निर्यात (CSV)' : 'Export Class Report (CSV)'}
               </button>
             </div>
-            {kids.map((k) => {
-              const h = [...hist(k.id!)].sort((a, b) => b.updatedAt - a.updatedAt);
-              const cur = latest.get(k.id!) ?? 'not-started';
-              const lastScore = h[0]?.score;
-              const isExpanded = Boolean(expandedHistory[k.id!]);
+            {canUndo() && (
+              <button type="button" onClick={handleUndo} style={{ fontSize: '0.88rem', padding: '4px 10px' }}>
+                ↩️ {lang === 'hi' ? 'अंतिम क्रिया पूर्ववत करें (Undo)' : lang === 'mr' ? 'शेवटची कृती मागे घ्या (Undo)' : 'Undo Last Change'}
+              </button>
+            )}
+          </div>
 
-              return (
-                <div key={k.id} style={{ borderBottom: '1px solid var(--line)', paddingBottom: 8, marginBottom: 8 }}>
-                  <div className="row" style={{ alignItems: 'center' }}>
-                    <span className="who" style={{ fontWeight: 600 }}>{k.name}</span>
-                    <span className="seg" role="group" aria-label={k.name}>
-                      {STATUSES.map((st) => (
-                        <button
-                          key={st}
-                          className={`stbtn ${st} ${cur === st ? 'on' : ''}`}
-                          aria-pressed={cur === st}
-                          onClick={() => void handleStatusChange(k.id!, st, lastScore)}
-                        >
-                          {t(lang, `st_${st}` as const)}
-                        </button>
-                      ))}
-                    </span>
-                    {cur === 'done' && (
-                      <input
-                        className="score"
-                        type="number"
-                        min={0}
-                        max={100}
-                        placeholder={t(lang, 'score')}
-                        aria-label={t(lang, 'score')}
-                        defaultValue={lastScore}
-                        onBlur={(e) =>
-                          void handleStatusChange(
-                            k.id!,
-                            'done',
-                            e.target.value === '' ? undefined : Number(e.target.value)
-                          )
-                        }
-                      />
-                    )}
-                    <span className="small">
-                      {t(lang, 'suggested')}: {t(lang, `tier_${suggestTier(h)}` as const)}
-                    </span>
-                    <button
-                      type="button"
-                      style={{ fontSize: '0.8rem', padding: '2px 8px' }}
-                      onClick={() => toggleHistory(k.id!)}
-                      title="History"
-                    >
-                      📜 {h.length}
-                    </button>
-                    <button
-                      aria-label={`${t(lang, 'remove')} ${k.name}`}
-                      onClick={() => void removeStudent(k.id!)}
-                    >
-                      ✕
-                    </button>
-                  </div>
-
-                  {/* History View (last 5 records) */}
-                  {isExpanded && (
-                    <div style={{ background: 'var(--bg)', padding: '6px 12px', borderRadius: 6, marginTop: 6, fontSize: '0.82rem' }}>
-                      <b>📜 {lang === 'hi' ? 'हालिया 5 रिकॉर्ड' : lang === 'mr' ? 'मागील ५ नोंदी' : 'Last 5 Records'}:</b>
-                      {h.length === 0 ? (
-                        <p style={{ margin: '4px 0', color: 'var(--mute)' }}>No records yet.</p>
-                      ) : (
-                        <ul style={{ margin: '4px 0', paddingLeft: 18 }}>
-                          {h.slice(0, 5).map((rec, i) => (
-                            <li key={i}>
-                              {new Date(rec.updatedAt).toLocaleDateString()} —{' '}
-                              <span style={{ fontWeight: 600 }}>{t(lang, `st_${rec.status}` as const)}</span>
-                              {rec.score !== undefined ? ` (${rec.score}%)` : ''}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  )}
+          {/* Single summary strip per selected grade */}
+          <div className="sumgrid">
+            {summary.map((s) => (
+              <div key={s.grade} className={`card g${s.grade}`}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <b>Grade {s.grade}</b>
+                  <button
+                    type="button"
+                    onClick={() => exportClassReport(s.grade as Grade)}
+                    disabled={s.total === 0}
+                    title="Export CSV"
+                    style={{ fontSize: '0.78rem', padding: '2px 6px', background: 'none', border: '1px solid var(--line)' }}
+                  >
+                    📥 CSV
+                  </button>
                 </div>
-              );
-            })}
-          </section>
-        ) : null;
-      })}
+                <div className="meter" aria-label={`${s.done}/${s.total}`}>
+                  <span style={{ width: `${s.total ? (100 * s.done) / s.total : 0}%` }} />
+                </div>
+                <div className="small">
+                  {s.done}/{s.total} {t(lang, 'st_done')} · {s.needsHelp} {t(lang, 'st_needs-help')}
+                </div>
+              </div>
+            ))}
+          </div>
 
-      <div className="bar" style={{ marginTop: 16 }}>
-        <button onClick={() => void backup()}>{t(lang, 'export')}</button>
-        <label className="filebtn">
-          {t(lang, 'import')}
-          <input
-            type="file"
-            accept="application/json"
-            hidden
-            onChange={(e) => void restore(e.target.files?.[0])}
-          />
-        </label>
-      </div>
+          {/* Unified student roster */}
+          <section className="card" style={{ marginTop: 16 }}>
+            <h3 style={{ margin: '0 0 12px 0' }}>
+              👥 {lang === 'hi' ? 'विद्यार्थी नामावली एवं स्थिति' : lang === 'mr' ? 'विद्यार्थी यादी व स्थिती' : 'Student Roster & Status'}
+            </h3>
+            {filteredStudents.length === 0 ? (
+              <p style={{ color: 'var(--mute)' }}>
+                {lang === 'hi' ? 'चयनित कक्षाओं में कोई विद्यार्थी नहीं है।' : lang === 'mr' ? 'निवडलेल्या इयत्तांमध्ये विद्यार्थी नाहीत.' : 'No students in currently selected grades.'}
+              </p>
+            ) : (
+              filteredStudents.map((k) => {
+                const h = [...hist(k.id!)].sort((a, b) => b.updatedAt - a.updatedAt);
+                const cur = latest.get(k.id!) ?? 'not-started';
+                const lastScore = h[0]?.score;
+                const isExpanded = Boolean(expandedHistory[k.id!]);
+
+                return (
+                  <div key={k.id} style={{ borderBottom: '1px solid var(--line)', paddingBottom: 8, marginBottom: 8 }}>
+                    <div className="row" style={{ alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+                      <span
+                        className="who"
+                        style={{
+                          fontWeight: 600,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          minWidth: 150,
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontSize: '0.75rem',
+                            padding: '2px 6px',
+                            borderRadius: 4,
+                            background: `var(--g${k.grade})`,
+                            color: '#fff',
+                            fontWeight: 700,
+                          }}
+                        >
+                          G{k.grade}
+                        </span>
+                        {k.name}
+                      </span>
+                      <span className="seg" role="group" aria-label={k.name}>
+                        {STATUSES.map((st) => {
+                          const icon = st === 'done' ? '✓ ' : st === 'needs-help' ? '⚠️ ' : '○ ';
+                          return (
+                            <button
+                              key={st}
+                              className={`stbtn ${st} ${cur === st ? 'on' : ''}`}
+                              aria-pressed={cur === st}
+                              onClick={() => void handleStatusChange(k.id!, st, lastScore)}
+                            >
+                              <span aria-hidden="true">{icon}</span>
+                              {t(lang, `st_${st}` as const)}
+                            </button>
+                          );
+                        })}
+                      </span>
+                      {cur === 'done' && (
+                        <input
+                          className="score"
+                          type="number"
+                          min={0}
+                          max={100}
+                          placeholder={t(lang, 'score')}
+                          aria-label={t(lang, 'score')}
+                          defaultValue={lastScore}
+                          onBlur={(e) =>
+                            void handleStatusChange(
+                              k.id!,
+                              'done',
+                              e.target.value === '' ? undefined : Number(e.target.value)
+                            )
+                          }
+                        />
+                      )}
+                      <span className="small">
+                        {t(lang, 'suggested')}: {t(lang, `tier_${suggestTier(h)}` as const)}
+                      </span>
+                      <button
+                        type="button"
+                        style={{ fontSize: '0.8rem', padding: '2px 8px' }}
+                        onClick={() => toggleHistory(k.id!)}
+                        title="History"
+                      >
+                        📜 {h.length}
+                      </button>
+                      <button
+                        aria-label={`${t(lang, 'remove')} ${k.name}`}
+                        onClick={() => void removeStudent(k.id!)}
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    {/* History View */}
+                    {isExpanded && (
+                      <div style={{ background: 'var(--bg)', padding: '6px 12px', borderRadius: 6, marginTop: 6, fontSize: '0.82rem' }}>
+                        <b>📜 {lang === 'hi' ? 'हालिया 5 रिकॉर्ड' : lang === 'mr' ? 'मागील ५ नोंदी' : 'Last 5 Records'}:</b>
+                        {h.length === 0 ? (
+                          <p style={{ margin: '4px 0', color: 'var(--mute)' }}>No records yet.</p>
+                        ) : (
+                          <ul style={{ margin: '4px 0', paddingLeft: 18 }}>
+                            {h.slice(0, 5).map((rec, i) => (
+                              <li key={i}>
+                                {new Date(rec.updatedAt).toLocaleDateString()} —{' '}
+                                <span style={{ fontWeight: 600 }}>{t(lang, `st_${rec.status}` as const)}</span>
+                                {rec.score !== undefined ? ` (${rec.score}%)` : ''}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </section>
+        </>
+      )}
+
+      {hasStudents && (
+        <div className="bar" style={{ marginTop: 16 }}>
+          <button onClick={() => void backup()} disabled={!hasStudents}>
+            {t(lang, 'export')}
+          </button>
+          <label className="filebtn">
+            {t(lang, 'import')}
+            <input
+              type="file"
+              accept="application/json"
+              hidden
+              onChange={(e) => void restore(e.target.files?.[0])}
+            />
+          </label>
+        </div>
+      )}
     </div>
   );
 }
