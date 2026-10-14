@@ -48,18 +48,37 @@ export function App() {
   // PWA Install state
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showInstallModal, setShowInstallModal] = useState(false);
-  const [offlineReady, setOfflineReady] = useState(false);
+  const [swStatus, setSwStatus] = useState<'ready' | 'preparing' | 'none'>('none');
   const isIOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
 
   useEffect(() => {
-    if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
-      if (navigator.serviceWorker.controller) {
-        setOfflineReady(true);
-      }
-      navigator.serviceWorker.ready.then(() => {
-        setOfflineReady(true);
-      }).catch(() => {});
+    if (typeof navigator === 'undefined' || !('serviceWorker' in navigator)) {
+      setSwStatus('none');
+      return;
     }
+
+    if (navigator.serviceWorker.controller) {
+      setSwStatus('ready');
+    } else {
+      // Check if registration exists or is installing
+      navigator.serviceWorker.getRegistration().then((reg) => {
+        if (!reg) {
+          setSwStatus('none');
+        } else if (reg.active) {
+          setSwStatus('ready');
+        } else if (reg.installing || reg.waiting) {
+          setSwStatus('preparing');
+        } else {
+          setSwStatus('none');
+        }
+      }).catch(() => {
+        setSwStatus('none');
+      });
+    }
+
+    navigator.serviceWorker.ready.then(() => {
+      setSwStatus('ready');
+    }).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -173,13 +192,44 @@ export function App() {
         <div className="header-title">
           <h1>{t(lang, 'appTitle')}</h1>
           <span
-            className={`offline-chip ${offlineReady ? 'ready' : 'pending'}`}
-            title={offlineReady ? 'Service Worker cached: offline ready' : 'Service Worker active'}
+            className={`offline-chip ${swStatus}`}
+            title={
+              swStatus === 'ready'
+                ? (lang === 'hi'
+                    ? 'सर्विस वर्कर सक्रिय एवं कैश सुरक्षित: ऐप बिना इंटरनेट पूर्णतः चलेगा'
+                    : lang === 'mr'
+                    ? 'सर्व्हिस वर्कर सक्रिय व कॅश सुरक्षित: ॲप इंटरनेटशिवाय पूर्ण चालेल'
+                    : 'Service worker active and assets cached: ready for offline use')
+                : swStatus === 'preparing'
+                ? (lang === 'hi'
+                    ? 'ऑफलाइन एसेट्स डाउनलोड हो रहे हैं...'
+                    : lang === 'mr'
+                    ? 'ऑफलाइन साहित्य डाऊनलोड होत आहे...'
+                    : 'Service worker installing: preparing offline cache...')
+                : (lang === 'hi'
+                    ? 'केवल ऑनलाइन (डेवलपमेंट सर्वर या सर्विस वर्कर अनुपलब्ध)'
+                    : lang === 'mr'
+                    ? 'केवळ ऑनलाइन (डेव्हलपमेंट सर्व्हर किंवा सर्व्हिस वर्कर अनुपलब्ध)'
+                    : 'Online only (dev server or service worker not active)')
+            }
+            aria-label={
+              swStatus === 'ready'
+                ? 'Offline ready: service worker active and assets cached'
+                : swStatus === 'preparing'
+                ? 'Preparing offline: service worker installing'
+                : 'Online only: running in dev server without service worker'
+            }
             role="status"
           >
-            {offlineReady
-              ? `🟢 ${lang === 'hi' ? 'ऑफलाइन तैयार' : lang === 'mr' ? 'ऑफलाइन तयार' : 'Offline Ready'}`
-              : `🟢 ${lang === 'hi' ? 'ऑफलाइन सक्षम' : lang === 'mr' ? 'ऑफलाइन सक्षम' : 'Offline Ready'}`}
+            {swStatus === 'ready' && (
+              <>🟢 {lang === 'hi' ? 'ऑफलाइन तैयार' : lang === 'mr' ? 'ऑफलाइन तयार' : 'Offline ready'}</>
+            )}
+            {swStatus === 'preparing' && (
+              <>🟡 {lang === 'hi' ? 'तैयार हो रहा है' : lang === 'mr' ? 'तयार होत आहे' : 'Preparing offline'}</>
+            )}
+            {swStatus === 'none' && (
+              <>⚪ {lang === 'hi' ? 'केवल ऑनलाइन' : lang === 'mr' ? 'केवळ ऑनलाइन' : 'Online only'}</>
+            )}
           </span>
         </div>
         <div className="header-controls">
