@@ -349,7 +349,7 @@ export function App() {
         </div>
         <nav className="tabs no-print" role="tablist">
           {TABS.map((k) => (
-            <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}>
+            <button key={k} type="button" role="tab" data-tab={k} aria-selected={tab === k} onClick={() => setTab(k)}>
               {t(lang, `tab_${k}` as const)}
             </button>
           ))}

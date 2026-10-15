@@ -914,8 +914,8 @@ th {
 }
 
 .timeline-opening {
-  background: var(--mute);
-  color: #fff;
+  background: var(--board);
+  color: var(--on);
 }
 
 .timeline-slot:hover {

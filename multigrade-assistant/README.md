@@ -99,11 +99,24 @@ render.yaml     Render Blueprint static site deployment spec with PWA cache head
 
 ## Production & Verification Status
 
-- **Automated Tests:** 46/46 passing (`npm test`)
+- **Automated Tests:** 50/50 passing (`npm test`)
 - **PWA Production Build:** Zero TypeScript errors, service worker precached (`npm run build`)
 - **Validation Gate:** `npm run validate` runs report check, typecheck, tests, and build.
 - **Field Usability & SUS Evaluation:** Evaluation protocol defined in `docs/EVALUATION.md`; empirical trial data: `[TO VERIFY - pending field trial deployment]`
 - **Textbook Mapping:** Structural mappings established in `docs/CURRICULUM_MAPPING.md`; Maharashtra State Board textbook chapter verification: `[TO VERIFY]`
 - **Language Review:** Hindi/Marathi translations authored with Maharashtra classroom terminology; native-speaker primary teacher review: `[TO VERIFY]`
+
+## Design System & UX Standards
+
+- **Theme Resolution (`src/theme.ts`):** Supports three modes: `Light`, `Dark`, and `Auto` (system `prefers-color-scheme`). Theme applies instantaneously on first paint via an inline head script to guarantee zero flash of unstyled content. All text, dropdowns, inputs, timer rings, and badges strictly meet WCAG AA contrast (>= 4.5:1).
+- **Accessible Topic Picker Modal (`src/components/TopicPickerModal.tsx`):** Replaces native dropdown selects with a high-contrast grid of topic cards featuring clean titles (stripped of duplicated `[EVS]` / `(Maths)` labels), subject badges, search filtering, and full keyboard navigation (Arrows, Enter, Escape).
+- **Status Badge:** Three distinct offline states:
+  - 🟢 **Offline ready**: Service Worker active and all assets/curriculum cached.
+  - 🟡 **Preparing offline**: Service Worker installing or downloading cache.
+  - ⚪ **Online only**: Dev server mode or service worker not installed.
+- **Difficulty Staircase Strip:** Displays the shared unifying theme once, followed by a compact progression step per selected grade showing its learning outcome and Level N of M position.
+- **Synchronized Rotation & Quick Start:** Period length and passes are shared across Rotation, Worksheets, and Print Pack, dynamically deriving stage time bounds (`0-5 min`, `5-40 min`, etc.) and hiding single-grade unused columns.
+- **8-inch Tablet Accessibility:** 44px touch targets on interactive controls, visible keyboard focus rings, `aria-live` polite slot announcements, and `prefers-reduced-motion` compliance.
+
 
 
