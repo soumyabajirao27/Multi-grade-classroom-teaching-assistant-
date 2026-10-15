@@ -6,7 +6,8 @@ import { buildWorksheet } from '../engine/worksheet';
 import { suggestTier } from '../engine/progress';
 import { buildRotation } from '../engine/rotation';
 import { t } from '../i18n';
-import { TIERS, resolveL10n, type Grade, type Lang, type Tier, type Topic, type Worksheet } from '../types';
+import { getTopic } from '../content/curriculum';
+import { TIERS, resolveL10n, type Grade, type GradeTopicMap, type Lang, type SessionMode, type Tier, type Topic, type Worksheet } from '../types';
 
 interface WorksheetsProps {
   lang: Lang;
@@ -15,6 +16,8 @@ interface WorksheetsProps {
   periodTotal?: number;
   passes?: 1 | 2;
   openingMinutes?: number;
+  mode?: SessionMode;
+  gradeTopics?: GradeTopicMap;
 }
 
 export function Worksheets({
@@ -24,9 +27,11 @@ export function Worksheets({
   periodTotal = 40,
   passes = 1,
   openingMinutes = 5,
+  mode = 'theme',
+  gradeTopics = {},
 }: WorksheetsProps) {
   const students = useLiveQuery(() => db.students.toArray(), [], []);
-  const records = useLiveQuery(() => db.records.where('topicId').equals(topic.id).toArray(), [topic.id], []);
+  const records = useLiveQuery(() => db.records.toArray(), [], []);
   const [seed, setSeed] = useState('class-1');
   const [diff, setDiff] = useState(true);
   const [key, setKey] = useState(false);
@@ -35,28 +40,47 @@ export function Worksheets({
 
   const effectivePasses: 1 | 2 = grades.length <= 1 ? 1 : passes;
 
+  const getTopicForGrade = useMemo(() => {
+    return (g: Grade): Topic => {
+      if (mode === 'multi_subject' && gradeTopics[g]) {
+        return getTopic(gradeTopics[g]!);
+      }
+      return topic;
+    };
+  }, [mode, gradeTopics, topic]);
+
   const sheets = useMemo(() => {
     const out: Worksheet[] = [];
     for (const g of [...grades].sort()) {
+      const activeTopic = getTopicForGrade(g);
       const kids = students.filter((s) => s.grade === g);
       if (!diff || !kids.length) {
-        out.push(buildWorksheet({ topic, grade: g, tier: 'core', seed, students: kids.map((k) => k.name), lang }));
+        const ws = buildWorksheet({ topic: activeTopic, grade: g, tier: 'core', seed, students: kids.map((k) => k.name), lang });
+        ws.subject = activeTopic.subject;
+        out.push(ws);
         continue;
       }
       const byTier = new Map<Tier, string[]>();
       for (const k of kids) {
-        const tier = suggestTier(records.filter((r) => r.studentId === k.id));
+        const tier = suggestTier(records.filter((r) => r.studentId === k.id && r.topicId === activeTopic.id));
         byTier.set(tier, [...(byTier.get(tier) ?? []), k.name]);
       }
-      for (const tier of TIERS) if (byTier.has(tier)) out.push(buildWorksheet({ topic, grade: g, tier, seed, students: byTier.get(tier), lang }));
+      for (const tier of TIERS) {
+        if (byTier.has(tier)) {
+          const ws = buildWorksheet({ topic: activeTopic, grade: g, tier, seed, students: byTier.get(tier), lang });
+          ws.subject = activeTopic.subject;
+          out.push(ws);
+        }
+      }
     }
     return out;
-  }, [grades, students, records, topic, seed, diff, lang]);
+  }, [grades, students, records, topic, seed, diff, lang, getTopicForGrade]);
 
   const rotation = useMemo(() => {
     if (!grades.length) return null;
-    return buildRotation(topic, grades, periodTotal, openingMinutes, effectivePasses);
-  }, [topic, grades, periodTotal, openingMinutes, effectivePasses]);
+    return buildRotation(topic, grades, periodTotal, openingMinutes, effectivePasses, mode === 'multi_subject' ? getTopicForGrade : undefined);
+  }, [topic, grades, periodTotal, openingMinutes, effectivePasses, mode, getTopicForGrade]);
+
 
   const actualOpening = rotation?.opening ?? openingMinutes;
   const actualPeriodTotal = rotation?.total ?? periodTotal;

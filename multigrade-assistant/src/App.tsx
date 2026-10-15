@@ -11,7 +11,7 @@ import { TopicPickerModal } from './components/TopicPickerModal';
 import { usePersisted } from './hooks';
 import { LANGS, t } from './i18n';
 import { getSystemPrefersDark, resolveTheme, type ThemeMode } from './theme';
-import { GRADES, type Grade, type Lang } from './types';
+import { GRADES, type Grade, type GradeTopicMap, type Lang, type SessionMode } from './types';
 
 type Tab = 'plan' | 'ws' | 'rot' | 'prog';
 const TABS: Tab[] = ['plan', 'ws', 'rot', 'prog'];
@@ -20,6 +20,15 @@ export function App() {
   const [lang, setLang] = usePersisted<Lang>('lang', 'en');
   const [topicId, setTopicId] = usePersisted('topic', TOPICS[0].id);
   const [grades, setGrades] = usePersisted<Grade[]>('grades', [1, 3, 5]);
+  const [sessionMode, setSessionMode] = usePersisted<SessionMode>('session_mode', 'theme');
+  const [gradeTopics, setGradeTopics] = usePersisted<GradeTopicMap>('grade_topics', {
+    1: 'math-market',
+    2: 'math-market',
+    3: 'evs-water',
+    4: 'evs-water',
+    5: 'math-fractions',
+  });
+  const [gradePickingFor, setGradePickingFor] = useState<Grade | null>(null);
   const [tab, setTab] = useState<Tab>('plan');
   const [showWelcome, setShowWelcome] = usePersisted<boolean>('welcome_seen', false);
   const [manualWelcome, setManualWelcome] = useState(false);
@@ -30,6 +39,7 @@ export function App() {
   const [rotationPasses, setRotationPasses] = usePersisted<1 | 2>('rotation_passes', 1);
 
   const effectivePasses: 1 | 2 = grades.length <= 1 ? 1 : rotationPasses;
+
 
   useEffect(() => {
     if (typeof window === 'undefined' || !window.matchMedia) return;
@@ -302,35 +312,109 @@ export function App() {
         </div>
       </header>
       <main>
+        {/* Mode A / Mode B Switcher Bar */}
+        <div className="bar no-print" style={{ background: 'var(--card)', borderBottom: '1px solid var(--line)', padding: '6px 16px', display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--ink)' }}>
+            🎯 {lang === 'hi' ? 'शिक्षण मोड' : lang === 'mr' ? 'अध्यापन मोड' : 'Classroom Mode'}:
+          </span>
+          <div className="theme-toggle" role="radiogroup" aria-label="Session Mode" style={{ display: 'inline-flex' }}>
+            <button
+              type="button"
+              className={sessionMode === 'theme' ? 'active' : ''}
+              onClick={() => setSessionMode('theme')}
+              aria-pressed={sessionMode === 'theme'}
+              title={t(lang, 'modeA_desc')}
+              style={{ fontSize: '0.85rem', padding: '4px 12px' }}
+            >
+              🌱 {t(lang, 'modeA')}
+            </button>
+            <button
+              type="button"
+              className={sessionMode === 'multi_subject' ? 'active' : ''}
+              onClick={() => setSessionMode('multi_subject')}
+              aria-pressed={sessionMode === 'multi_subject'}
+              title={t(lang, 'modeB_desc')}
+              style={{ fontSize: '0.85rem', padding: '4px 12px' }}
+            >
+              📚 {t(lang, 'modeB')}
+            </button>
+          </div>
+          <span className="small" style={{ color: 'var(--mute)', marginLeft: 6 }}>
+            {sessionMode === 'theme' ? t(lang, 'modeA_desc') : t(lang, 'modeB_desc')}
+          </span>
+        </div>
+
         <div className="bar no-print">
-          <button
-            type="button"
-            className="topic-trigger-btn"
-            onClick={() => setShowTopicPicker(true)}
-            aria-haspopup="dialog"
-            aria-expanded={showTopicPicker}
-            aria-label={`${t(lang, 'topic')}: ${cleanedTopicTitle}`}
-          >
-            <span className="topic-card-icon" aria-hidden="true">
-              {topic.subject === 'math' ? '📐' : '🌱'}
-            </span>
-            <span>{cleanedTopicTitle}</span>
-            <span className={`subject-tag tag-${topic.subject}`}>
-              {topic.subject === 'math'
-                ? lang === 'hi'
-                  ? 'गणित'
+          {sessionMode === 'theme' ? (
+            <button
+              type="button"
+              className="topic-trigger-btn"
+              onClick={() => {
+                setGradePickingFor(null);
+                setShowTopicPicker(true);
+              }}
+              aria-haspopup="dialog"
+              aria-expanded={showTopicPicker}
+              aria-label={`${t(lang, 'topic')}: ${cleanedTopicTitle}`}
+            >
+              <span className="topic-card-icon" aria-hidden="true">
+                {topic.subject === 'math' ? '📐' : '🌱'}
+              </span>
+              <span>{cleanedTopicTitle}</span>
+              <span className={`subject-tag tag-${topic.subject}`}>
+                {topic.subject === 'math'
+                  ? lang === 'hi'
+                    ? 'गणित'
+                    : lang === 'mr'
+                    ? 'गणित'
+                    : 'Maths'
+                  : lang === 'hi'
+                  ? 'पर्यावरण'
                   : lang === 'mr'
-                  ? 'गणित'
-                  : 'Maths'
-                : lang === 'hi'
-                ? 'पर्यावरण'
-                : lang === 'mr'
-                ? 'परिसर'
-                : 'EVS'}
-            </span>
-            <span className="topic-chevron" aria-hidden="true">▼</span>
-          </button>
-          {topic.reviewed?.[lang] === false && (
+                  ? 'परिसर'
+                  : 'EVS'}
+              </span>
+              <span className="topic-chevron" aria-hidden="true">▼</span>
+            </button>
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>
+                {lang === 'hi' ? 'कक्षा विषय' : lang === 'mr' ? 'इयत्ता घटक' : 'Grade Subjects'}:
+              </span>
+              {grades.map((g) => {
+                const assignedTopic = getTopic(gradeTopics[g] || topicId);
+                const title = cleanTopicTitle(assignedTopic.title[lang] || assignedTopic.title.en);
+                return (
+                  <button
+                    key={g}
+                    type="button"
+                    className="chip"
+                    onClick={() => {
+                      setGradePickingFor(g);
+                      setShowTopicPicker(true);
+                    }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      fontSize: '0.82rem',
+                      padding: '4px 8px',
+                      background: 'var(--card)',
+                      border: '1px solid var(--line)',
+                    }}
+                    title={`Grade ${g}: Click to change subject/topic`}
+                  >
+                    <b style={{ color: `var(--g${g})` }}>G{g}</b>
+                    <span>{assignedTopic.subject === 'math' ? '📐' : '🌱'}</span>
+                    <span>{title}</span>
+                    <span style={{ fontSize: '0.7rem' }}>▼</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {topic.reviewed?.[lang] === false && sessionMode === 'theme' && (
             <span
               className="chip unreviewed-badge"
               title="Translation needs native-speaker teacher review"
@@ -354,7 +438,19 @@ export function App() {
             </button>
           ))}
         </nav>
-        {tab === 'plan' && <Planner lang={lang} topic={topic} grades={grades} />}
+        {tab === 'plan' && (
+          <Planner
+            lang={lang}
+            topic={topic}
+            grades={grades}
+            mode={sessionMode}
+            gradeTopics={gradeTopics}
+            onOpenTopicPickerForGrade={(g) => {
+              setGradePickingFor(g);
+              setShowTopicPicker(true);
+            }}
+          />
+        )}
         {tab === 'ws' && (
           <Worksheets
             lang={lang}
@@ -363,6 +459,8 @@ export function App() {
             periodTotal={periodTotal}
             passes={effectivePasses}
             openingMinutes={5}
+            mode={sessionMode}
+            gradeTopics={gradeTopics}
           />
         )}
         {tab === 'rot' && (
@@ -375,10 +473,35 @@ export function App() {
             passes={rotationPasses}
             onPassesChange={setRotationPasses}
             openingMinutes={5}
+            mode={sessionMode}
+            gradeTopics={gradeTopics}
           />
         )}
         {tab === 'prog' && <Progress lang={lang} topic={topic} grades={grades} />}
+
+        {/* Global or Per-Grade Topic Picker Modal */}
+        <TopicPickerModal
+          isOpen={showTopicPicker}
+          onClose={() => {
+            setShowTopicPicker(false);
+            setGradePickingFor(null);
+          }}
+          selectedTopicId={
+            gradePickingFor ? (gradeTopics[gradePickingFor] || topicId) : topicId
+          }
+          onSelectTopic={(id) => {
+            if (gradePickingFor) {
+              setGradeTopics({ ...gradeTopics, [gradePickingFor]: id });
+            } else {
+              setTopicId(id);
+            }
+            setShowTopicPicker(false);
+            setGradePickingFor(null);
+          }}
+          lang={lang}
+        />
       </main>
     </>
   );
 }
+

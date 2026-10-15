@@ -15,6 +15,15 @@ const en = {
   'st_not-started': 'Not started', 'st_needs-help': 'Needs help', st_done: 'Done',
   tier_support: 'Support', tier_core: 'Core', tier_stretch: 'Stretch', suggested: 'Suggested level',
   noKid: 'Add students in Progress to get level-wise worksheets.',
+  modeA: 'Mode A: Shared Theme', modeB: 'Mode B: Mixed Subjects',
+  modeA_desc: 'Same theme across all grades with grade-wise difficulty',
+  modeB_desc: 'Different subject & topic assigned per grade',
+  loadMockClass: 'Load Sample Class',
+  scenario3Grade: '3-Grade (G2, G3, G5)',
+  scenario4Grade: '4-Grade (G1, G2, G3, G4)',
+  scenario5Grade: '5-Grade (G1-G5 All)',
+  subject_math: 'Maths', subject_evs: 'EVS',
+  teachingSubject: 'Subject',
 };
 type Dict = typeof en;
 const hi: Partial<Dict> = {
@@ -32,6 +41,15 @@ const hi: Partial<Dict> = {
   'st_not-started': 'शुरू नहीं', 'st_needs-help': 'मदद चाहिए', st_done: 'पूर्ण',
   tier_support: 'सहायता', tier_core: 'मूल', tier_stretch: 'चुनौती', suggested: 'सुझाया स्तर',
   noKid: 'स्तर अनुसार वर्कशीट के लिए प्रगति में बच्चे जोड़ें।',
+  modeA: 'मोड A: साझा विषय', modeB: 'मोड B: भिन्न विषय',
+  modeA_desc: 'सभी कक्षाओं के लिए एक ही विषय, अलग कठिनाई स्तर',
+  modeB_desc: 'प्रत्येक कक्षा को अलग विषय और पाठ',
+  loadMockClass: 'नमूना कक्षा लोड करें',
+  scenario3Grade: '3-कक्षा (G2, G3, G5)',
+  scenario4Grade: '4-कक्षा (G1, G2, G3, G4)',
+  scenario5Grade: '5-कक्षा (G1-G5 सभी)',
+  subject_math: 'गणित', subject_evs: 'पर्यावरण',
+  teachingSubject: 'विषय',
 };
 const mr: Partial<Dict> = {
   appTitle: 'बहु-इयत्ता शिक्षण सहाय्यक', topic: 'विषय', grades: 'इयत्ता', language: 'भाषा',
@@ -48,8 +66,18 @@ const mr: Partial<Dict> = {
   'st_not-started': 'सुरू नाही', 'st_needs-help': 'मदत हवी', st_done: 'पूर्ण',
   tier_support: 'सहाय्य', tier_core: 'मूळ', tier_stretch: 'आव्हान', suggested: 'सुचवलेला स्तर',
   noKid: 'स्तरानुसार कार्यपत्रिकेसाठी प्रगतीमध्ये विद्यार्थी जोडा.',
+  modeA: 'मोड A: समान संकल्पना', modeB: 'मोड B: भिन्न विषय',
+  modeA_desc: 'सर्व इयत्तांसाठी एकच विषय, काठिण्य पातळीनुसार',
+  modeB_desc: 'प्रत्येक इयत्तेला स्वतंत्र विषय व घटक',
+  loadMockClass: 'नमुना वर्ग लोड करा',
+  scenario3Grade: '3-इयत्ता (G2, G3, G5)',
+  scenario4Grade: '4-इयत्ता (G1, G2, G3, G4)',
+  scenario5Grade: '5-इयत्ता (G1-G5 सर्व)',
+  subject_math: 'गणित', subject_evs: 'परिसर',
+  teachingSubject: 'विषय',
 };
 export type Key = keyof Dict;
 const STR: Record<Lang, Partial<Dict>> = { en, hi, mr };
 export const t = (lang: Lang, key: Key): string => STR[lang][key] ?? en[key];
 export const LANGS: { id: Lang; label: string }[] = [{ id: 'en', label: 'English' }, { id: 'hi', label: 'हिन्दी' }, { id: 'mr', label: 'मराठी' }];
+

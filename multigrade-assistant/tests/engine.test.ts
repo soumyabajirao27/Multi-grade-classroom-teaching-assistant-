@@ -10,9 +10,11 @@ import { buildSessionPlan } from '../src/engine/planner';
 import { allocate, buildRotation, calculateRemainingMs } from '../src/engine/rotation';
 import { suggestTier } from '../src/engine/progress';
 import { MAX_SOLO_MINUTES } from '../src/engine/rules';
-import { GRADES, TIERS, resolveL10n, type Grade, type Lang } from '../src/types';
+import { GRADES, TIERS, resolveL10n, type Grade, type Lang, type Topic } from '../src/types';
 
 const math = TOPICS.find((t) => t.id === 'math-market')!;
+const water = TOPICS.find((t) => t.id === 'evs-water')!;
+
 
 describe('rng', () => {
   it('is deterministic per seed and differs across seeds', () => {
@@ -482,5 +484,80 @@ describe('quick start and rotation schedule time synchronization', () => {
   });
 });
 
+describe('multi-grade scenarios: 3-grade, 4-grade, and 5-grade in Mode A and Mode B', () => {
+  const scenario3: Grade[] = [2, 3, 5];
+  const scenario4: Grade[] = [1, 2, 3, 4];
+  const scenario5: Grade[] = [1, 2, 3, 4, 5];
 
+  it('Mode A: creates coherent session plan with unifying theme across all grades', () => {
+    for (const grades of [scenario3, scenario4, scenario5]) {
+      const plan = buildSessionPlan(water, grades);
+      expect(plan.rows.length).toBe(grades.length);
+      expect(plan.theme).toEqual(water.theme);
+      // Grades are ascending
+      for (let i = 0; i < plan.rows.length - 1; i++) {
+        expect(plan.rows[i].grade).toBeLessThan(plan.rows[i + 1].grade);
+      }
+    }
+  });
 
+  it('Mode B: supports assigning different topics and subjects per grade', () => {
+    const mixedGradeTopics: Record<Grade, Topic> = {
+      1: math,
+      2: math,
+      3: water,
+      4: water,
+      5: math,
+    };
+
+    for (const grades of [scenario3, scenario4, scenario5]) {
+      const plan = buildSessionPlan(water, grades, (g) => mixedGradeTopics[g]);
+      expect(plan.rows.length).toBe(grades.length);
+      for (const row of plan.rows) {
+        expect(row.topic).toBeDefined();
+        expect(row.topic?.subject).toBe(mixedGradeTopics[row.grade].subject);
+      }
+    }
+  });
+
+  it('Rotation scheduler: creates non-overlapping, contiguous slots for mixed subjects', () => {
+    const mixedGradeTopics: Record<Grade, Topic> = {
+      1: math,
+      2: math,
+      3: water,
+      4: water,
+      5: math,
+    };
+
+    for (const grades of [scenario3, scenario4, scenario5]) {
+      const rot = buildRotation(water, grades, 45, 5, 1, (g) => mixedGradeTopics[g]);
+      expect(rot.slots.length).toBe(grades.length);
+      expect(rot.opening).toBe(5);
+      expect(rot.total).toBe(45);
+
+      // Verify slots are perfectly contiguous with zero overlap or gaps
+      let prevEnd = rot.opening;
+      for (const slot of rot.slots) {
+        expect(slot.start).toBe(prevEnd);
+        expect(slot.end).toBe(slot.start + slot.minutes);
+        expect(slot.topic).toBeDefined();
+        expect(slot.subject).toBe(mixedGradeTopics[slot.grade].subject);
+        prevEnd = slot.end;
+      }
+      expect(prevEnd).toBe(rot.total);
+    }
+  });
+
+  it('Rotation scheduler: 2-pass mode correctly interleaves slots without conflicts', () => {
+    for (const grades of [scenario3, scenario4, scenario5]) {
+      const rot = buildRotation(water, grades, 50, 5, 2);
+      expect(rot.slots.length).toBe(grades.length * 2);
+      // Pass 1 followed by Pass 2
+      const pass1Slots = rot.slots.filter((s) => s.pass === 1);
+      const pass2Slots = rot.slots.filter((s) => s.pass === 2);
+      expect(pass1Slots.length).toBe(grades.length);
+      expect(pass2Slots.length).toBe(grades.length);
+      expect(pass1Slots[pass1Slots.length - 1].end).toBe(pass2Slots[0].start);
+    }
+  });
+});

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { BarChart } from '../components/BarChart';
-import { addStudent, canUndo, db, exportAll, importAll, removeStudent, setStatus, undoLast } from '../db/db';
+import { addStudent, canUndo, db, exportAll, importAll, loadMockScenario, removeStudent, setStatus, undoLast } from '../db/db';
 import { suggestTier, summarize } from '../engine/progress';
 import { t } from '../i18n';
 import { GRADES, type Grade, type Lang, type Status, type Topic } from '../types';
@@ -128,6 +128,39 @@ export function Progress({ lang, topic, grades }: { lang: Lang; topic: Topic; gr
         <button className="primary" type="submit">
           {t(lang, 'addStudent')}
         </button>
+
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginLeft: 'auto', flexWrap: 'wrap' }}>
+          <span className="small" style={{ fontWeight: 600, color: 'var(--mute)' }}>
+            🎯 {t(lang, 'loadMockClass')}:
+          </span>
+          <button
+            type="button"
+            className="chip"
+            onClick={() => loadMockScenario('3-grade')}
+            title="Load 3-Grade Scenario (Grades 2, 3, 5)"
+            style={{ fontSize: '0.8rem', padding: '3px 8px' }}
+          >
+            {t(lang, 'scenario3Grade')}
+          </button>
+          <button
+            type="button"
+            className="chip"
+            onClick={() => loadMockScenario('4-grade')}
+            title="Load 4-Grade Scenario (Grades 1, 2, 3, 4)"
+            style={{ fontSize: '0.8rem', padding: '3px 8px' }}
+          >
+            {t(lang, 'scenario4Grade')}
+          </button>
+          <button
+            type="button"
+            className="chip"
+            onClick={() => loadMockScenario('5-grade')}
+            title="Load 5-Grade Complete Classroom (Grades 1-5)"
+            style={{ fontSize: '0.8rem', padding: '3px 8px' }}
+          >
+            {t(lang, 'scenario5Grade')}
+          </button>
+        </div>
       </form>
 
       {!hasStudents ? (
@@ -141,8 +174,26 @@ export function Progress({ lang, topic, grades }: { lang: Lang; topic: Topic; gr
           <p style={{ color: 'var(--mute)', maxWidth: 460, margin: '0 auto 16px auto', fontSize: '0.95rem' }}>
             {t(lang, 'emptyProgress')}
           </p>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 8, flexWrap: 'wrap', marginTop: 16 }}>
+            <button
+              type="button"
+              className="primary"
+              onClick={() => loadMockScenario('3-grade')}
+              style={{ padding: '8px 14px' }}
+            >
+              🚀 {t(lang, 'loadMockClass')}: {t(lang, 'scenario3Grade')}
+            </button>
+            <button
+              type="button"
+              onClick={() => loadMockScenario('5-grade')}
+              style={{ padding: '8px 14px' }}
+            >
+              🏫 {t(lang, 'loadMockClass')}: {t(lang, 'scenario5Grade')}
+            </button>
+          </div>
         </div>
       ) : (
+
         <>
           <BarChart students={enrichedStudents} grades={[...grades].sort()} />
 

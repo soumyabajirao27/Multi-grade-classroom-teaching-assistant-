@@ -85,3 +85,88 @@ export async function importAll(json: string) {
   });
   lastUndoFn = null;
 }
+
+export type ScenarioType = '3-grade' | '4-grade' | '5-grade';
+
+export async function loadMockScenario(scenario: ScenarioType) {
+  const now = Date.now();
+  let mockStudents: { name: string; grade: Grade }[] = [];
+
+  if (scenario === '3-grade') {
+    // Grades 2, 3, 5
+    mockStudents = [
+      { name: 'Aarav Patil', grade: 2 },
+      { name: 'Ananya Shinde', grade: 2 },
+      { name: 'Rohan Deshmukh', grade: 2 },
+      { name: 'Siddhi Kulkarni', grade: 3 },
+      { name: 'Vedant Gaikwad', grade: 3 },
+      { name: 'Sai Jadhav', grade: 3 },
+      { name: 'Tanvi Pawar', grade: 5 },
+      { name: 'Aditya More', grade: 5 },
+      { name: 'Pranav Joshi', grade: 5 },
+    ];
+  } else if (scenario === '4-grade') {
+    // Grades 1, 2, 3, 4
+    mockStudents = [
+      { name: 'Gauri Kale', grade: 1 },
+      { name: 'Omkar Salunkhe', grade: 1 },
+      { name: 'Aarav Patil', grade: 2 },
+      { name: 'Ananya Shinde', grade: 2 },
+      { name: 'Siddhi Kulkarni', grade: 3 },
+      { name: 'Vedant Gaikwad', grade: 3 },
+      { name: 'Samarth Bhosale', grade: 4 },
+      { name: 'Isha Chavan', grade: 4 },
+    ];
+  } else {
+    // All Grades 1-5 (Complete 12-kid multi-grade classroom)
+    mockStudents = [
+      { name: 'Gauri Kale', grade: 1 },
+      { name: 'Omkar Salunkhe', grade: 1 },
+      { name: 'Aarav Patil', grade: 2 },
+      { name: 'Ananya Shinde', grade: 2 },
+      { name: 'Siddhi Kulkarni', grade: 3 },
+      { name: 'Vedant Gaikwad', grade: 3 },
+      { name: 'Samarth Bhosale', grade: 4 },
+      { name: 'Isha Chavan', grade: 4 },
+      { name: 'Tanvi Pawar', grade: 5 },
+      { name: 'Aditya More', grade: 5 },
+      { name: 'Pranav Joshi', grade: 5 },
+      { name: 'Shruti Kamble', grade: 5 },
+    ];
+  }
+
+  await db.transaction('rw', db.students, db.records, async () => {
+    await db.students.clear();
+    await db.records.clear();
+    const ids = await db.students.bulkAdd(mockStudents, { allKeys: true });
+
+    // Seed realistic records for water & market
+    const sampleRecords: ProgressRecord[] = [];
+    ids.forEach((id, idx) => {
+      // Alternating progress statuses: some done, some needs-help, some not-started
+      const waterStatus = idx % 3 === 0 ? 'done' : idx % 3 === 1 ? 'needs-help' : 'not-started';
+      const marketStatus = idx % 2 === 0 ? 'done' : 'needs-help';
+
+      sampleRecords.push({
+        studentId: Number(id),
+        topicId: 'evs-water',
+        status: waterStatus,
+        score: waterStatus === 'done' ? 85 : waterStatus === 'needs-help' ? 45 : undefined,
+        updatedAt: now - (idx * 3600000),
+      });
+
+      sampleRecords.push({
+        studentId: Number(id),
+        topicId: 'math-market',
+        status: marketStatus,
+        score: marketStatus === 'done' ? 90 : 50,
+        updatedAt: now - (idx * 1800000),
+      });
+    });
+
+    await db.records.bulkAdd(sampleRecords);
+  });
+
+  lastUndoFn = null;
+}
+

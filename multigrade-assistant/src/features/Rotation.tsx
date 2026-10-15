@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { cleanTopicTitle } from '../cleanTitle';
 import { CircularTimer } from '../components/CircularTimer';
+import { getTopic } from '../content/curriculum';
 import { buildRotation, calculateRemainingMs } from '../engine/rotation';
 import { beep } from '../hooks';
 import { t } from '../i18n';
-import { resolveL10n, type Grade, type Lang, type Topic } from '../types';
+import { resolveL10n, type Grade, type GradeTopicMap, type Lang, type SessionMode, type Topic } from '../types';
 
 interface RotationProps {
   lang: Lang;
@@ -14,6 +16,8 @@ interface RotationProps {
   passes?: 1 | 2;
   onPassesChange?: (val: 1 | 2) => void;
   openingMinutes?: number;
+  mode?: SessionMode;
+  gradeTopics?: GradeTopicMap;
 }
 
 export function Rotation({
@@ -25,6 +29,8 @@ export function Rotation({
   passes: propPasses,
   onPassesChange,
   openingMinutes = 5,
+  mode = 'theme',
+  gradeTopics = {},
 }: RotationProps) {
   const [localTotal, setLocalTotal] = useState(40);
   const total = periodTotal !== undefined ? periodTotal : localTotal;
@@ -43,10 +49,20 @@ export function Rotation({
   const passes: 1 | 2 = grades.length <= 1 ? 1 : rawPasses;
   const [demo, setDemo] = useState(false);
 
+  const getTopicForGrade = useMemo(() => {
+    return (g: Grade): Topic => {
+      if (mode === 'multi_subject' && gradeTopics[g]) {
+        return getTopic(gradeTopics[g]!);
+      }
+      return topic;
+    };
+  }, [mode, gradeTopics, topic]);
+
   const plan = useMemo(
-    () => buildRotation(topic, grades, total, openingMinutes, passes),
-    [topic, grades, total, openingMinutes, passes]
+    () => buildRotation(topic, grades, total, openingMinutes, passes, mode === 'multi_subject' ? getTopicForGrade : undefined),
+    [topic, grades, total, openingMinutes, passes, mode, getTopicForGrade]
   );
+
   const unit = demo ? 1000 : 60000;
 
   const [idx, setIdx] = useState(0);
@@ -208,8 +224,14 @@ export function Rotation({
             {finished
               ? t(lang, 'done')
               : `${t(lang, 'nowTeaching')}: Grade ${cur?.grade}${cur?.pass ? ` · Pass ${cur.pass}` : ''} (${cur?.minutes} min)`}
+            {cur?.topic && (
+              <span className={`subject-tag tag-${cur.topic.subject}`} style={{ marginLeft: 8, fontSize: '0.75rem' }}>
+                {cur.topic.subject === 'math' ? '📐' : '🌱'} {cleanTopicTitle(cur.topic.title[lang] || cur.topic.title.en)}
+              </span>
+            )}
           </span>
         </div>
+
 
         <div className="rotation-timer-row">
           <CircularTimer
@@ -341,15 +363,29 @@ export function Rotation({
                   {row.start}–{row.end}
                   {row.pass ? ` (P${row.pass})` : ''}
                 </td>
-                {grades.map((g) =>
-                  g === row.grade ? (
+                {grades.map((g) => {
+                  const isLead = g === row.grade;
+                  const gradeTopic = getTopicForGrade(g);
+                  return isLead ? (
                     <td key={g} className="lead">
-                      {t(lang, 'teacherLed')}
+                      <b>{t(lang, 'teacherLed')}</b>
+                      {mode === 'multi_subject' && (
+                        <div className="small" style={{ fontSize: '0.75rem', marginTop: 2 }}>
+                          {gradeTopic.subject === 'math' ? '📐' : '🌱'} {cleanTopicTitle(gradeTopic.title[lang] || gradeTopic.title.en)}
+                        </div>
+                      )}
                     </td>
                   ) : (
-                    <td key={g}>{t(lang, 'selfWork')}</td>
-                  )
-                )}
+                    <td key={g}>
+                      <span>{t(lang, 'selfWork')}</span>
+                      {mode === 'multi_subject' && (
+                        <div className="small" style={{ fontSize: '0.72rem', color: 'var(--mute)', marginTop: 2 }}>
+                          {gradeTopic.subject === 'math' ? '📐' : '🌱'} {cleanTopicTitle(gradeTopic.title[lang] || gradeTopic.title.en)}
+                        </div>
+                      )}
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>

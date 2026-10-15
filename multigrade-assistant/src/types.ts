@@ -73,4 +73,12 @@ export interface Worksheet {
   id: string; topicId: string; grade: Grade; tier: Tier; seed: string;
   title: string; instructions: string; students: string[]; questions: Question[];
   earlyFinisher?: string;
+  subject?: Subject;
 }
+
+/** Session mode: Mode A (theme - same topic for all grades) or Mode B (multi_subject - different topic/subject per grade) */
+export type SessionMode = 'theme' | 'multi_subject';
+
+/** Map of grade to assigned topic ID for Mode B */
+export type GradeTopicMap = Partial<Record<Grade, string>>;
+

@@ -8,6 +8,8 @@ export interface Slot {
   end: number;
   minutes: number;
   pass?: number;
+  topic?: Topic;
+  subject?: string;
 }
 
 export interface RotationPlan {
@@ -47,14 +49,17 @@ export function allocate(total: number, weights: number[]): number[] {
  * Teacher passes over the grades (youngest first), after a whole-class opening.
  * Allows 1 or 2 passes (revisiting each grade when the period is long).
  * Warns when any grade would be unsupervised longer than its limit.
+ * Supports Mode A (single topic) or Mode B (getTopicForGrade callback).
  */
 export function buildRotation(
   topic: Topic,
   grades: Grade[],
   totalMinutes: number,
   openingMinutes = 5,
-  passes: 1 | 2 = 1
+  passes: 1 | 2 = 1,
+  getTopicForGrade?: (g: Grade) => Topic
 ): RotationPlan {
+
   const gs = [...grades].sort((a, b) => a - b);
   const totalSlotsCount = gs.length * passes;
   const opening = Math.min(openingMinutes, Math.max(0, totalMinutes - totalSlotsCount));
@@ -81,6 +86,7 @@ export function buildRotation(
   for (let p = 1; p <= passes; p++) {
     for (const grade of gs) {
       const minutes = mins[slotIdx];
+      const gradeTopic = getTopicForGrade ? getTopicForGrade(grade) : topic;
       slots.push({
         index: slotIdx,
         grade,
@@ -88,11 +94,14 @@ export function buildRotation(
         end: cursor + minutes,
         minutes,
         pass: p,
+        topic: gradeTopic,
+        subject: gradeTopic.subject,
       });
       cursor += minutes;
       slotIdx++;
     }
   }
+
 
   // Check warnings
   for (const s of slots) {

@@ -4,8 +4,17 @@ import type { Lang, Worksheet } from '../types';
 export function Sheet({ ws, lang, showKey }: { ws: Worksheet; lang: Lang; showKey: boolean }) {
   return (
     <article className="sheet">
-      <h3>Grade {ws.grade} · {ws.title} <span className={`tier tier-${ws.tier}`}>{t(lang, `tier_${ws.tier}` as const)}</span></h3>
+      <h3>
+        Grade {ws.grade} · {ws.title}{' '}
+        {ws.subject && (
+          <span className={`subject-tag tag-${ws.subject}`} style={{ fontSize: '0.75rem', verticalAlign: 'middle', marginRight: 4 }}>
+            {ws.subject === 'math' ? '📐 Maths' : '🌱 EVS'}
+          </span>
+        )}
+        <span className={`tier tier-${ws.tier}`}>{t(lang, `tier_${ws.tier}` as const)}</span>
+      </h3>
       <p>{t(lang, 'name')}: <span className="ln" /> &nbsp; {t(lang, 'date')}: <span className="ln short" /></p>
+
       {ws.students.length > 0 && <p className="small">{t(lang, 'students')}: {ws.students.join(', ')}</p>}
       <p><b>{ws.instructions}</b></p>
       <ol>

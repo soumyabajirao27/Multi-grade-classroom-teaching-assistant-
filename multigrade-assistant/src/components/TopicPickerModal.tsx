@@ -10,6 +10,7 @@ interface TopicPickerModalProps {
   selectedTopicId: string;
   onSelectTopic: (id: string) => void;
   lang: Lang;
+  initialSubjectFilter?: 'all' | 'math' | 'evs';
 }
 
 export function TopicPickerModal({
@@ -18,6 +19,7 @@ export function TopicPickerModal({
   selectedTopicId,
   onSelectTopic,
   lang,
+  initialSubjectFilter = 'all',
 }: TopicPickerModalProps) {
   const [search, setSearch] = useState('');
   const [filterSubject, setFilterSubject] = useState<'all' | 'math' | 'evs'>('all');
@@ -27,12 +29,13 @@ export function TopicPickerModal({
   useEffect(() => {
     if (isOpen) {
       setSearch('');
-      setFilterSubject('all');
+      setFilterSubject(initialSubjectFilter);
       setTimeout(() => {
         searchInputRef.current?.focus();
       }, 50);
     }
-  }, [isOpen]);
+  }, [isOpen, initialSubjectFilter]);
+
 
   if (!isOpen) return null;
 
