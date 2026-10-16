@@ -84,6 +84,7 @@ export interface Topic {
   mapping: string | CurriculumMapping[]; // curriculum mapping note or structured entries
   grades: Record<Grade, GradePlan>;
   reviewed?: Record<Lang, boolean>; // language translation review status
+  isCustom?: boolean;               // true if topic was imported/authored by teacher
 }
 
 export interface Question {

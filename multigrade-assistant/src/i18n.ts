@@ -35,6 +35,14 @@ const en = {
   sourceType: 'Source type',
   officialSource: 'Official portal',
   secondarySource: 'Secondary source',
+  importTopic: 'Import topic (JSON)',
+  exportTemplate: 'Topic template',
+  deleteCustomTopic: 'Delete topic',
+  confirmDeleteTopic: 'Delete this custom topic?',
+  customBadge: 'Custom',
+  customTopicHelp: 'Add original topic (Grades 1-5)',
+  topicImportSuccess: 'Topic imported successfully!',
+  topicImportFailed: 'Topic validation failed:',
 };
 type Dict = typeof en;
 const hi: Partial<Dict> = {
@@ -72,6 +80,14 @@ const hi: Partial<Dict> = {
   sourceType: 'स्रोत प्रकार',
   officialSource: 'आधिकारिक पोर्टल',
   secondarySource: 'माध्यमिक स्रोत',
+  importTopic: 'पाठ जोड़ें (JSON)',
+  exportTemplate: 'पाठ टेम्पलेट',
+  deleteCustomTopic: 'पाठ हटाएँ',
+  confirmDeleteTopic: 'क्या आप यह कस्टम विषय हटाना चाहते हैं?',
+  customBadge: 'कस्टम',
+  customTopicHelp: 'कक्षा 1-5 के लिए नया पाठ जोड़ें',
+  topicImportSuccess: 'पाठ सफलतापूर्वक जोड़ा गया!',
+  topicImportFailed: 'पाठ सत्यापन विफल:',
 };
 const mr: Partial<Dict> = {
   appTitle: 'बहु-इयत्ता शिक्षण सहाय्यक', topic: 'विषय', grades: 'इयत्ता', language: 'भाषा',
@@ -108,6 +124,14 @@ const mr: Partial<Dict> = {
   sourceType: 'स्रोत प्रकार',
   officialSource: 'अधिकृत पोर्टल',
   secondarySource: 'दुय्यम स्रोत',
+  importTopic: 'घटक जोडा (JSON)',
+  exportTemplate: 'घटक टेम्पलेट',
+  deleteCustomTopic: 'घटक काढा',
+  confirmDeleteTopic: 'हा सानुकूल घटक काढायचा आहे का?',
+  customBadge: 'सानुकूल',
+  customTopicHelp: 'इयत्ता १-५ साठी नवीन घटक जोडा',
+  topicImportSuccess: 'घटक यशस्वीरीत्या जोडला गेला!',
+  topicImportFailed: 'घटक पडताळणी अयशस्वी:',
 };
 export type Key = keyof Dict;
 const STR: Record<Lang, Partial<Dict>> = { en, hi, mr };

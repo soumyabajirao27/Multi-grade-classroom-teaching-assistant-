@@ -1,5 +1,5 @@
 import Dexie, { type Table } from 'dexie';
-import type { Grade, Status } from '../types';
+import type { Grade, Status, Topic } from '../types';
 
 export interface Student { id?: number; name: string; grade: Grade }
 export interface ProgressRecord { id?: number; studentId: number; topicId: string; status: Status; score?: number; updatedAt: number }
@@ -7,11 +7,18 @@ export interface ProgressRecord { id?: number; studentId: number; topicId: strin
 class AppDB extends Dexie {
   students!: Table<Student, number>;
   records!: Table<ProgressRecord, number>;
+  customTopics!: Table<Topic, string>;
+
   constructor() {
     super('multigrade-assistant');
     this.version(1).stores({
       students: '++id, grade',
       records: '++id, studentId, topicId, [studentId+topicId], updatedAt',
+    });
+    this.version(2).stores({
+      students: '++id, grade',
+      records: '++id, studentId, topicId, [studentId+topicId], updatedAt',
+      customTopics: 'id, subject',
     });
   }
 }
@@ -64,24 +71,59 @@ export async function setStatus(studentId: number, topicId: string, status: Stat
   }
 }
 
+// Custom Topics CRUD
+export async function saveCustomTopic(topic: Topic): Promise<void> {
+  await db.customTopics.put({ ...topic, isCustom: true });
+}
+
+export async function deleteCustomTopic(id: string): Promise<void> {
+  await db.customTopics.delete(id);
+}
+
+export async function getCustomTopics(): Promise<Topic[]> {
+  return db.customTopics.toArray();
+}
+
+/**
+ * Backup format version 2 includes customTopics.
+ * Backward compatible: imports version 1 (which only has students and records) safely.
+ */
 export async function exportAll(): Promise<string> {
-  return JSON.stringify({ version: 1, students: await db.students.toArray(), records: await db.records.toArray() }, null, 2);
+  const customTopics = await db.customTopics.toArray();
+  return JSON.stringify(
+    {
+      version: 2,
+      students: await db.students.toArray(),
+      records: await db.records.toArray(),
+      customTopics,
+    },
+    null,
+    2
+  );
 }
 
 export async function importAll(json: string) {
   const d = JSON.parse(json);
   if (!d || typeof d !== 'object') throw new Error('Invalid backup file');
-  if (d.version !== undefined && d.version !== 1) {
+  if (d.version !== undefined && d.version !== 1 && d.version !== 2) {
     throw new Error(`Unsupported backup schema version: ${d.version}`);
   }
   if (!Array.isArray(d.students) || !Array.isArray(d.records)) {
     throw new Error('Invalid backup file: students or records missing');
   }
-  await db.transaction('rw', db.students, db.records, async () => {
+
+  // Schema migration: v1 backup has no customTopics; v2 may have customTopics
+  const customTopics: Topic[] = Array.isArray(d.customTopics) ? d.customTopics : [];
+
+  await db.transaction('rw', db.students, db.records, db.customTopics, async () => {
     await db.students.clear();
     await db.records.clear();
+    await db.customTopics.clear();
     await db.students.bulkAdd(d.students);
     await db.records.bulkAdd(d.records);
+    if (customTopics.length > 0) {
+      await db.customTopics.bulkAdd(customTopics);
+    }
   });
   lastUndoFn = null;
 }

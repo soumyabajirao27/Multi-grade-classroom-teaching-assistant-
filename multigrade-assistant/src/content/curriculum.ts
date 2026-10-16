@@ -3589,6 +3589,25 @@ const marathiLang: Topic = {
   },
 };
 
-export const TOPICS: Topic[] = [water, market, shapes, body, plants, time, neighbourhood, fractions, animals, marathiLang];
-export const getTopic = (id: string): Topic => TOPICS.find((t) => t.id === id) ?? TOPICS[0];
+export const BUILTIN_TOPICS: Topic[] = [water, market, shapes, body, plants, time, neighbourhood, fractions, animals, marathiLang];
+let customTopicsRegistry: Topic[] = [];
+
+export function setRegisteredCustomTopics(topics: Topic[]) {
+  customTopicsRegistry = topics.map((t) => ({ ...t, isCustom: true }));
+}
+
+export function getAllTopics(): Topic[] {
+  return [...BUILTIN_TOPICS, ...customTopicsRegistry];
+}
+
+export const TOPICS: Topic[] = BUILTIN_TOPICS;
+
+export const getTopic = (id: string, allTopics?: Topic[]): Topic => {
+  if (allTopics) {
+    return allTopics.find((t) => t.id === id) ?? customTopicsRegistry.find((t) => t.id === id) ?? BUILTIN_TOPICS.find((t) => t.id === id) ?? BUILTIN_TOPICS[0];
+  }
+  return customTopicsRegistry.find((t) => t.id === id) ?? BUILTIN_TOPICS.find((t) => t.id === id) ?? BUILTIN_TOPICS[0];
+};
+
 export type { GradePlan };
+

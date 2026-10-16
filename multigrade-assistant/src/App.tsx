@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { ReloadPrompt } from './components/ReloadPrompt';
 import { Welcome } from './components/Welcome';
-import { TOPICS, getTopic } from './content/curriculum';
+import { TOPICS, getTopic, setRegisteredCustomTopics } from './content/curriculum';
+import { getCustomTopics, saveCustomTopic, deleteCustomTopic } from './db/db';
 import { Planner } from './features/Planner';
 import { Progress } from './features/Progress';
 import { Rotation } from './features/Rotation';
@@ -11,7 +12,7 @@ import { TopicPickerModal } from './components/TopicPickerModal';
 import { usePersisted } from './hooks';
 import { LANGS, t } from './i18n';
 import { getSystemPrefersDark, resolveTheme, type ThemeMode } from './theme';
-import { GRADES, type Grade, type GradeTopicMap, type Lang, type SessionMode } from './types';
+import { GRADES, type Grade, type GradeTopicMap, type Lang, type SessionMode, type Topic } from './types';
 
 type Tab = 'plan' | 'ws' | 'rot' | 'prog';
 const TABS: Tab[] = ['plan', 'ws', 'rot', 'prog'];
@@ -112,6 +113,32 @@ export function App() {
     }
   };
 
+  const [customTopics, setCustomTopics] = useState<Topic[]>([]);
+
+  useEffect(() => {
+    getCustomTopics().then((list) => {
+      setCustomTopics(list);
+      setRegisteredCustomTopics(list);
+    }).catch(() => {});
+  }, []);
+
+  const handleImportCustomTopic = async (newTopic: Topic) => {
+    await saveCustomTopic(newTopic);
+    const updated = await getCustomTopics();
+    setCustomTopics(updated);
+    setRegisteredCustomTopics(updated);
+  };
+
+  const handleDeleteCustomTopic = async (id: string) => {
+    await deleteCustomTopic(id);
+    const updated = await getCustomTopics();
+    setCustomTopics(updated);
+    setRegisteredCustomTopics(updated);
+    if (topicId === id) {
+      setTopicId(TOPICS[0].id);
+    }
+  };
+
   const topic = getTopic(topicId);
   const cleanedTopicTitle = cleanTopicTitle(topic.title[lang] || topic.title.en);
   const toggle = (g: Grade) => setGrades(grades.includes(g) ? grades.filter((x) => x !== g) : [...grades, g]);
@@ -136,9 +163,19 @@ export function App() {
       <TopicPickerModal
         isOpen={showTopicPicker}
         onClose={() => setShowTopicPicker(false)}
-        selectedTopicId={topicId}
-        onSelectTopic={(id) => setTopicId(id)}
+        selectedTopicId={gradePickingFor ? (gradeTopics[gradePickingFor] || topicId) : topicId}
+        onSelectTopic={(id) => {
+          if (gradePickingFor) {
+            setGradeTopics({ ...gradeTopics, [gradePickingFor]: id });
+            setGradePickingFor(null);
+          } else {
+            setTopicId(id);
+          }
+        }}
         lang={lang}
+        customTopics={customTopics}
+        onImportCustomTopic={handleImportCustomTopic}
+        onDeleteCustomTopic={handleDeleteCustomTopic}
       />
 
       {showInstallModal && (

@@ -713,3 +713,104 @@ describe('multi-grade scenarios: 3-grade, 4-grade, and 5-grade in Mode A and Mod
   });
 });
 
+import { validateCustomTopic, getTopicTemplateJson } from '../src/engine/validateTopic';
+
+describe('Custom topic validation (validateTopic)', () => {
+  it('validates and accepts the standard topic template', () => {
+    const template = getTopicTemplateJson();
+    const result = validateCustomTopic(template);
+    expect(result.valid).toBe(true);
+    expect(result.errors).toHaveLength(0);
+    expect(result.topic).toBeDefined();
+    expect(result.topic?.isCustom).toBe(true);
+    expect(result.topic?.id).toBe('custom-topic-example');
+  });
+
+  it('fails on malformed JSON string', () => {
+    const res = validateCustomTopic('{ invalid json');
+    expect(res.valid).toBe(false);
+    expect(res.errors.some((e) => e.path === 'json')).toBe(true);
+  });
+
+  it('fails when input is not an object or empty', () => {
+    const res = validateCustomTopic(null);
+    expect(res.valid).toBe(false);
+    expect(res.errors[0].path).toBe('root');
+  });
+
+  it('fails on unexpected top-level property (schema strictness)', () => {
+    const parsed = JSON.parse(getTopicTemplateJson());
+    parsed.maliciousCode = 'alert(1)';
+    const res = validateCustomTopic(parsed);
+    expect(res.valid).toBe(false);
+    expect(res.errors.some((e) => e.path === 'maliciousCode')).toBe(true);
+  });
+
+  it('fails when topic id clashes with built-in topic', () => {
+    const parsed = JSON.parse(getTopicTemplateJson());
+    parsed.id = 'evs-water';
+    const res = validateCustomTopic(parsed);
+    expect(res.valid).toBe(false);
+    expect(res.errors.some((e) => e.message.includes('clashes with a built-in'))).toBe(true);
+  });
+
+  it('fails when topic id clashes with existing custom topic', () => {
+    const parsed = JSON.parse(getTopicTemplateJson());
+    parsed.id = 'custom-birds';
+    const res = validateCustomTopic(parsed, ['custom-birds']);
+    expect(res.valid).toBe(false);
+    expect(res.errors.some((e) => e.message.includes('already exists'))).toBe(true);
+  });
+
+  it('fails on invalid subject type', () => {
+    const parsed = JSON.parse(getTopicTemplateJson());
+    parsed.subject = 'astrology';
+    const res = validateCustomTopic(parsed);
+    expect(res.valid).toBe(false);
+    expect(res.errors.some((e) => e.path === 'subject')).toBe(true);
+  });
+
+  it('fails when a grade plan is missing', () => {
+    const parsed = JSON.parse(getTopicTemplateJson());
+    delete parsed.grades[5];
+    const res = validateCustomTopic(parsed);
+    expect(res.valid).toBe(false);
+    expect(res.errors.some((e) => e.path === 'grades.5')).toBe(true);
+  });
+
+  it('fails when solo minutes exceeds MAX_SOLO_MINUTES for that grade', () => {
+    const parsed = JSON.parse(getTopicTemplateJson());
+    // Grade 1 MAX_SOLO_MINUTES is 10 min
+    parsed.grades[1].independent.minutes = 25;
+    const res = validateCustomTopic(parsed);
+    expect(res.valid).toBe(false);
+    expect(res.errors.some((e) => e.path === 'grades.1.independent.minutes' && e.message.includes('exceeds MAX_SOLO_MINUTES'))).toBe(true);
+  });
+
+  it('fails when question is missing tier differentiation without sameAcrossTiers reason', () => {
+    const parsed = JSON.parse(getTopicTemplateJson());
+    // Grade 2 has an authored question with support/stretch; remove stretch
+    delete parsed.grades[2].questions[0].items[0].stretch;
+    const res = validateCustomTopic(parsed);
+    expect(res.valid).toBe(false);
+    expect(res.errors.some((e) => e.path.includes('stretch') && e.message.includes('stretch tier variant'))).toBe(true);
+  });
+
+  it('fails when sameAcrossTiers is set without a justified sameReason', () => {
+    const parsed = JSON.parse(getTopicTemplateJson());
+    // Grade 1 question has sameAcrossTiers: true; remove sameReason
+    delete parsed.grades[1].questions[0].items[0].sameReason;
+    const res = validateCustomTopic(parsed);
+    expect(res.valid).toBe(false);
+    expect(res.errors.some((e) => e.path.includes('sameReason'))).toBe(true);
+  });
+
+  it('fails when string exceeds maximum allowed length', () => {
+    const parsed = JSON.parse(getTopicTemplateJson());
+    parsed.title.en = 'A'.repeat(1005);
+    const res = validateCustomTopic(parsed);
+    expect(res.valid).toBe(false);
+    expect(res.errors.some((e) => e.message.includes('exceeds maximum length'))).toBe(true);
+  });
+});
+
