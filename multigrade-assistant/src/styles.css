@@ -947,34 +947,41 @@ th {
 .rotation-top-panel {
   display: flex;
   flex-direction: column;
-  padding: 16px;
-  margin-bottom: 16px;
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+  min-height: 240px;
 }
 
 .rotation-banner {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
-  background: var(--paper);
+  gap: var(--space-3);
+  padding: 10px 16px;
+  background: var(--card-subtle);
   border: 1px solid var(--line);
-  border-radius: 8px;
-  margin-bottom: 14px;
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-3);
+  min-height: 48px;
 }
 
 .rotation-badge {
   color: #fff;
   padding: 4px 10px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-weight: 700;
-  font-size: 0.9rem;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  font-size: var(--text-sm);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  flex-shrink: 0;
 }
 
 .rotation-banner-text {
-  font-size: 1.05rem;
+  font-size: var(--text-base);
   font-weight: 600;
   color: var(--ink);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .rotation-timer-row {
@@ -982,40 +989,42 @@ th {
   align-items: center;
   justify-content: space-around;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: var(--space-5);
+  margin-top: var(--space-2);
 }
 
 .rotation-controls-col {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--space-3);
   flex: 1;
   min-width: 260px;
 }
 
 .rotation-btn-group {
   display: flex;
-  gap: 10px;
+  gap: var(--space-2);
   flex-wrap: wrap;
 }
 
 .rotation-cur-guidance {
   border-top: 1px solid var(--line);
-  padding-top: 10px;
+  padding-top: var(--space-3);
+  min-height: 54px;
 }
 
 .rotation-timeline-card {
-  padding: 14px 16px;
-  margin-bottom: 16px;
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
 }
 
 .rotation-timeline-track {
   display: flex;
   height: 38px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   overflow: visible;
   position: relative;
-  background: var(--paper);
+  background: var(--card-subtle);
   border: 1px solid var(--line);
 }
 
@@ -1213,10 +1222,14 @@ th {
   background: #ffffff !important;
   color: #1a1a1a !important;
   border: 1px solid #d3ddd9;
-  border-radius: 10px;
-  padding: 24px;
-  margin: 16px 0;
-  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-sm);
+  padding: 28px 32px;
+  margin: var(--space-4) 0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.print-area {
+  padding: var(--space-2) 0;
 }
 
 .sheet h3,
