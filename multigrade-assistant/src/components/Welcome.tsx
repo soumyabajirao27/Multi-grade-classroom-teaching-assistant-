@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Lang } from '../types';
+import { IconBook, IconPrinter, IconTimer, IconX } from './icons';
 
 interface WelcomeProps {
   lang: Lang;
@@ -29,7 +30,7 @@ export function Welcome({ lang, onClose }: WelcomeProps) {
           : lang === 'mr'
           ? '१. विषय आणि वर्ग निवडा'
           : '1. Choose Topic and Grades',
-      icon: '📖',
+      icon: <IconBook size={48} strokeWidth={1.75} />,
       desc:
         lang === 'hi'
           ? 'शीर्ष बार से एक साझा विषय (जैसे जल) चुनें और आज उपस्थित कक्षाओं (जैसे कक्षा १, ३, ५) पर क्लिक करें। पाठ योजना स्वतः तैयार हो जाएगी।'
@@ -45,7 +46,7 @@ export function Welcome({ lang, onClose }: WelcomeProps) {
           : lang === 'mr'
           ? '२. कार्यपत्रिका प्रिंट करा'
           : '2. Print Worksheets',
-      icon: '🖨️',
+      icon: <IconPrinter size={48} strokeWidth={1.75} />,
       desc:
         lang === 'hi'
           ? 'कार्यपत्रिका (Worksheets) टैब खोलें। हर कक्षा के स्तर (सपोर्ट, कोर, स्ट्रेच) के अनुसार प्रश्न तैयार होते हैं। "प्रिंट" दबाकर बच्चों को हल करने के लिए दें।'
@@ -61,7 +62,7 @@ export function Welcome({ lang, onClose }: WelcomeProps) {
           : lang === 'mr'
           ? '३. चक्र टाइमर सुरू करा'
           : '3. Start Rotation Timer',
-      icon: '⏱️',
+      icon: <IconTimer size={48} strokeWidth={1.75} />,
       desc:
         lang === 'hi'
           ? 'चक्र (Rotation) टैब पर जाएं और कुल समय तय करें। टाइमर शुरू करें - आवाज़ (बीप) बजने पर अगले कक्षा समूह को प्रत्यक्ष शिक्षण दें, बाकी बच्चे स्वतंत्र कार्य करेंगे।'
@@ -99,9 +100,12 @@ export function Welcome({ lang, onClose }: WelcomeProps) {
             padding: 8,
             minWidth: 42,
             minHeight: 42,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
-          ✕
+          <IconX size={20} aria-hidden="true" />
         </button>
 
         <div className="welcome-icon" aria-hidden="true">

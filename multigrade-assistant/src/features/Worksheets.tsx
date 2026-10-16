@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Sheet } from '../components/Sheet';
+import { IconDownload, IconPrinter, IconRotateCcw } from '../components/icons';
 import { db } from '../db/db';
 import { buildWorksheet } from '../engine/worksheet';
 import { suggestTier } from '../engine/progress';
@@ -107,17 +108,21 @@ export function Worksheets({
   return (
     <div>
       <div className="bar no-print">
-        <button type="button" className="primary" onClick={handlePrintPack} title="Print Quick Start + Rotation Schedule + All Worksheets">
-          📦 {lang === 'hi' ? 'प्रिंट पैक (शेड्यूल + वर्कशीट)' : lang === 'mr' ? 'प्रिंट पॅक (शेड्युल + वर्कशीट)' : 'Print Pack'}
+        <button type="button" className="primary" onClick={handlePrintPack} title="Print Quick Start + Rotation Schedule + All Worksheets" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+          <IconPrinter size={16} aria-hidden="true" />
+          <span>{lang === 'hi' ? 'प्रिंट पैक (शेड्यूल + वर्कशीट)' : lang === 'mr' ? 'प्रिंट पॅक (शेड्युल + वर्कशीट)' : 'Print Pack'}</span>
         </button>
-        <button type="button" onClick={() => window.print()}>
-          🖨️ {t(lang, 'print')}
+        <button type="button" onClick={() => window.print()} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+          <IconPrinter size={16} aria-hidden="true" />
+          <span>{t(lang, 'print')}</span>
         </button>
-        <button type="button" onClick={handleDownloadPdf}>
-          📥 {lang === 'hi' ? 'पीडीएफ डाउनलोड' : lang === 'mr' ? 'PDF डाउनलोड' : 'Download PDF'}
+        <button type="button" onClick={handleDownloadPdf} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+          <IconDownload size={16} aria-hidden="true" />
+          <span>{lang === 'hi' ? 'पीडीएफ डाउनलोड' : lang === 'mr' ? 'PDF डाउनलोड' : 'Download PDF'}</span>
         </button>
-        <button type="button" onClick={() => setSeed(Math.random().toString(36).slice(2, 7))}>
-          {t(lang, 'regenerate')}
+        <button type="button" onClick={() => setSeed(Math.random().toString(36).slice(2, 7))} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+          <IconRotateCcw size={14} aria-hidden="true" />
+          <span>{t(lang, 'regenerate')}</span>
         </button>
         <label>
           <input type="checkbox" checked={includeQuickStart} onChange={(e) => setIncludeQuickStart(e.target.checked)} />{' '}

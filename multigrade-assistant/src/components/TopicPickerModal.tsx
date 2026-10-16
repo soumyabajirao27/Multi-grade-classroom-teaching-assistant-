@@ -4,6 +4,15 @@ import { BUILTIN_TOPICS } from '../content/curriculum';
 import { t } from '../i18n';
 import type { Lang, Topic } from '../types';
 import { validateCustomTopic, getTopicTemplateJson, type ValidationError } from '../engine/validateTopic';
+import {
+  IconCheck,
+  IconDownload,
+  IconStar,
+  IconSubject,
+  IconTrash,
+  IconUpload,
+  IconX,
+} from './icons';
 
 interface TopicPickerModalProps {
   isOpen: boolean;
@@ -125,7 +134,7 @@ export function TopicPickerModal({
             onClick={onClose}
             aria-label="Close"
           >
-            ✕
+            <IconX size={18} aria-hidden="true" />
           </button>
         </div>
 
@@ -160,7 +169,8 @@ export function TopicPickerModal({
               onClick={() => setFilterSubject('math')}
               aria-pressed={filterSubject === 'math'}
             >
-              📐 {lang === 'hi' ? 'गणित' : lang === 'mr' ? 'गणित' : 'Maths'}
+              <IconSubject subject="math" size={14} aria-hidden="true" style={{ marginRight: 4, verticalAlign: -2 }} />
+              {lang === 'hi' ? 'गणित' : lang === 'mr' ? 'गणित' : 'Maths'}
             </button>
             <button
               type="button"
@@ -168,7 +178,8 @@ export function TopicPickerModal({
               onClick={() => setFilterSubject('evs')}
               aria-pressed={filterSubject === 'evs'}
             >
-              🌱 {lang === 'hi' ? 'पर्यावरण' : lang === 'mr' ? 'परिसर' : 'EVS'}
+              <IconSubject subject="evs" size={14} aria-hidden="true" style={{ marginRight: 4, verticalAlign: -2 }} />
+              {lang === 'hi' ? 'पर्यावरण' : lang === 'mr' ? 'परिसर' : 'EVS'}
             </button>
             <button
               type="button"
@@ -176,7 +187,8 @@ export function TopicPickerModal({
               onClick={() => setFilterSubject('lang')}
               aria-pressed={filterSubject === 'lang'}
             >
-              📖 {lang === 'hi' ? 'भाषा' : lang === 'mr' ? 'भाषा' : 'Language'}
+              <IconSubject subject="lang" size={14} aria-hidden="true" style={{ marginRight: 4, verticalAlign: -2 }} />
+              {lang === 'hi' ? 'भाषा' : lang === 'mr' ? 'भाषा' : 'Language'}
             </button>
           </div>
         </div>
@@ -185,9 +197,10 @@ export function TopicPickerModal({
             type="button"
             className="chip"
             onClick={() => fileInputRef.current?.click()}
-            style={{ cursor: 'pointer', fontWeight: 600, fontSize: '0.82rem', padding: '6px 12px' }}
+            style={{ cursor: 'pointer', fontWeight: 600, fontSize: '0.82rem', padding: '6px 12px', display: 'inline-flex', alignItems: 'center', gap: 6 }}
           >
-            📥 {t(lang, 'importTopic')}
+            <IconUpload size={14} aria-hidden="true" />
+            {t(lang, 'importTopic')}
           </button>
           <input
             ref={fileInputRef}
@@ -230,15 +243,17 @@ export function TopicPickerModal({
               a.click();
               URL.revokeObjectURL(url);
             }}
-            style={{ cursor: 'pointer', fontWeight: 600, fontSize: '0.82rem', padding: '6px 12px' }}
+            style={{ cursor: 'pointer', fontWeight: 600, fontSize: '0.82rem', padding: '6px 12px', display: 'inline-flex', alignItems: 'center', gap: 6 }}
           >
-            📄 {t(lang, 'exportTemplate')}
+            <IconDownload size={14} aria-hidden="true" />
+            {t(lang, 'exportTemplate')}
           </button>
         </div>
 
         {importSuccess && (
-          <div style={{ marginTop: 8, padding: '8px 12px', background: '#ecfdf5', color: '#065f46', borderRadius: 6, fontSize: '0.85rem' }}>
-            ✓ {importSuccess}
+          <div style={{ marginTop: 8, padding: '8px 12px', background: '#ecfdf5', color: '#065f46', borderRadius: 6, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <IconCheck size={16} aria-hidden="true" />
+            <span>{importSuccess}</span>
           </div>
         )}
 
@@ -265,7 +280,6 @@ export function TopicPickerModal({
           {filteredTopics.map((tp) => {
             const isSelected = tp.id === selectedTopicId;
             const cleanedTitle = cleanTopicTitle(tp.title[lang] || tp.title.en);
-            const icon = tp.subject === 'math' ? '📐' : tp.subject === 'evs' ? '🌱' : '📖';
             const subjectTag =
               tp.subject === 'math'
                 ? lang === 'hi'
@@ -302,13 +316,14 @@ export function TopicPickerModal({
                   style={{ width: '100%', height: '100%' }}
                 >
                   <div className="topic-card-top">
-                    <span className="topic-card-icon" aria-hidden="true">
-                      {icon}
+                    <span className="topic-card-icon" aria-hidden="true" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                      <IconSubject subject={tp.subject} size={20} />
                     </span>
                     <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
                       {tp.isCustom && (
-                        <span className="subject-tag" style={{ background: '#fef3c7', color: '#92400e', fontWeight: 700 }}>
-                          ⭐ {t(lang, 'customBadge')}
+                        <span className="subject-tag" style={{ background: '#fef3c7', color: '#92400e', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                          <IconStar size={12} aria-hidden="true" />
+                          {t(lang, 'customBadge')}
                         </span>
                       )}
                       <span className={`subject-tag tag-${tp.subject}`}>{subjectTag}</span>
@@ -316,8 +331,8 @@ export function TopicPickerModal({
                   </div>
                   <div className="topic-card-title">{cleanedTitle}</div>
                   {isSelected && (
-                    <span className="topic-card-selected-check" aria-hidden="true">
-                      ✓
+                    <span className="topic-card-selected-check" aria-hidden="true" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                      <IconCheck size={14} />
                     </span>
                   )}
                 </button>
@@ -340,13 +355,15 @@ export function TopicPickerModal({
                       background: 'rgba(239, 68, 68, 0.1)',
                       color: '#b91c1c',
                       borderRadius: 4,
-                      padding: '2px 6px',
+                      padding: '4px 6px',
                       cursor: 'pointer',
                       fontSize: '0.72rem',
                       fontWeight: 600,
+                      display: 'inline-flex',
+                      alignItems: 'center',
                     }}
                   >
-                    🗑️
+                    <IconTrash size={12} aria-hidden="true" />
                   </button>
                 )}
               </div>

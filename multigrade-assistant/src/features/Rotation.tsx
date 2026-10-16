@@ -2,6 +2,15 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { cleanTopicTitle } from '../cleanTitle';
 import { CircularTimer } from '../components/CircularTimer';
+import {
+  IconPause,
+  IconPlay,
+  IconRotateCcw,
+  IconSkipForward,
+  IconSparkles,
+  IconSubject,
+  IconTimer,
+} from '../components/icons';
 import { getTopic } from '../content/curriculum';
 import { db } from '../db/db';
 import { buildRotation, calculateRemainingMs } from '../engine/rotation';
@@ -367,8 +376,9 @@ export function Rotation({
               ? t(lang, 'done')
               : `${t(lang, 'nowTeaching')}: Grade ${cur?.grade}${cur?.pass ? ` · Pass ${cur.pass}` : ''} (${cur?.minutes} min)`}
             {cur?.topic && (
-              <span className={`subject-tag tag-${cur.topic.subject}`} style={{ marginLeft: 8, fontSize: '0.75rem' }}>
-                {cur.topic.subject === 'math' ? '📐' : cur.topic.subject === 'evs' ? '🌱' : '📖'} {cleanTopicTitle(cur.topic.title[lang] || cur.topic.title.en)}
+              <span className={`subject-tag tag-${cur.topic.subject}`} style={{ marginLeft: 8, fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                <IconSubject subject={cur.topic.subject} size={13} aria-hidden="true" />
+                <span>{cleanTopicTitle(cur.topic.title[lang] || cur.topic.title.en)}</span>
               </span>
             )}
           </span>
@@ -389,17 +399,19 @@ export function Rotation({
                 type="button"
                 className="primary"
                 onClick={toggle}
-                style={{ minWidth: 100, minHeight: 44, fontWeight: 700 }}
+                style={{ minWidth: 100, minHeight: 44, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
               >
-                {running ? t(lang, 'pause') : t(lang, 'start')}
+                {running ? <IconPause size={16} aria-hidden="true" /> : <IconPlay size={16} aria-hidden="true" />}
+                <span>{running ? t(lang, 'pause') : t(lang, 'start')}</span>
               </button>
               <button
                 type="button"
                 onClick={() => idx + 1 < plan.slots.length && go(idx + 1, running)}
                 disabled={idx + 1 >= plan.slots.length}
-                style={{ minHeight: 44 }}
+                style={{ minHeight: 44, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}
               >
-                {t(lang, 'next')}
+                <IconSkipForward size={14} aria-hidden="true" />
+                <span>{t(lang, 'next')}</span>
               </button>
               <button
                 type="button"
@@ -407,9 +419,10 @@ export function Rotation({
                   setFinished(false);
                   go(0, false);
                 }}
-                style={{ minHeight: 44 }}
+                style={{ minHeight: 44, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}
               >
-                {t(lang, 'reset')}
+                <IconRotateCcw size={14} aria-hidden="true" />
+                <span>{t(lang, 'reset')}</span>
               </button>
             </div>
 
@@ -418,7 +431,7 @@ export function Rotation({
               <div className="rotation-cur-guidance">
                 {curGradePlan.checklist && curGradePlan.checklist.length > 0 && (
                   <div className="small">
-                    <b>📋 {lang === 'hi' ? 'शिक्षक जाँच सूची' : lang === 'mr' ? 'शिक्षक तपासणी' : 'Checklist'}:</b>
+                    <b>{lang === 'hi' ? 'शिक्षक जाँच सूची' : lang === 'mr' ? 'शिक्षक तपासणी' : 'Checklist'}:</b>
                     <ul style={{ margin: '4px 0', paddingLeft: 18 }}>
                       {curGradePlan.checklist.map((c, i) => (
                         <li key={i}>{resolveL10n(c, lang)}</li>
@@ -427,9 +440,12 @@ export function Rotation({
                   </div>
                 )}
                 {curGradePlan.earlyFinisher && (
-                  <div className="small" style={{ color: 'var(--ok)', marginTop: 4 }}>
-                    <b>⭐ {lang === 'hi' ? 'जल्दी पूरा करने वालों के लिए' : lang === 'mr' ? 'लवकर पूर्ण करणाऱ्यांसाठी' : 'Early Finisher'}:</b>{' '}
-                    {resolveL10n(curGradePlan.earlyFinisher, lang)}
+                  <div className="small" style={{ color: 'var(--ok)', marginTop: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <IconSparkles size={14} aria-hidden="true" />
+                    <span>
+                      <b>{lang === 'hi' ? 'जल्दी पूरा करने वालों के लिए' : lang === 'mr' ? 'लवकर पूर्ण करणाऱ्यांसाठी' : 'Early Finisher'}:</b>{' '}
+                      {resolveL10n(curGradePlan.earlyFinisher, lang)}
+                    </span>
                   </div>
                 )}
               </div>
@@ -440,8 +456,9 @@ export function Rotation({
 
       {/* Visual Timeline with marker for current slot */}
       <div className="rotation-timeline-card card">
-        <h4 style={{ margin: '0 0 10px 0', fontSize: '0.95rem', color: 'var(--mute)' }}>
-          ⏱️ {lang === 'hi' ? 'समयरेखा' : lang === 'mr' ? 'वेळरेषा' : 'Session Timeline'}
+        <h4 style={{ margin: '0 0 10px 0', fontSize: '0.95rem', color: 'var(--mute)', display: 'flex', alignItems: 'center', gap: 6 }}>
+          <IconTimer size={16} aria-hidden="true" />
+          <span>{lang === 'hi' ? 'समयरेखा' : lang === 'mr' ? 'वेळरेषा' : 'Session Timeline'}</span>
         </h4>
         <div className="rotation-timeline-track" role="progressbar" aria-label="Timeline progress">
           {plan.opening > 0 && (
@@ -512,8 +529,9 @@ export function Rotation({
                     <td key={g} className="lead">
                       <b>{t(lang, 'teacherLed')}</b>
                       {mode === 'multi_subject' && (
-                        <div className="small" style={{ fontSize: '0.75rem', marginTop: 2 }}>
-                          {gradeTopic.subject === 'math' ? '📐' : gradeTopic.subject === 'evs' ? '🌱' : '📖'} {cleanTopicTitle(gradeTopic.title[lang] || gradeTopic.title.en)}
+                        <div className="small" style={{ fontSize: '0.75rem', marginTop: 2, display: 'flex', alignItems: 'center', gap: 4 }}>
+                          <IconSubject subject={gradeTopic.subject} size={12} aria-hidden="true" />
+                          <span>{cleanTopicTitle(gradeTopic.title[lang] || gradeTopic.title.en)}</span>
                         </div>
                       )}
                     </td>
@@ -521,8 +539,9 @@ export function Rotation({
                     <td key={g}>
                       <span>{t(lang, 'selfWork')}</span>
                       {mode === 'multi_subject' && (
-                        <div className="small" style={{ fontSize: '0.72rem', color: 'var(--mute)', marginTop: 2 }}>
-                          {gradeTopic.subject === 'math' ? '📐' : gradeTopic.subject === 'evs' ? '🌱' : '📖'} {cleanTopicTitle(gradeTopic.title[lang] || gradeTopic.title.en)}
+                        <div className="small" style={{ fontSize: '0.72rem', color: 'var(--mute)', marginTop: 2, display: 'flex', alignItems: 'center', gap: 4 }}>
+                          <IconSubject subject={gradeTopic.subject} size={12} aria-hidden="true" />
+                          <span>{cleanTopicTitle(gradeTopic.title[lang] || gradeTopic.title.en)}</span>
                         </div>
                       )}
                     </td>

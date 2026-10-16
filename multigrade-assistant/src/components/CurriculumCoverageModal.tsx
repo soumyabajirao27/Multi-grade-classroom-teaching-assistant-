@@ -7,6 +7,7 @@ import {
 } from '../content/curriculumSources';
 import { t } from '../i18n';
 import type { Grade, Lang, MappingStatus } from '../types';
+import { IconChart, IconDownload, IconPrinter, IconX } from './icons';
 
 interface CurriculumCoverageModalProps {
   lang: Lang;
@@ -95,10 +96,11 @@ export function CurriculumCoverageModal({ lang, onClose }: CurriculumCoverageMod
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h2 id="coverage-modal-title" style={{ margin: 0, fontSize: '1.3rem' }}>
-              📊 {t(lang, 'curriculumCoverage')}
+            <h2 id="coverage-modal-title" style={{ margin: 0, fontSize: '1.3rem', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <IconChart size={22} aria-hidden="true" />
+              <span>{t(lang, 'curriculumCoverage')}</span>
             </h2>
-            <p className="small" style={{ margin: '4px 0 0 0', color: '#666' }}>
+            <p className="small" style={{ margin: '4px 0 0 0', color: 'var(--mute)' }}>
               {lang === 'hi'
                 ? 'कक्षा 1-5 के सभी विषयों के लिए आधिकारिक NCERT और राज्य बोर्ड पाठ्यक्रम संरेखण'
                 : lang === 'mr'
@@ -110,10 +112,10 @@ export function CurriculumCoverageModal({ lang, onClose }: CurriculumCoverageMod
             type="button"
             className="chip"
             onClick={onClose}
-            style={{ cursor: 'pointer', padding: '6px 12px', fontSize: '1.1rem', fontWeight: 'bold' }}
+            style={{ cursor: 'pointer', padding: '6px 12px', fontSize: '1.1rem', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center' }}
             aria-label="Close"
           >
-            ✕
+            <IconX size={18} aria-hidden="true" />
           </button>
         </div>
 
@@ -215,17 +217,19 @@ export function CurriculumCoverageModal({ lang, onClose }: CurriculumCoverageMod
               type="button"
               className="chip"
               onClick={handleDownloadCsv}
-              style={{ cursor: 'pointer', padding: '6px 14px', fontWeight: 600 }}
+              style={{ cursor: 'pointer', padding: '6px 14px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 6 }}
             >
-              📥 {t(lang, 'exportMappingCsv')}
+              <IconDownload size={14} aria-hidden="true" />
+              <span>{t(lang, 'exportMappingCsv')}</span>
             </button>
             <button
               type="button"
               className="chip"
               onClick={handlePrint}
-              style={{ cursor: 'pointer', padding: '6px 14px', fontWeight: 600 }}
+              style={{ cursor: 'pointer', padding: '6px 14px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 6 }}
             >
-              🖨️ {t(lang, 'print')}
+              <IconPrinter size={14} aria-hidden="true" />
+              <span>{t(lang, 'print')}</span>
             </button>
           </div>
           <button

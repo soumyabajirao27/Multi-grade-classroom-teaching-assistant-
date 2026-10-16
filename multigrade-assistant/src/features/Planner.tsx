@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { cleanTopicTitle } from '../cleanTitle';
 import { CurriculumCoverageModal, formatStatusLabel, getStatusBadgeStyle } from '../components/CurriculumCoverageModal';
+import { IconBook, IconChart, IconSubject } from '../components/icons';
 import { getTopic } from '../content/curriculum';
 import { getCurriculumSources } from '../content/curriculumSources';
 import { buildSessionPlan } from '../engine/planner';
@@ -110,8 +111,9 @@ export function Planner({
                     Grade {grade} · L{stepIdx + 1}
                   </span>
                   {mode === 'multi_subject' && (
-                    <span className={`subject-tag tag-${activeTopic.subject}`} style={{ fontSize: '0.75rem', fontWeight: 600 }}>
-                      {activeTopic.subject === 'math' ? '📐' : activeTopic.subject === 'evs' ? '🌱' : '📖'} {cleanTitle}
+                    <span className={`subject-tag tag-${activeTopic.subject}`} style={{ fontSize: '0.75rem', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                      <IconSubject subject={activeTopic.subject} size={13} aria-hidden="true" />
+                      <span>{cleanTitle}</span>
                     </span>
                   )}
                   <span className="staircase-step-outcome">
@@ -131,7 +133,7 @@ export function Planner({
           onClick={() => setShowCoverageModal(true)}
           style={{ cursor: 'pointer', padding: '6px 14px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 6 }}
         >
-          <span>📊</span>
+          <IconChart size={16} aria-hidden="true" />
           <span>{t(lang, 'curriculumCoverage')}</span>
         </button>
       </div>
@@ -176,7 +178,7 @@ export function Planner({
                   }}
                   title={lang === 'hi' ? 'विषय बदलें' : lang === 'mr' ? 'विषय बदला' : 'Change topic/subject'}
                 >
-                  <span>{activeTopic.subject === 'math' ? '📐' : activeTopic.subject === 'evs' ? '🌱' : '📖'}</span>
+                  <IconSubject subject={activeTopic.subject} size={14} aria-hidden="true" />
                   <span>{cleanedTitle}</span>
                   <span className={`subject-tag tag-${activeTopic.subject}`} style={{ fontSize: '0.72rem' }}>
                     {activeTopic.subject === 'math'
@@ -185,7 +187,6 @@ export function Planner({
                       ? lang === 'hi' ? 'पर्यावरण' : lang === 'mr' ? 'परिसर' : 'EVS'
                       : lang === 'hi' ? 'भाषा' : lang === 'mr' ? 'भाषा' : 'Language'}
                   </span>
-                  <span style={{ fontSize: '0.7rem' }}>✏️</span>
                 </button>
               )}
               {plan.rows.length > 1 && (
@@ -215,7 +216,7 @@ export function Planner({
                 }}
                 title={lang === 'hi' ? 'पाठ्यक्रम स्रोत देखें' : lang === 'mr' ? 'अभ्यासक्रम स्रोत पहा' : 'View curriculum source'}
               >
-                <span>📚</span>
+                <IconBook size={14} aria-hidden="true" />
                 <span>{lang === 'hi' ? 'स्रोत' : lang === 'mr' ? 'स्रोत' : 'Source'}</span>
               </button>
             </div>
@@ -240,7 +241,10 @@ export function Planner({
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                <span style={{ fontWeight: 600 }}>📖 {primarySource.board}:</span>
+                <span style={{ fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                  <IconBook size={14} aria-hidden="true" />
+                  <span>{primarySource.board}:</span>
+                </span>
                 <span>{primarySource.book}</span>
                 {primarySource.chapter && primarySource.chapter !== 'TO RESEARCH' && (
                   <span style={{ fontStyle: 'italic' }}>· {primarySource.chapterNo ? `Ch ${primarySource.chapterNo}: ` : ''}{primarySource.chapter}</span>

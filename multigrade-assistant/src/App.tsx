@@ -9,6 +9,7 @@ import { Rotation } from './features/Rotation';
 import { Worksheets } from './features/Worksheets';
 import { cleanTopicTitle } from './cleanTitle';
 import { TopicPickerModal } from './components/TopicPickerModal';
+import { IconAlertCircle, IconChevronDown, IconHelp, IconSubject } from './components/icons';
 import { usePersisted } from './hooks';
 import { LANGS, t } from './i18n';
 import { getSystemPrefersDark, resolveTheme, type ThemeMode } from './theme';
@@ -334,7 +335,8 @@ export function App() {
             {installLabel}
           </button>
           <button type="button" className="help-btn" onClick={() => setManualWelcome(true)} title="Help / Guide">
-            ❓ {lang === 'hi' ? 'मार्गदर्शिका' : lang === 'mr' ? 'मार्गदर्शिका' : 'Guide'}
+            <IconHelp size={16} aria-hidden="true" style={{ marginRight: 4, verticalAlign: -2 }} />
+            {lang === 'hi' ? 'मार्गदर्शिका' : lang === 'mr' ? 'मार्गदर्शिका' : 'Guide'}
           </button>
           <label className="lang">
             {t(lang, 'language')}{' '}
@@ -394,8 +396,8 @@ export function App() {
               aria-expanded={showTopicPicker}
               aria-label={`${t(lang, 'topic')}: ${cleanedTopicTitle}`}
             >
-              <span className="topic-card-icon" aria-hidden="true">
-                {topic.subject === 'math' ? '📐' : topic.subject === 'evs' ? '🌱' : '📖'}
+              <span className="topic-card-icon" aria-hidden="true" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                <IconSubject subject={topic.subject} size={18} />
               </span>
               <span>{cleanedTopicTitle}</span>
               <span className={`subject-tag tag-${topic.subject}`}>
@@ -417,7 +419,9 @@ export function App() {
                   ? 'भाषा'
                   : 'Language'}
               </span>
-              <span className="topic-chevron" aria-hidden="true">▼</span>
+              <span className="topic-chevron" aria-hidden="true" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                <IconChevronDown size={14} />
+              </span>
             </button>
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
@@ -448,9 +452,13 @@ export function App() {
                     title={`Grade ${g}: Click to change subject/topic`}
                   >
                     <b style={{ color: `var(--g${g})` }}>G{g}</b>
-                    <span>{assignedTopic.subject === 'math' ? '📐' : assignedTopic.subject === 'evs' ? '🌱' : '📖'}</span>
+                    <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                      <IconSubject subject={assignedTopic.subject} size={14} />
+                    </span>
                     <span>{title}</span>
-                    <span style={{ fontSize: '0.7rem' }}>▼</span>
+                    <span style={{ fontSize: '0.7rem', display: 'inline-flex', alignItems: 'center' }}>
+                      <IconChevronDown size={12} />
+                    </span>
                   </button>
                 );
               })}
@@ -461,9 +469,10 @@ export function App() {
             <span
               className="chip unreviewed-badge"
               title="Translation needs native-speaker teacher review"
-              style={{ background: '#fff3cd', color: '#856404', borderColor: '#ffeeba', fontWeight: 600, fontSize: '0.82rem' }}
+              style={{ background: '#fff3cd', color: '#856404', borderColor: '#ffeeba', fontWeight: 600, fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: 4 }}
             >
-              ⚠️ {lang === 'hi' ? 'अनुवाद समीक्षा प्रतीक्षित' : lang === 'mr' ? 'भाषांतर तपासणी आवश्यक' : 'Translation needs review'}
+              <IconAlertCircle size={14} aria-hidden="true" />
+              {lang === 'hi' ? 'अनुवाद समीक्षा प्रतीक्षित' : lang === 'mr' ? 'भाषांतर तपासणी आवश्यक' : 'Translation needs review'}
             </span>
           )}
           <span role="group" aria-label={t(lang, 'grades')} className="chips">

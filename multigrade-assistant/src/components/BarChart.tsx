@@ -1,5 +1,6 @@
 import type { Student } from '../db/db';
 import type { Grade, Status } from '../types';
+import { IconChart } from './icons';
 
 interface BarChartProps {
   students: (Student & { status?: Status })[];
@@ -11,7 +12,10 @@ export function BarChart({ students, grades }: BarChartProps) {
 
   return (
     <div className="card barchart-card">
-      <h4>📊 Grade-wise Mastery Overview</h4>
+      <h4 style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <IconChart size={16} aria-hidden="true" />
+        <span>Grade-wise Mastery Overview</span>
+      </h4>
       <div className="barchart-container">
         {grades.map((g) => {
           const list = students.filter((s) => s.grade === g);

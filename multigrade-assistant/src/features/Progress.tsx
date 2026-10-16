@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { BarChart } from '../components/BarChart';
+import { IconChart, IconDownload, IconRotateCcw, IconSprout } from '../components/icons';
 import { addStudent, canUndo, db, exportAll, importAll, loadMockScenario, removeStudent, setStatus, undoLast } from '../db/db';
 import { suggestTier, summarize } from '../engine/progress';
 import { t } from '../i18n';
@@ -165,8 +166,8 @@ export function Progress({ lang, topic, grades }: { lang: Lang; topic: Topic; gr
 
       {!hasStudents ? (
         <div className="card empty-progress-state" style={{ textAlign: 'center', padding: '40px 20px', marginTop: 16 }}>
-          <div style={{ fontSize: '3.5rem', marginBottom: 12 }} aria-hidden="true">
-            🌱
+          <div style={{ marginBottom: 12, display: 'flex', justifyContent: 'center', color: 'var(--mute)' }} aria-hidden="true">
+            <IconSprout size={48} strokeWidth={1.5} />
           </div>
           <h3 style={{ margin: '0 0 8px 0', fontSize: '1.25rem' }}>
             {lang === 'hi' ? 'कोई विद्यार्थी नहीं जोड़ा गया' : lang === 'mr' ? 'अद्याप कोणतेही विद्यार्थी नाहीत' : 'No Students Added Yet'}
@@ -181,14 +182,14 @@ export function Progress({ lang, topic, grades }: { lang: Lang; topic: Topic; gr
               onClick={() => loadMockScenario('3-grade')}
               style={{ padding: '8px 14px' }}
             >
-              🚀 {t(lang, 'loadMockClass')}: {t(lang, 'scenario3Grade')}
+              {t(lang, 'loadMockClass')}: {t(lang, 'scenario3Grade')}
             </button>
             <button
               type="button"
               onClick={() => loadMockScenario('5-grade')}
               style={{ padding: '8px 14px' }}
             >
-              🏫 {t(lang, 'loadMockClass')}: {t(lang, 'scenario5Grade')}
+              {t(lang, 'loadMockClass')}: {t(lang, 'scenario5Grade')}
             </button>
           </div>
         </div>
@@ -205,15 +206,17 @@ export function Progress({ lang, topic, grades }: { lang: Lang; topic: Topic; gr
                 className="primary"
                 onClick={() => exportClassReport()}
                 disabled={!hasStudents}
-                style={{ fontSize: '0.85rem', padding: '4px 10px' }}
+                style={{ fontSize: '0.85rem', padding: '4px 10px', display: 'inline-flex', alignItems: 'center', gap: 6 }}
                 title="Export CSV: Date, Topic, Grade, Student, Status, Score"
               >
-                📊 {lang === 'hi' ? 'कक्षा रिपोर्ट निर्यात (CSV)' : lang === 'mr' ? 'वर्ग अहवाल निर्यात (CSV)' : 'Export Class Report (CSV)'}
+                <IconChart size={14} aria-hidden="true" />
+                <span>{lang === 'hi' ? 'कक्षा रिपोर्ट निर्यात (CSV)' : lang === 'mr' ? 'वर्ग अहवाल निर्यात (CSV)' : 'Export Class Report (CSV)'}</span>
               </button>
             </div>
             {canUndo() && (
-              <button type="button" onClick={handleUndo} style={{ fontSize: '0.88rem', padding: '4px 10px' }}>
-                ↩️ {lang === 'hi' ? 'अंतिम क्रिया पूर्ववत करें (Undo)' : lang === 'mr' ? 'शेवटची कृती मागे घ्या (Undo)' : 'Undo Last Change'}
+              <button type="button" onClick={handleUndo} style={{ fontSize: '0.88rem', padding: '4px 10px', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <IconRotateCcw size={14} aria-hidden="true" />
+                <span>{lang === 'hi' ? 'अंतिम क्रिया पूर्ववत करें (Undo)' : lang === 'mr' ? 'शेवटची कृती मागे घ्या (Undo)' : 'Undo Last Change'}</span>
               </button>
             )}
           </div>
@@ -229,9 +232,10 @@ export function Progress({ lang, topic, grades }: { lang: Lang; topic: Topic; gr
                     onClick={() => exportClassReport(s.grade as Grade)}
                     disabled={s.total === 0}
                     title="Export CSV"
-                    style={{ fontSize: '0.78rem', padding: '2px 6px', background: 'none', border: '1px solid var(--line)' }}
+                    style={{ fontSize: '0.78rem', padding: '2px 6px', background: 'none', border: '1px solid var(--line)', display: 'inline-flex', alignItems: 'center', gap: 4 }}
                   >
-                    📥 CSV
+                    <IconDownload size={12} aria-hidden="true" />
+                    <span>CSV</span>
                   </button>
                 </div>
                 <div className="meter" aria-label={`${s.done}/${s.total}`}>
