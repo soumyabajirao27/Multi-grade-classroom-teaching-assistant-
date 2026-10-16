@@ -9,8 +9,9 @@ import puppeteer from 'puppeteer';
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 
-const BASE = 'http://localhost:5173/';
-const OUT  = join(import.meta.dirname, '..', 'docs', 'screens');
+const BASE = process.env.SCREENSHOT_URL || 'http://localhost:5173/';
+const SUBDIR = process.env.SCREENSHOT_DIR || '';
+const OUT  = join(import.meta.dirname, '..', 'docs', 'screens', SUBDIR);
 
 const VIEWPORTS = [
   { w: 1280, h: 800,  label: '1280x800'  },
@@ -39,8 +40,8 @@ const browser = await puppeteer.launch({
 for (const vp of VIEWPORTS) {
   for (const theme of THEMES) {
     for (const lang of LANGS) {
-      // Only capture hi/mr at 1280x800 (matching the requested coverage)
-      if (lang !== 'en' && vp.label !== '1280x800') continue;
+      // Step 0 requests: English and Marathi at the three viewports, both themes; and hi at 1280x800
+      if (lang === 'hi' && vp.label !== '1280x800') continue;
 
       // Use emulateMediaFeatures for prefers-color-scheme instead of just data-theme
       const page = await browser.newPage();
@@ -51,13 +52,12 @@ for (const vp of VIEWPORTS) {
         { name: 'prefers-color-scheme', value: theme },
       ]);
 
-      // Set localStorage values before navigation
-      // We use page.evaluateOnNewDocument so they're set before the app reads them
+      // Set localStorage values before navigation, including marking welcome_seen so Guide popup doesn't block
       await page.evaluateOnNewDocument((t, l) => {
         localStorage.setItem('theme', JSON.stringify(t));
         localStorage.setItem('lang', JSON.stringify(l));
-        // Also set grades to [1,3,5] for consistent screenshots
-        localStorage.setItem('grades', JSON.stringify([1,3,5]));
+        localStorage.setItem('welcome_seen', JSON.stringify(true));
+        localStorage.setItem('grades', JSON.stringify([1, 3, 5]));
       }, theme, lang);
 
       // Navigate
