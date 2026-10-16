@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { cleanTopicTitle } from '../cleanTitle';
 import { CircularTimer } from '../components/CircularTimer';
 import { getTopic } from '../content/curriculum';
+import { db } from '../db/db';
 import { buildRotation, calculateRemainingMs } from '../engine/rotation';
 import { beep } from '../hooks';
 import { t } from '../i18n';
@@ -32,6 +34,23 @@ export function Rotation({
   mode = 'theme',
   gradeTopics = {},
 }: RotationProps) {
+  const students = useLiveQuery(() => db.students.toArray(), [], []);
+  const [manualCounts, setManualCounts] = useState<Partial<Record<Grade, number>>>({});
+
+  // Auto-fill student counts from roster, allow manual override
+  const activeStudentCounts = useMemo(() => {
+    const counts: Partial<Record<Grade, number>> = {};
+    for (const g of grades) {
+      if (manualCounts[g] !== undefined) {
+        counts[g] = manualCounts[g];
+      } else {
+        const rosterCount = students.filter((s) => s.grade === g).length;
+        counts[g] = rosterCount;
+      }
+    }
+    return counts;
+  }, [grades, students, manualCounts]);
+
   const [localTotal, setLocalTotal] = useState(40);
   const total = periodTotal !== undefined ? periodTotal : localTotal;
   const setTotal = (val: number) => {
@@ -59,9 +78,19 @@ export function Rotation({
   }, [mode, gradeTopics, topic]);
 
   const plan = useMemo(
-    () => buildRotation(topic, grades, total, openingMinutes, passes, mode === 'multi_subject' ? getTopicForGrade : undefined),
-    [topic, grades, total, openingMinutes, passes, mode, getTopicForGrade]
+    () =>
+      buildRotation(
+        topic,
+        grades,
+        total,
+        openingMinutes,
+        passes,
+        mode === 'multi_subject' ? getTopicForGrade : undefined,
+        activeStudentCounts
+      ),
+    [topic, grades, total, openingMinutes, passes, mode, getTopicForGrade, activeStudentCounts]
   );
+
 
   const unit = demo ? 1000 : 60000;
 
@@ -73,6 +102,12 @@ export function Rotation({
   const endAt = useRef(0);
   const lastBeepedIndex = useRef<number>(-1);
   const wake = useRef<{ release: () => Promise<void> } | null>(null);
+  const [muted, setMuted] = useState(false);
+  const [visualFlash, setVisualFlash] = useState(false);
+  const [wakeLockSupported] = useState<boolean>(() => {
+    return typeof navigator !== 'undefined' && 'wakeLock' in navigator;
+  });
+
 
   const slotMs = (i: number) => (plan.slots[i]?.minutes ?? 0) * unit;
 
@@ -102,9 +137,20 @@ export function Rotation({
         return;
       }
 
-      // Slot has expired
+      // Slot has expired: trigger audio chime and visual fallback
       if (lastBeepedIndex.current !== idx) {
-        beep();
+        if (!muted) {
+          const played = beep();
+          if (!played) {
+            // Audio was blocked by browser autoplay policy: trigger visual flash
+            setVisualFlash(true);
+            setTimeout(() => setVisualFlash(false), 2000);
+          }
+        } else {
+          // Muted: always show visual flash fallback
+          setVisualFlash(true);
+          setTimeout(() => setVisualFlash(false), 2000);
+        }
         lastBeepedIndex.current = idx;
       }
 
@@ -119,7 +165,8 @@ export function Rotation({
 
     return () => clearInterval(timerId);
     // eslint-disable-next-line
-  }, [running, idx, plan]);
+  }, [running, idx, plan, muted]);
+
 
   useEffect(() => {
     // Keep tablet screen awake while timer runs
@@ -183,6 +230,19 @@ export function Rotation({
           />{' '}
           {t(lang, 'demo')}
         </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={muted}
+            onChange={(e) => setMuted(e.target.checked)}
+          />{' '}
+          {muted ? '🔇' : '🔔'}{' '}
+          {lang === 'hi'
+            ? muted ? 'ध्वनि मूक (Muted)' : 'घंटी ध्वनि (Chime)'
+            : lang === 'mr'
+            ? muted ? 'ध्वनी बंद (Muted)' : 'घंटा ध्वनी (Chime)'
+            : muted ? 'Chime Muted' : 'Audio Chime'}
+        </label>
         <label style={{ opacity: !isMultiGrade ? 0.65 : 1 }}>
           <input
             type="checkbox"
@@ -199,6 +259,88 @@ export function Rotation({
         </label>
       </div>
 
+      {/* Grade student counts bar (adaptive weighting) */}
+      <div className="bar no-print" style={{ background: 'var(--card)', borderBottom: '1px solid var(--line)', padding: '6px 14px', display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+        <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--ink)' }}>
+          👥 {lang === 'hi' ? 'विद्यार्थी संख्या (अनुकूलित कालखंड)' : lang === 'mr' ? 'विद्यार्थी संख्या (अनुकूलित वेळ)' : 'Student Counts (Adaptive Weighting)'}:
+        </span>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+          {grades.map((g) => {
+            const count = activeStudentCounts[g] ?? 0;
+            return (
+              <label key={g} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.82rem' }}>
+                <span className="chip" style={{ background: `var(--g${g})`, color: '#fff', padding: '1px 6px', fontSize: '0.75rem', fontWeight: 700 }}>
+                  G{g}
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  max={50}
+                  value={count}
+                  onChange={(e) => {
+                    const val = Math.max(0, parseInt(e.target.value, 10) || 0);
+                    setManualCounts({ ...manualCounts, [g]: val });
+                  }}
+                  style={{ width: 48, padding: '2px 4px', fontSize: '0.82rem', textAlign: 'center' }}
+                  title={`Grade ${g} student count`}
+                />
+              </label>
+            );
+          })}
+        </div>
+        <span className="small" style={{ color: 'var(--mute)', marginLeft: 'auto' }}>
+          {lang === 'hi' ? 'रोस्टर से स्वतः भरे; आवश्यकता अनुसार बदलें' : lang === 'mr' ? 'रोस्टरमधून स्वयंचलित; हवे असल्यास बदला' : 'Auto-filled from roster; editable'}
+        </span>
+      </div>
+
+
+      {!wakeLockSupported && running && (
+        <div
+          role="note"
+          style={{
+            padding: '6px 12px',
+            marginBottom: 10,
+            background: 'var(--warnbg)',
+            border: '1px solid #ffd591',
+            borderRadius: 6,
+            fontSize: '0.82rem',
+            color: 'var(--ink)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+          }}
+        >
+          <span>💡</span>
+          <span>
+            {lang === 'hi'
+              ? 'स्क्रीन वेक-लॉक अनुपलब्ध: कृपया टैबलेट स्क्रीन को हस्तचालित रूप से चालू रखें।'
+              : lang === 'mr'
+              ? 'स्क्रीन वेक-लॉक उपलब्ध नाही: कृपया टॅबलेट स्क्रीन मॅन्युअली चालू ठेवा.'
+              : 'Screen wake-lock unsupported on this browser: please keep screen on manually.'}
+          </span>
+        </div>
+      )}
+
+      {visualFlash && (
+        <div
+          role="alert"
+          style={{
+            padding: '10px 14px',
+            marginBottom: 10,
+            background: 'var(--acc)',
+            color: '#1c2b27',
+            fontWeight: 700,
+            borderRadius: 8,
+            textAlign: 'center',
+            fontSize: '1rem',
+            boxShadow: 'var(--shadow-md)',
+            animation: 'pulse 1s infinite alternate',
+          }}
+        >
+          🔔 {lang === 'hi' ? 'स्लॉट समाप्त! अगले समूह पर जाएँ।' : lang === 'mr' ? 'स्लॉट संपला! पुढील गटाकडे वळा.' : 'Slot Complete! Transition to next grade.'}
+        </div>
+      )}
+
       {plan.warnings.length > 0 && (
         <div className="warn" role="alert">
           <b>{t(lang, 'warnings')}</b>
@@ -211,7 +353,7 @@ export function Rotation({
       )}
 
       {/* Top compact timer & teaching panel */}
-      <div className="card rotation-top-panel">
+      <div className={`card rotation-top-panel ${visualFlash ? 'slot-transition-flash' : ''}`}>
         <div className="rotation-banner" role="status">
           <span className="rotation-badge" style={{ background: cur ? `var(--g${cur.grade})` : 'var(--board)' }}>
             {finished

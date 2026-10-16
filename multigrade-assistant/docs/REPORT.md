@@ -267,16 +267,19 @@ This section outlines technical enhancements and differentiation features implem
 
 ---
 
-## Chapter 9: Limitations & Future Enhancements
+## Chapter 9: Limitations & Practical Field Constraints
 
-### 9.1 Known Constraints
-1. **Regional Script Authored Text:** While UI chrome is fully trilingual, narrative reading comprehension questions are primarily authored in English with Hindi/Marathi titles.
-2. **Audio Dictation:** Young Grade 1 learners in rural schools benefit from speech synthesis/voice read-aloud for worksheet instructions.
-3. **Cross-Device Synchronization:** Current IndexedDB storage is strictly local to the individual device; peer-to-peer WebRTC or local Bluetooth sync would facilitate multi-tablet classrooms.
+### 9.1 Known Practical and Architectural Constraints
+1. **Acoustic Noise Bleed Across Grade Stations:** When 3 to 5 grades share a single physical classroom room without partitions, oral reading or partner math practice in independent groups can generate acoustic noise that competes with direct teacher instruction. The app mitigates this with non-verbal tasks (sketches, manipulative counters, written worksheets), but physical layout arrangements remain vital.
+2. **Draft Language Translations:** While core UI controls and common prompts are fully translated into Marathi and Hindi, several advanced extension tasks and narrative problem items carry draft translations awaiting formal editorial review by native language educators. The app displays explicit translation review warnings where applicable.
+3. **Screen Wake-Lock Hardware & Browser Limits:** The Screen Wake Lock API is supported on modern mobile Chromium browsers (Chrome, Edge) but is unavailable or restricted in older Android WebViews, low-end browsers, or devices with aggressive OS battery saver policies. In such cases, the rotation timer displays a non-intrusive notification reminding teachers to adjust their display timeout manually.
+4. **Fixed Pedagogical Weights vs. Adaptive Cohort Sizes:** Baseline rotation time allocation uses age-weighted pedagogy (Grade 1 receives greater teacher touchpoints than Grade 5). While student-count adaptive weighting now incorporates roster size (`TEACHER_WEIGHT[g] * (1 + 0.1 * min(count, 15))`), extreme cohort imbalances in real schools (e.g., 18 first graders and 2 fifth graders) still require manual teacher adjustments via the override controls.
+5. **Cross-Device Synchronization:** IndexedDB storage is strictly local to the teacher's individual tablet or laptop. Synchronizing student rosters or records across multiple devices requires manual JSON backup/restore or local wireless synchronization.
 
-### 9.2 Roadmap
-- Integrating browser Web Speech API for voice prompts in Marathi and Hindi.
+### 9.2 Roadmap & Future Enhancements
+- Integrating browser Web Speech API for voice prompts and audio read-aloud in Marathi and Hindi.
 - Adding camera-based optical paper-checking for printed worksheets using local WebAssembly.
+- Offline peer-to-peer classroom sync via local Wi-Fi or WebRTC data channels for two-teacher schools.
 - Expanding curriculum repository to 20 topics covering Upper Primary (Classes 6–8).
 
 ---

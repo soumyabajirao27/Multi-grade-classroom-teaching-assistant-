@@ -50,6 +50,8 @@ export function allocate(total: number, weights: number[]): number[] {
  * Allows 1 or 2 passes (revisiting each grade when the period is long).
  * Warns when any grade would be unsupervised longer than its limit.
  * Supports Mode A (single topic) or Mode B (getTopicForGrade callback).
+ * Optional studentCounts: blends age weight with student count capped at 15.
+ * If counts are missing for any active grade, falls back to age-only weighting.
  */
 export function buildRotation(
   topic: Topic,
@@ -57,9 +59,9 @@ export function buildRotation(
   totalMinutes: number,
   openingMinutes = 5,
   passes: 1 | 2 = 1,
-  getTopicForGrade?: (g: Grade) => Topic
+  getTopicForGrade?: (g: Grade) => Topic,
+  studentCounts?: Partial<Record<Grade, number>>
 ): RotationPlan {
-
   const gs = [...grades].sort((a, b) => a - b);
   const totalSlotsCount = gs.length * passes;
   const opening = Math.min(openingMinutes, Math.max(0, totalMinutes - totalSlotsCount));
@@ -70,11 +72,30 @@ export function buildRotation(
     return { total: totalMinutes, opening, passes, slots: [], warnings };
   }
 
+  // Determine whether valid student counts are provided for all active grades
+  const hasFullStudentCounts =
+    studentCounts !== undefined &&
+    gs.every((g) => studentCounts[g] !== undefined && typeof studentCounts[g] === 'number');
+
   // Build weights for each slot
   const weights: number[] = [];
   for (let p = 1; p <= passes; p++) {
     for (const g of gs) {
-      weights.push(TEACHER_WEIGHT[g]);
+      if (hasFullStudentCounts) {
+        const count = studentCounts![g]!;
+        if (count === 0) {
+          // 0 students: allocate minimal weight so standard minimum slot is maintained for station prep
+          weights.push(1);
+        } else {
+          // Blended formula: BaseAgeWeight * (1 + 0.1 * min(count, 15))
+          const cappedCount = Math.min(count, 15);
+          const blended = TEACHER_WEIGHT[g] * (1 + 0.1 * cappedCount);
+          weights.push(blended);
+        }
+      } else {
+        // Fall back to pure age-based weighting
+        weights.push(TEACHER_WEIGHT[g]);
+      }
     }
   }
 
@@ -83,6 +104,7 @@ export function buildRotation(
   const slots: Slot[] = [];
 
   let slotIdx = 0;
+
   for (let p = 1; p <= passes; p++) {
     for (const grade of gs) {
       const minutes = mins[slotIdx];

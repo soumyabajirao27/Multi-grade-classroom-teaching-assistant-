@@ -1,3 +1,4 @@
+import { formatCurriculumFooter } from '../content/curriculumSources';
 import { t } from '../i18n';
 import type { Lang, Worksheet } from '../types';
 
@@ -31,6 +32,11 @@ export function Sheet({ ws, lang, showKey }: { ws: Worksheet; lang: Lang; showKe
         </p>
       )}
       <p className="small seed">{t(lang, 'seed')}: {ws.seed}</p>
+      {formatCurriculumFooter(ws.topicId, ws.grade) && (
+        <p className="small" style={{ fontSize: '0.75rem', color: '#666', marginTop: 4, fontStyle: 'italic' }}>
+          📖 {formatCurriculumFooter(ws.topicId, ws.grade)}
+        </p>
+      )}
       {showKey && (
         <div className="key"><b>{t(lang, 'answerKey')}</b>
           <ol>{ws.questions.map((q) => <li key={q.id}>{q.answer}</li>)}</ol>

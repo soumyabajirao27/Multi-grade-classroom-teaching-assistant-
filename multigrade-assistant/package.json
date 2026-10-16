@@ -11,7 +11,8 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "check:report": "node scripts/check-report.js",
-    "validate": "npm run check:report && npm run typecheck && npm test && npm run build",
+    "check:curriculum": "vite-node scripts/check-curriculum.mjs",
+    "validate": "npm run check:report && npm run check:curriculum && npm run typecheck && npm test && npm run build",
     "samples": "vite-node scripts/make-samples.ts"
   },
   "dependencies": {

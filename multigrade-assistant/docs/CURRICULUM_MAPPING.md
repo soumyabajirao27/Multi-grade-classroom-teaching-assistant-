@@ -9,35 +9,63 @@ This table documents the alignment of each topic and grade level with official s
 
 ## Maharashtra State Board (Balbharati) & NCERT Mapping Table
 
-| Topic ID | Subject | Grade | Board | Textbook | Chapter (To Verify against Textbooks) | Status | Verified By |
-|---|---|:---:|---|---|---|:---:|---|
-| `evs-water` | EVS | 1 | Maharashtra State Board | Parisar Abhyas (Part 1) | TO VERIFY: Chapter on Water uses & sources | to-verify | Pending Review |
-| `evs-water` | EVS | 1 | NCERT | Looking Around | TO VERIFY: Chapter on Water | to-verify | Pending Review |
-| `evs-water` | EVS | 2 | Maharashtra State Board | Parisar Abhyas (Part 1) | TO VERIFY: Water sources and cleanliness | to-verify | Pending Review |
-| `evs-water` | EVS | 2 | NCERT | Looking Around | TO VERIFY: Water habits and storage | to-verify | Pending Review |
-| `evs-water` | EVS | 3 | Maharashtra State Board | Parisar Abhyas (Part 1) | TO VERIFY: Evaporation and drying | to-verify | Pending Review |
-| `evs-water` | EVS | 3 | NCERT | Looking Around (Water 'O' Water!) | TO VERIFY: Chapter on water states | to-verify | Pending Review |
-| `evs-water` | EVS | 4 | Maharashtra State Board | Parisar Abhyas (Part 1) | TO VERIFY: Water cycle and harvesting | to-verify | Pending Review |
-| `evs-water` | EVS | 4 | NCERT | Looking Around | TO VERIFY: Rain and water cycle | to-verify | Pending Review |
-| `evs-water` | EVS | 5 | Maharashtra State Board | Parisar Abhyas (Part 1) | TO VERIFY: Water conservation and audits | to-verify | Pending Review |
-| `evs-water` | EVS | 5 | NCERT | Looking Around (Every Drop Counts) | TO VERIFY: Chapter on water distribution | to-verify | Pending Review |
-| `math-market` | Maths | 1 | Maharashtra State Board | Ganit (Balbharati) | TO VERIFY: Counting objects up to 20 | to-verify | Pending Review |
-| `math-market` | Maths | 1 | NCERT | Math-Magic | TO VERIFY: Numbers from 1 to 20 | to-verify | Pending Review |
-| `math-market` | Maths | 2 | Maharashtra State Board | Ganit (Balbharati) | TO VERIFY: 2-digit addition and subtraction | to-verify | Pending Review |
-| `math-market` | Maths | 2 | NCERT | Math-Magic | TO VERIFY: Tens and ones bundles | to-verify | Pending Review |
-| `math-market` | Maths | 3 | Maharashtra State Board | Ganit (Balbharati) | TO VERIFY: 3-digit bills and place-value | to-verify | Pending Review |
-| `math-market` | Maths | 3 | NCERT | Math-Magic (Give and Take) | TO VERIFY: Chapter on 3-digit operations | to-verify | Pending Review |
-| `math-market` | Maths | 4 | Maharashtra State Board | Ganit (Balbharati) | TO VERIFY: Multiplication & multi-step problems | to-verify | Pending Review |
-| `math-market` | Maths | 4 | NCERT | Math-Magic (The Junk Seller) | TO VERIFY: Currency and market ledgers | to-verify | Pending Review |
-| `math-market` | Maths | 5 | Maharashtra State Board | Ganit (Balbharati) | TO VERIFY: Fractions, Rupees & Paise | to-verify | Pending Review |
-| `math-market` | Maths | 5 | NCERT | Math-Magic (Parts and Wholes) | TO VERIFY: Fractions and money operations | to-verify | Pending Review |
-| `math-shapes` | Maths | 1–5 | Both | Balbharati / Math-Magic | TO VERIFY: Shapes, Spatial Sense & Perimeter | to-verify | Pending Review |
-| `evs-body` | EVS | 1–5 | Both | Parisar Abhyas / Looking Around | TO VERIFY: Human Body, Food & Health | to-verify | Pending Review |
-| `evs-plants` | EVS | 1–5 | Both | Parisar Abhyas / Looking Around | TO VERIFY: Plants, Leaves & Photosynthesis | to-verify | Pending Review |
-| `math-time` | Maths | 1–5 | Both | Balbharati / Math-Magic | TO VERIFY: Time, Clock Reading & Calendar | to-verify | Pending Review |
-| `evs-neighbourhood` | EVS | 1–5 | Both | Parisar Abhyas / Looking Around | TO VERIFY: Directions, Maps & Distances | to-verify | Pending Review |
-| `math-fractions` | Maths | 1–5 | Both | Balbharati / Math-Magic | TO VERIFY: Fractions & Equal Sharing | to-verify | Pending Review |
-| `evs-animals` | EVS | 1–5 | Both | Parisar Abhyas / Looking Around | TO VERIFY: Animals, Habitats & Senses | to-verify | Pending Review |
+| Topic ID | Subject | Grade | Board | Textbook | Status | Chapter / Notes | Edition | Source |
+|---|---|:---:|---|---|:---:|---|:---:|---|
+| `evs-water` | EVS | 1 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | To verify against ebalbharati Grade 1 Parisar Abhyas textbook | — | — (ebalbharati) |
+| `evs-water` | EVS | 1 | NCERT | Looking Around / Environmental Studies | `to-verify` | To verify against NCERT Grade 1 syllabus / Joyful learning | — | — (ebalbharati) |
+| `evs-water` | EVS | 2 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Water sources and cleanliness unit | — | — (ebalbharati) |
+| `evs-water` | EVS | 2 | NCERT | Looking Around | `to-verify` | Water habits and storage unit | — | — (ebalbharati) |
+| `evs-water` | EVS | 3 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Evaporation and drying unit | — | — (ebalbharati) |
+| `evs-water` | EVS | 3 | NCERT | Looking Around | `to-verify` | Water 'O' Water unit | — | — (ebalbharati) |
+| `evs-water` | EVS | 4 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Water cycle and natural harvesting | — | — (ebalbharati) |
+| `evs-water` | EVS | 4 | NCERT | Looking Around | `to-verify` | Rain and water storage | — | — (ebalbharati) |
+| `evs-water` | EVS | 5 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Water conservation and community audit | — | — (ebalbharati) |
+| `evs-water` | EVS | 5 | NCERT | Looking Around | `to-verify` | Every Drop Counts chapter | — | — (ebalbharati) |
+| `math-market` | MATH | 1 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Counting objects and small coins up to 20 | — | — (ebalbharati) |
+| `math-market` | MATH | 1 | NCERT | Math-Magic | `to-verify` | Numbers 1 to 20 | — | — (ebalbharati) |
+| `math-market` | MATH | 2 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | 2-digit addition and subtraction with money | — | — (ebalbharati) |
+| `math-market` | MATH | 2 | NCERT | Math-Magic | `to-verify` | Tens and ones bundles | — | — (ebalbharati) |
+| `math-market` | MATH | 3 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | 3-digit market bills and place value | — | — (ebalbharati) |
+| `math-market` | MATH | 3 | NCERT | Math-Magic | `to-verify` | Give and Take unit | — | — (ebalbharati) |
+| `math-market` | MATH | 4 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Multiplication & multi-step transaction calculations | — | — (ebalbharati) |
+| `math-market` | MATH | 4 | NCERT | Math-Magic | `to-verify` | The Junk Seller chapter | — | — (ebalbharati) |
+| `math-market` | MATH | 5 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Decimals, Rupees and Paise accounting | — | — (ebalbharati) |
+| `math-market` | MATH | 5 | NCERT | Math-Magic | `to-verify` | Parts and Wholes / Currency unit | — | — (ebalbharati) |
+| `math-shapes` | MATH | 1 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Basic 2D shapes identification | — | — (ebalbharati) |
+| `math-shapes` | MATH | 2 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Edges and corners of geometric shapes | — | — (ebalbharati) |
+| `math-shapes` | MATH | 3 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Perimeter introduction on grid paper | — | — (ebalbharati) |
+| `math-shapes` | MATH | 4 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Perimeter of rectangles and regular polygons | — | — (ebalbharati) |
+| `math-shapes` | MATH | 5 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Perimeter, area formula and tile layout | — | — (ebalbharati) |
+| `evs-body` | EVS | 1 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | External body parts and hygiene | — | — (ebalbharati) |
+| `evs-body` | EVS | 2 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Sense organs and healthy daily habits | — | — (ebalbharati) |
+| `evs-body` | EVS | 3 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Body movement, teeth care and balanced diet | — | — (ebalbharati) |
+| `evs-body` | EVS | 4 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Digestive system journey and clean eating | — | — (ebalbharati) |
+| `evs-body` | EVS | 5 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Internal organ systems and pulse rate measurement | — | — (ebalbharati) |
+| `evs-plants` | EVS | 1 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Plant parts: root, stem, leaf and flower | — | — (ebalbharati) |
+| `evs-plants` | EVS | 2 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Trees, shrubs, herbs and climbers | — | — (ebalbharati) |
+| `evs-plants` | EVS | 3 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Photosynthesis introduction: sunlight, water, air | — | — (ebalbharati) |
+| `evs-plants` | EVS | 4 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Taproot vs fibrous root systems | — | — (ebalbharati) |
+| `evs-plants` | EVS | 5 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Seed dispersal mechanisms and ecological interdependence | — | — (ebalbharati) |
+| `math-time` | MATH | 1 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Daily routine sequencing: morning, afternoon, night | — | — (ebalbharati) |
+| `math-time` | MATH | 2 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Reading whole hours on analog clock | — | — (ebalbharati) |
+| `math-time` | MATH | 3 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Reading half past, quarter past and minutes | — | — (ebalbharati) |
+| `math-time` | MATH | 4 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | 12-hour vs 24-hour clock and elapsed time | — | — (ebalbharati) |
+| `math-time` | MATH | 5 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Timetables, elapsed duration and railway schedules | — | — (ebalbharati) |
+| `evs-neighbourhood` | EVS | 1 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Landmarks around home and school | — | — (ebalbharati) |
+| `evs-neighbourhood` | EVS | 2 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Community helpers in village | — | — (ebalbharati) |
+| `evs-neighbourhood` | EVS | 3 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Four cardinal directions and simple sketch map | — | — (ebalbharati) |
+| `evs-neighbourhood` | EVS | 4 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Scale, map symbols and sub-districts | — | — (ebalbharati) |
+| `evs-neighbourhood` | EVS | 5 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | District and state geography, transport networks | — | — (ebalbharati) |
+| `math-fractions` | MATH | 1 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Equal sharing between 2 persons | — | — (ebalbharati) |
+| `math-fractions` | MATH | 2 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Half and quarter of real objects (bhakri/roti) | — | — (ebalbharati) |
+| `math-fractions` | MATH | 3 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Fractions notation: 1/2, 1/4, 3/4 | — | — (ebalbharati) |
+| `math-fractions` | MATH | 4 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Like fractions addition and subtraction | — | — (ebalbharati) |
+| `math-fractions` | MATH | 5 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Equivalent fractions, mixed numbers and word problems | — | — (ebalbharati) |
+| `evs-animals` | EVS | 1 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Domestic vs wild animals | — | — (ebalbharati) |
+| `evs-animals` | EVS | 2 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Animal homes and sounds | — | — (ebalbharati) |
+| `evs-animals` | EVS | 3 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Herbivores, carnivores and food habits | — | — (ebalbharati) |
+| `evs-animals` | EVS | 4 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Animal adaptations and habitats (aquatic/terrestrial) | — | — (ebalbharati) |
+| `evs-animals` | EVS | 5 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Food chains, wildlife preservation and keystone species | — | — (ebalbharati) |
 
 ---
 

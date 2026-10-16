@@ -1,6 +1,7 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { cleanTopicTitle } from '../cleanTitle';
 import { getTopic } from '../content/curriculum';
+import { getCurriculumSources, type CurriculumSourceEntry } from '../content/curriculumSources';
 import { buildSessionPlan } from '../engine/planner';
 import { t } from '../i18n';
 import { resolveL10n, type Grade, type GradeTopicMap, type Lang, type SessionMode, type Topic } from '../types';
@@ -36,6 +37,12 @@ export function Planner({
     () => buildSessionPlan(topic, grades, mode === 'multi_subject' ? getTopicForGrade : undefined),
     [topic, grades, mode, getTopicForGrade]
   );
+
+  const [activeSourceModal, setActiveSourceModal] = useState<{
+    grade: Grade;
+    topic: Topic;
+    sources: CurriculumSourceEntry[];
+  } | null>(null);
 
   if (!grades.length) return <p>{t(lang, 'noGrades')}</p>;
 
@@ -170,6 +177,28 @@ export function Planner({
                     : `Level ${stepIdx + 1} of ${plan.rows.length}`}
                 </span>
               )}
+              <button
+                type="button"
+                className="chip"
+                onClick={() => {
+                  const sources = getCurriculumSources(activeTopic.id, grade);
+                  setActiveSourceModal({ grade, topic: activeTopic, sources });
+                }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  cursor: 'pointer',
+                  background: 'var(--card)',
+                  border: '1px solid var(--line)',
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                }}
+                title={lang === 'hi' ? 'पाठ्यक्रम स्रोत देखें' : lang === 'mr' ? 'अभ्यासक्रम स्रोत पहा' : 'View curriculum source'}
+              >
+                <span>📚</span>
+                <span>{lang === 'hi' ? 'स्रोत' : lang === 'mr' ? 'स्रोत' : 'Source'}</span>
+              </button>
             </div>
             {buddy && <span className="small">🤝 {t(lang, 'buddy')} {buddy}</span>}
           </div>
@@ -200,21 +229,118 @@ export function Planner({
               )}
             </div>
           </div>
-          {p.mapping && p.mapping.length > 0 && (
-            <div className="small" style={{ marginTop: 10, paddingTop: 8, borderTop: '1px dashed var(--line)' }}>
-              <b>📚 {lang === 'hi' ? 'पाठ्यक्रम मिलान' : lang === 'mr' ? 'अभ्यासक्रम जुळणी' : 'Curriculum Mapping'}:</b>
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 4 }}>
-                {p.mapping.map((m, i) => (
-                  <span key={i} className="chip" style={{ fontSize: '0.82rem' }}>
-                    {m.board} · {m.textbook} · {m.chapter} ({m.status})
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
         </section>
         );
       })}
+
+      {activeSourceModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="source-modal-title"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: 16,
+          }}
+          onClick={() => setActiveSourceModal(null)}
+        >
+          <div
+            className="card"
+            style={{
+              maxWidth: 520,
+              width: '100%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              boxShadow: '0 8px 30px rgba(0,0,0,0.3)',
+              background: 'var(--card)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <h3 id="source-modal-title" style={{ margin: 0, fontSize: '1.2rem' }}>
+                📚 {lang === 'hi' ? 'पाठ्यक्रम स्रोत' : lang === 'mr' ? 'अभ्यासक्रम स्रोत' : 'Curriculum Source'} — Grade {activeSourceModal.grade}
+              </h3>
+              <button
+                type="button"
+                className="chip"
+                onClick={() => setActiveSourceModal(null)}
+                style={{ cursor: 'pointer', padding: '4px 10px', fontSize: '1rem', fontWeight: 'bold' }}
+                aria-label="Close"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div style={{ fontSize: '0.9rem', marginBottom: 14, color: '#555' }}>
+              <strong>{lang === 'hi' ? 'विषय' : lang === 'mr' ? 'घटक' : 'Topic'}:</strong> {resolveL10n(activeSourceModal.topic.title, lang)}
+            </div>
+
+            {activeSourceModal.sources.length === 0 ? (
+              <p className="small">{lang === 'hi' ? 'कोई स्रोत प्रविष्टि उपलब्ध नहीं है।' : lang === 'mr' ? 'कोणतीही नोंद उपलब्ध नाही.' : 'No source entries recorded for this grade.'}</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {activeSourceModal.sources.map((src, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      border: '1px solid var(--line)',
+                      borderRadius: 6,
+                      padding: 10,
+                      background: src.status === 'verified' ? '#f0f9f4' : 'var(--bg, #fbfbfb)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                      <span style={{ fontWeight: 600 }}>{src.board} ({src.medium})</span>
+                      <span
+                        className="chip"
+                        style={{
+                          fontSize: '0.75rem',
+                          background: src.status === 'verified' ? '#d4edda' : '#fff3cd',
+                          color: src.status === 'verified' ? '#155724' : '#856404',
+                        }}
+                      >
+                        {src.status}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '0.88rem' }}><strong>{src.textbook}</strong></div>
+                    {src.chapterNo !== undefined && src.chapterTitle ? (
+                      <div style={{ fontSize: '0.85rem', marginTop: 2 }}>
+                        Chapter {src.chapterNo}: {src.chapterTitle} {src.pageStart ? `(p. ${src.pageStart})` : ''}
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: '0.85rem', color: '#666', marginTop: 2 }}>
+                        {src.notes || 'Alignment pending textbook chapter verification'}
+                      </div>
+                    )}
+                    {src.status === 'verified' && src.sourceUrl && (
+                      <div style={{ fontSize: '0.82rem', marginTop: 4 }}>
+                        <span style={{ color: 'var(--primary)' }}>Official portal source verified</span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div style={{ marginTop: 16, textAlign: 'right' }}>
+              <button
+                type="button"
+                className="chip primary"
+                onClick={() => setActiveSourceModal(null)}
+                style={{ cursor: 'pointer', padding: '6px 16px' }}
+              >
+                {lang === 'hi' ? 'बंद करें' : lang === 'mr' ? 'बंद करा' : 'Close'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

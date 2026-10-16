@@ -149,7 +149,17 @@ export function Worksheets({
                     : 'Teacher Quick Start Guide (3 Steps)'}
                 </h2>
                 <div style={{ color: '#444', fontSize: '0.9rem', marginTop: 4 }}>
-                  {resolveL10n(topic.title, lang)} • {grades.map((g) => `Grade ${g}`).join(', ')}
+                  {mode === 'multi_subject' ? (
+                    <div>
+                      <span style={{ fontWeight: 600 }}>Multi-Subject Station Mode:</span>{' '}
+                      {grades.map((g) => {
+                        const gt = getTopicForGrade(g);
+                        return `G${g} (${gt.subject === 'math' ? 'Maths' : 'EVS'}: ${resolveL10n(gt.title, lang)})`;
+                      }).join(' • ')}
+                    </div>
+                  ) : (
+                    <div>{resolveL10n(topic.title, lang)} • {grades.map((g) => `Grade ${g}`).join(', ')}</div>
+                  )}
                 </div>
               </div>
               <div style={{ textAlign: 'right', fontSize: '0.85rem' }}>
@@ -263,7 +273,8 @@ export function Worksheets({
               </thead>
               <tbody>
                 {rotation.slots.map((s, idx) => {
-                  const gData = topic.grades[s.grade];
+                  const sTopic = getTopicForGrade(s.grade);
+                  const gData = sTopic.grades[s.grade];
                   const checklist = gData.checklist?.map((c) => resolveL10n(c, lang)).join('; ') ?? '';
                   const otherGrades = grades.filter((g) => g !== s.grade);
                   return (
@@ -276,6 +287,13 @@ export function Worksheets({
                       </td>
                       <td>
                         <strong style={{ fontSize: '1.05rem' }}>Grade {s.grade}</strong>
+                        {mode === 'multi_subject' && (
+                          <div style={{ fontSize: '0.8rem', marginTop: 2 }}>
+                            <span className={`subject-tag tag-${sTopic.subject}`}>
+                              {sTopic.subject === 'math' ? '📐 Maths' : '🌱 EVS'}
+                            </span>
+                          </div>
+                        )}
                       </td>
                       <td>
                         <div style={{ fontWeight: 600 }}>{resolveL10n(gData.outcome, lang)}</div>
@@ -288,10 +306,12 @@ export function Worksheets({
                       {grades.length > 1 && (
                         <td style={{ fontSize: '0.85rem' }}>
                           {otherGrades.map((og) => {
-                            const ogData = topic.grades[og];
+                            const ogTopic = getTopicForGrade(og);
+                            const ogData = ogTopic.grades[og];
                             return (
                               <div key={og} style={{ marginBottom: 4 }}>
-                                <strong>G{og}:</strong> {resolveL10n(ogData.independent.title, lang)} — {resolveL10n(ogData.independent.instructions, lang)}
+                                <strong>G{og} {mode === 'multi_subject' ? `(${ogTopic.subject === 'math' ? 'Maths' : 'EVS'})` : ''}:</strong>{' '}
+                                {resolveL10n(ogData.independent.title, lang)} — {resolveL10n(ogData.independent.instructions, lang)}
                               </div>
                             );
                           })}

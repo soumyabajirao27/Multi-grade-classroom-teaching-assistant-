@@ -560,4 +560,55 @@ describe('multi-grade scenarios: 3-grade, 4-grade, and 5-grade in Mode A and Mod
       expect(pass1Slots[pass1Slots.length - 1].end).toBe(pass2Slots[0].start);
     }
   });
+
+  it('Rotation scheduler: existing calls without studentCounts give identical allocations', () => {
+    const rotDefault = buildRotation(water, [1, 3, 5], 40, 5, 1);
+    const rotWithUndefined = buildRotation(water, [1, 3, 5], 40, 5, 1, undefined, undefined);
+    expect(rotDefault.slots.map((s) => s.minutes)).toEqual(rotWithUndefined.slots.map((s) => s.minutes));
+  });
+
+  it('Rotation scheduler: adjusts time for uneven classes (8 students in G2, 1 in G5)', () => {
+    // Uneven class: 8 students in Grade 2 vs 1 student in Grade 5
+    const grades: Grade[] = [2, 5];
+    const totalMinutes = 40;
+    const opening = 5;
+
+    const basePlan = buildRotation(water, grades, totalMinutes, opening, 1);
+    const weightedPlan = buildRotation(
+      water,
+      grades,
+      totalMinutes,
+      opening,
+      1,
+      undefined,
+      { 2: 8, 5: 1 }
+    );
+
+    const g2BaseSlot = basePlan.slots.find((s) => s.grade === 2)!;
+    const g2WeightedSlot = weightedPlan.slots.find((s) => s.grade === 2)!;
+    const g5WeightedSlot = weightedPlan.slots.find((s) => s.grade === 5)!;
+
+    // Grade 2 with 8 students receives more teacher time than in base age weighting
+    expect(g2WeightedSlot.minutes).toBeGreaterThanOrEqual(g2BaseSlot.minutes);
+    // Grade 5 still gets direct instruction
+    expect(g5WeightedSlot.minutes).toBeGreaterThan(0);
+    // Total minutes remain exact
+    expect(weightedPlan.slots.reduce((sum, s) => sum + s.minutes, 0)).toBe(totalMinutes - opening);
+  });
+
+  it('Rotation scheduler: falls back to age-only weighting if counts are missing for any active grade', () => {
+    const grades: Grade[] = [1, 3, 5];
+    const basePlan = buildRotation(water, grades, 45, 5, 1);
+    // Grade 5 count is missing (partial counts)
+    const partialPlan = buildRotation(water, grades, 45, 5, 1, undefined, { 1: 5, 3: 4 });
+    expect(partialPlan.slots.map((s) => s.minutes)).toEqual(basePlan.slots.map((s) => s.minutes));
+  });
+
+  it('Rotation scheduler: allocates minimum slot for grade with 0 students', () => {
+    const grades: Grade[] = [1, 3];
+    const plan = buildRotation(water, grades, 40, 5, 1, undefined, { 1: 10, 3: 0 });
+    const g3Slot = plan.slots.find((s) => s.grade === 3)!;
+    expect(g3Slot.minutes).toBeGreaterThan(0);
+  });
 });
+
