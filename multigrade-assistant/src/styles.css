@@ -237,6 +237,10 @@ header {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+header h1 {
+  color: var(--on);
+}
+
 .header-title {
   display: flex;
   align-items: center;
@@ -427,8 +431,8 @@ input:focus {
 }
 
 [data-theme='dark'] .tag-evs {
-  background: #133a2a;
-  color: #6ee7b7;
+  background: #113829;
+  color: #a7f3d0;
 }
 
 .tag-lang {
@@ -439,6 +443,22 @@ input:focus {
 [data-theme='dark'] .tag-lang {
   background: #451a03;
   color: #fde68a;
+}
+
+/* Printable / Preview sheet override: always light theme on white paper */
+.sheet .subject-tag.tag-math {
+  background: #e8f4fd !important;
+  color: #1a56db !important;
+}
+
+.sheet .subject-tag.tag-evs {
+  background: #ecfdf5 !important;
+  color: #065f46 !important;
+}
+
+.sheet .subject-tag.tag-lang {
+  background: #fef3c7 !important;
+  color: #92400e !important;
 }
 
 .topic-chevron {
@@ -806,11 +826,17 @@ select:focus-visible,
   text-align: center;
 }
 
-.staircase-step-badge.g1-bg { background-color: var(--g1); }
-.staircase-step-badge.g2-bg { background-color: var(--g2); }
-.staircase-step-badge.g3-bg { background-color: var(--g3); }
-.staircase-step-badge.g4-bg { background-color: var(--g4); }
-.staircase-step-badge.g5-bg { background-color: var(--g5); }
+.staircase-step-badge.g1-bg { background-color: #A62619; color: #ffffff; }
+.staircase-step-badge.g2-bg { background-color: #8C5600; color: #ffffff; }
+.staircase-step-badge.g3-bg { background-color: #16643C; color: #ffffff; }
+.staircase-step-badge.g4-bg { background-color: #195B8A; color: #ffffff; }
+.staircase-step-badge.g5-bg { background-color: #692C84; color: #ffffff; }
+
+[data-theme='dark'] .staircase-step-badge.g1-bg { background-color: #A62619; color: #ffffff; }
+[data-theme='dark'] .staircase-step-badge.g2-bg { background-color: #8C5600; color: #ffffff; }
+[data-theme='dark'] .staircase-step-badge.g3-bg { background-color: #16643C; color: #ffffff; }
+[data-theme='dark'] .staircase-step-badge.g4-bg { background-color: #195B8A; color: #ffffff; }
+[data-theme='dark'] .staircase-step-badge.g5-bg { background-color: #692C84; color: #ffffff; }
 
 .staircase-step-outcome {
   font-size: 0.9rem;
@@ -1040,6 +1066,15 @@ th {
   border-right: 1px solid rgba(255, 255, 255, 0.4);
   transition: opacity 0.2s;
   user-select: none;
+}
+
+[data-theme='dark'] .timeline-slot:not(.timeline-opening) {
+  color: #141414;
+}
+
+[data-theme='dark'] .rotation-badge {
+  color: #141414;
+  text-shadow: none;
 }
 
 .timeline-slot:last-child {

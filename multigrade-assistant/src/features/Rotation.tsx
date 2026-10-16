@@ -278,7 +278,7 @@ export function Rotation({
             const count = activeStudentCounts[g] ?? 0;
             return (
               <label key={g} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: '0.82rem' }}>
-                <span className="chip" style={{ background: `var(--g${g})`, color: '#fff', padding: '1px 6px', fontSize: '0.75rem', fontWeight: 700 }}>
+                <span className="chip" style={{ background: `var(--g${g})`, color: 'var(--card)', padding: '2px 8px', fontSize: '0.78rem', fontWeight: 700 }}>
                   G{g}
                 </span>
                 <input

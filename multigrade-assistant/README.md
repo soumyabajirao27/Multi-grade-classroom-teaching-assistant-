@@ -132,15 +132,27 @@ render.yaml     Render Blueprint static site deployment spec with PWA cache head
 
 ## Design System & UX Standards
 
-- **Theme Resolution (`src/theme.ts`):** Supports three modes: `Light`, `Dark`, and `Auto` (system `prefers-color-scheme`). Theme applies instantaneously on first paint via an inline head script to guarantee zero flash of unstyled content. All text, dropdowns, inputs, timer rings, and badges strictly meet WCAG AA contrast (>= 4.5:1).
-- **Accessible Topic Picker Modal (`src/components/TopicPickerModal.tsx`):** Replaces native dropdown selects with a high-contrast grid of topic cards featuring clean titles (stripped of duplicated `[EVS]` / `(Maths)` labels), subject badges, search filtering, and full keyboard navigation (Arrows, Enter, Escape).
+- **Design Tokens (`src/styles.css`):**
+  - **Color Palette:** Warm classroom chalkboards (`--board: #143831`), parchment page background (`--bg: #F9F6F0`), high-contrast body ink (`--ink: #1A2925`), and Marigold primary accent (`--marigold: #E29000`). Grade identity tokens (`--g1` through `--g5`) distinguish grades across Planner, Rotation, Worksheets, and Progress.
+  - **Typography:** Self-hosted bundled fonts (Google Fonts `Baloo 2` for friendly numerals and titles, `Hind` with line-height >= 1.55 / 1.6 for body and Devanagari Hindi/Marathi text). Strict 72ch line-length cap on instructional paragraphs.
+  - **Spacing & Elevation:** 6-tier spacing scale (`4px`, `8px`, `12px`, `16px`, `24px`, `32px`), 3-tier corner radius (`8px`, `12px`, `16px`, `9999px` full), and 3 soft elevation shadows.
+- **Tree-Shaken Inline SVG Icon Library (`src/components/icons.tsx`):**
+  - Lightweight offline-first SVG icons replacing all UI emojis (`IconBook`, `IconMath`, `IconSprout`, `IconSubject`, `IconPrinter`, `IconTimer`, `IconHelp`, `IconChart`, `IconDownload`, `IconUpload`, `IconCheck`, `IconX`, `IconPlay`, `IconPause`, `IconRotateCcw`, `IconSkipForward`, `IconChevronDown`, `IconTrash`, `IconSparkles`, `IconAlertCircle`, `IconStar`).
+  - Total JS bundle growth is only **+1.41 kB gzip** (far below the 40 kB constraint).
+- **Accessibility & Contrast (`scripts/check-contrast.js` & `scripts/a11y-audit.mjs`):**
+  - Automated Axe-core audit across 2 themes (Light & Dark) × 4 tabs (Planner, Worksheets, Rotation, Progress) with **0 critical and 0 serious accessibility violations**.
+  - All 26 core foreground/background pairs verified to achieve >= 4.5:1 WCAG AA contrast ratio.
+  - Accessible touch targets >= 44px, visible high-contrast focus rings (`2px solid var(--marigold)`), `aria-live` polite rotation notifications, and `prefers-reduced-motion` animations.
+- **Visual Regression Quality Gate:**
+  - Before/after screenshot comparison catalog generated at `docs/screens/compare.html` verifying visual stability across 3 responsive viewports (`800x1280`, `1024x768`, `1280x800`), 3 languages (`en`, `hi`, `mr`), and both themes (`light`, `dark`).
+- **Theme Resolution (`src/theme.ts`):** Supports three modes: `Light`, `Dark`, and `Auto` (system `prefers-color-scheme`). Theme applies instantaneously on first paint via an inline head script to guarantee zero flash of unstyled content.
+- **Accessible Topic Picker Modal (`src/components/TopicPickerModal.tsx`):** Replaces native dropdown selects with a high-contrast grid of topic cards featuring clean titles, subject badges, search filtering, and full keyboard navigation (Arrows, Enter, Escape).
 - **Status Badge:** Three distinct offline states:
   - 🟢 **Offline ready**: Service Worker active and all assets/curriculum cached.
   - 🟡 **Preparing offline**: Service Worker installing or downloading cache.
   - ⚪ **Online only**: Dev server mode or service worker not installed.
 - **Difficulty Staircase Strip:** Displays the shared unifying theme once, followed by a compact progression step per selected grade showing its learning outcome and Level N of M position.
 - **Synchronized Rotation & Quick Start:** Period length and passes are shared across Rotation, Worksheets, and Print Pack, dynamically deriving stage time bounds (`0-5 min`, `5-40 min`, etc.) and hiding single-grade unused columns.
-- **8-inch Tablet Accessibility:** 44px touch targets on interactive controls, visible keyboard focus rings, `aria-live` polite slot announcements, and `prefers-reduced-motion` compliance.
 
 
 
