@@ -36,13 +36,14 @@ Report mean per criterion and list every item scored <= 2 with the fix made. Re-
 7. Two-pass rotation scheduling for extended periods.
 8. Trilingual fallback integrity: all localized fields provide non-empty English fallbacks.
 9. Cross-language worksheet compilation across all 5 grades, 3 tiers, and 3 languages (English, Hindi, Marathi).
-10. Complete trilingual coverage for all 9 topics and generator frames in English, Hindi, and Marathi.
-11. Curriculum mapping structural presence and validity across all topics.
-12. Strict `sameAcrossTiers` enforcement: every static item without variants must be `kind: 'draw'` and have a non-generic pedagogical `sameReason` (exactly 12 items across curriculum).
+10. Complete trilingual coverage for all 10 topics and generator frames in English, Hindi, and Marathi.
+11. Curriculum mapping structural presence and validity across 120 NCERT and Maharashtra State Board records.
+12. Strict `sameAcrossTiers` enforcement: every static item without variants must be `kind: 'draw'` and have a non-generic pedagogical `sameReason`.
 13. Tier differentiation invariant across every topic and grade: support sheet strictly easier than stretch (shorter prompts, smaller numbers, or visual scaffolding present) and stretch marks >= core marks.
 14. Early finisher and teacher return checklist presence for all grades.
 15. Student mastery tier progression recommendations.
 16. Accessibility & contrast contract: WCAG AA luminance ratios (> 4.5:1) for both light and dark modes, and CSS rules enforcing >= 44 px touch targets on mobile/tablet viewports.
+17. Custom topic validation engine tests: pure schema checking, 10+ failure modes, tier differentiation enforcement, bounded string/file size, and backup round-trip compatibility.
 
 ## D. Research & Evaluation Integrity Policy
 In strict compliance with project honesty rules:

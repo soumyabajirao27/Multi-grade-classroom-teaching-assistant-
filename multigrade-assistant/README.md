@@ -68,9 +68,9 @@ A `render.yaml` specification is included in the project root:
 9. **Two-Pass Rotation**: periods >= 35 min can optionally execute a second pass to avoid younger grades being left unsupervised.
 10. **sameAcrossTiers Restriction**: non-drawing questions MUST provide authored Support and Stretch variants. Only 12 non-verbal visual/drawing tasks are marked `sameAcrossTiers: true`, each with an explicit pedagogical justification.
 
-## Topics Included (9 Complete Multi-Grade Units)
+## Topics Included (10 Complete Multi-Grade Units)
 
-All 9 topics span Grades 1–5 and are fully translated into English, Hindi, and Marathi.
+All 10 built-in topics span Grades 1–5 and are fully translated into English, Hindi, and Marathi.
 > **Translation note:** All Hindi and Marathi classroom strings are marked `reviewed: false` in the source; native-speaker primary school teacher review is required before district deployment.
 
 1. **Water (EVS - `evs-water`)**: Sources, clean water habits, evaporation, water cycle, and village water auditing.
@@ -82,52 +82,52 @@ All 9 topics span Grades 1–5 and are fully translated into English, Hindi, and
 7. **Our Neighbourhood (EVS - `evs-neighbourhood`)**: Spatial near/far, cardinal directions, classroom sketch maps, map symbols/legends, and distance scales.
 8. **Fractions & Sharing (Maths - `math-fractions`)**: Equal parts, halves/quarters, fractions of collections, equivalent fractions, and mixed numbers.
 9. **Animals & Their Habitats (EVS - `evs-animals`)**: Animal sounds/homes, domestic vs wild, herbivore/carnivore diets, adaptations, and forest food webs.
+10. **Marathi Letters & Words (Language - `lang-marathi`)**: Swar/vyanjan recognition, matras and word formation, sentence construction, short reading passages, and paragraph writing with punctuation.
 
 ## Scope & Out-of-Scope
 
 ### In Scope (v1.0)
-- Grades 1–5, subjects: Mathematics and EVS (Environmental Studies)
-- Single teacher, single classroom, 9 authored multi-grade topics
-- Three UI languages: English, Hindi, Marathi (translation review pending)
+- Grades 1–5, subjects: Mathematics, EVS (Environmental Studies), and Language (Marathi)
+- Single teacher, single classroom, 10 authored multi-grade units
+- Custom teacher-authored topics: import/export with pure schema validation, stored in IndexedDB
+- Three UI languages: English, Hindi, Marathi (teacher review pending)
 - Offline-first PWA for Android/desktop tablets (8-inch+); no cloud, no accounts
-- Four modules: Planner, Worksheet Generator, Rotation Timer, Progress Tracker
+- Four modules: Planner (with Curriculum Coverage modal), Worksheet Generator, Rotation Timer, Progress Tracker
 
 ### Explicitly Out of Scope (v1.0)
-- **Grades 6–9 (Upper Primary):** Content, curriculum, and UX for upper-primary classes are not included. The data model is forward-compatible (Grade type can be extended) but no Grade 6+ topics exist.
-- **Language / Marathi Language (subject):** Marathi as a *teaching subject* (reading, writing, grammar) is not modelled as a content area in v1.0. The three UI language strings (EN/HI/MR) are interface-only. A Marathi-subject topic stub and lesson generator are deferred to v1.1.
-- **Real-time sync / multi-device:** IndexedDB is device-local; multi-device sync requires manual JSON export/import.
-- **Camera / OCR for worksheet marking:** Optical marking of printed worksheets is deferred.
+- **Grades 6–9 (Upper Primary):** Content, curriculum, and rotation rules for upper-primary classes are not included. In Indian rural multi-grade primary classrooms (FLN / Nipun Bharat), solo-time limits and peer buddy pairings are tuned specifically for ages 6–11. Grades 6–8 have subject specialist requirements.
+- **Real-time sync / multi-device:** IndexedDB is device-local; multi-device backup requires JSON export/import.
+- **Camera / OCR for worksheet marking:** Optical scanning/marking is deferred.
 - **Empirical field-trial data:** The evaluation protocol in `docs/EVALUATION.md` defines the SUS and pedagogical quality scorecards; empirical scores will be filled in after the district trial.
 
 ### Future Work (v1.1+)
-- Marathi language subject area with reading-comprehension activity templates and level-differentiated writing prompts (Grades 1–5)
-- Custom topic builder: teacher-authored topic and question sets stored in IndexedDB
-- Grades 6–9 expansion (Upper Primary; requires new curriculum mapping)
+- Additional Marathi reading-comprehension passage sets and Hindi/English language units
+- Grades 6–8 expansion with dedicated pedagogical rules and specialist timetable allocation
 - Browser Web Speech API audio read-aloud in Marathi and Hindi
 - Local offline peer-to-peer roster sync via Web Bluetooth or local Wi-Fi
 
 ## Structure
 
 ```
-src/components/ Welcome 3-step guide, ErrorBoundary, ReloadPrompt, BarChart, CircularTimer, Sheet
-src/engine/     rng, rules, planner, worksheet, rotation, progress (pure TypeScript, zero React)
-src/content/    curriculum library (9 topics with curriculum mapping), generators (13 localized generators)
-src/db/         IndexedDB (Dexie): students, records, undo stack, schema v1 validation
+src/components/ Welcome guide, ErrorBoundary, ReloadPrompt, BarChart, CircularTimer, Sheet, TopicPickerModal
+src/engine/     rng, rules, planner, worksheet, rotation, progress, validateTopic (pure TypeScript, zero React)
+src/content/    curriculum library (10 topics with curriculum mapping), generators (13 localized generators)
+src/db/         IndexedDB (Dexie): students, records, customTopics, undo stack, schema v2 migration
 src/features/   Planner, Worksheets (with Quick Start A4, Print Pack & PDF fallback), Rotation, Progress (CSV export)
 src/i18n.ts     en / hi / mr translations (trilingual interface)
-tests/          62 automated unit & integration tests
-docs/           REPORT.md, CURRICULUM_MAPPING.md, EVALUATION.md, ARCHITECTURE.md, DEMO_SCRIPT.md
+tests/          80 automated unit & integration tests
+docs/           REPORT.md, CURRICULUM_MAPPING.md, EVALUATION.md, ARCHITECTURE.md, VIVA_NOTES.md, CUSTOM_TOPICS.md
 samples/        regenerated printable HTML worksheets for curriculum topics
 render.yaml     Render Blueprint static site deployment spec with PWA cache headers
 ```
 
 ## Production & Verification Status
 
-- **Automated Tests:** 62/62 passing (`npm test`)
+- **Automated Tests:** 80/80 passing (`npm test`)
 - **PWA Production Build:** Zero TypeScript errors, service worker precached (`npm run build`)
-- **Validation Gate:** `npm run validate` runs report check, typecheck, tests, and build.
+- **Validation Gate:** `npm run validate` runs report check, curriculum check, typecheck, tests, and build.
 - **Field Usability & SUS Evaluation:** Evaluation protocol defined in `docs/EVALUATION.md`; empirical trial data: `[TO VERIFY - pending field trial deployment]`
-- **Textbook Mapping:** Structural mappings established in `docs/CURRICULUM_MAPPING.md`; Maharashtra State Board textbook chapter verification: `[TO VERIFY]`
+- **Textbook Mapping:** 120 structural mappings established in `src/content/curriculumSources.ts` and `docs/CURRICULUM_MAPPING.md`; verification against official textbooks: `[TO VERIFY]`
 - **Language Review:** Hindi/Marathi translations authored with Maharashtra classroom terminology; native-speaker primary teacher review: `[TO VERIFY]`
 
 ## Design System & UX Standards
