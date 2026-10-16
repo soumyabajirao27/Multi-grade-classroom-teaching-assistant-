@@ -120,6 +120,44 @@ describe('new topics and generators', () => {
   });
 });
 
+describe('Marathi language subject (lang-marathi)', () => {
+  const marathiTopic = TOPICS.find((t) => t.id === 'lang-marathi')!;
+
+  it('lang-marathi topic exists and has subject lang', () => {
+    expect(marathiTopic).toBeDefined();
+    expect(marathiTopic.subject).toBe('lang');
+  });
+
+  it('lang-marathi has all 5 grades with valid plans, earlyFinisher, and checklist', () => {
+    for (const g of GRADES) {
+      const plan = marathiTopic.grades[g];
+      expect(plan.teacher.steps.length).toBeGreaterThan(0);
+      expect(plan.questions.length).toBeGreaterThan(0);
+      expect(plan.earlyFinisher).toBeDefined();
+      expect(plan.checklist).toBeDefined();
+      expect(plan.checklist!.length).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  it('lang-marathi worksheets generate correctly for all grades and tiers', () => {
+    for (const g of GRADES) {
+      for (const tier of TIERS) {
+        const ws = buildWorksheet({ topic: marathiTopic, grade: g, tier, seed: `lang-${g}-${tier}` });
+        expect(ws.questions.length).toBeGreaterThan(0);
+        expect(ws.questions.every((q) => q.prompt.length > 0)).toBe(true);
+      }
+    }
+  });
+
+  it('lang-marathi topic title resolves in all 3 languages', () => {
+    const langs: Lang[] = ['en', 'hi', 'mr'];
+    for (const lang of langs) {
+      const title = resolveL10n(marathiTopic.title[lang], lang);
+      expect(title.length).toBeGreaterThan(0);
+    }
+  });
+});
+
 describe('rotation', () => {
   it('allocate sums exactly', () => {
     for (const total of [20, 35, 40, 47]) expect(allocate(total, [1.4, 1.1, 1]).reduce((a, b) => a + b, 0)).toBe(total);

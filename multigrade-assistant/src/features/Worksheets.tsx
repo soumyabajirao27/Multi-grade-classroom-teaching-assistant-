@@ -290,7 +290,7 @@ export function Worksheets({
                         {mode === 'multi_subject' && (
                           <div style={{ fontSize: '0.8rem', marginTop: 2 }}>
                             <span className={`subject-tag tag-${sTopic.subject}`}>
-                              {sTopic.subject === 'math' ? '📐 Maths' : '🌱 EVS'}
+                              {sTopic.subject === 'math' ? '📐 Maths' : sTopic.subject === 'evs' ? '🌱 EVS' : '📖 Language'}
                             </span>
                           </div>
                         )}

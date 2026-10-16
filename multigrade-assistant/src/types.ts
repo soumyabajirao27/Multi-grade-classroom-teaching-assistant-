@@ -3,7 +3,7 @@ export const GRADES: Grade[] = [1, 2, 3, 4, 5];
 export type Tier = 'support' | 'core' | 'stretch';
 export const TIERS: Tier[] = ['support', 'core', 'stretch'];
 export type Lang = 'en' | 'hi' | 'mr';
-export type Subject = 'math' | 'evs';
+export type Subject = 'math' | 'evs' | 'lang';
 export type Status = 'not-started' | 'needs-help' | 'done';
 
 export type GenId = 'count' | 'add' | 'addNoCarry' | 'sub' | 'mul' | 'div' | 'fracAdd' | 'money' | 'wordShop' | 'perimeter' | 'area' | 'timeRead' | 'timeElapsed';

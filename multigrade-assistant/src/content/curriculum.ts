@@ -3145,6 +3145,450 @@ const animals: Topic = {
   },
 };
 
-export const TOPICS: Topic[] = [water, market, shapes, body, plants, time, neighbourhood, fractions, animals];
+// ─────────────────────────────────────────────────────────────
+// MARATHI LANGUAGE (lang-marathi) – STUB TOPIC (v1.0)
+// Subject area: 'lang' – Marathi reading/writing as a curriculum subject.
+// All hi/mr strings: reviewed: false — needs native-speaker teacher review.
+// NOTE: This is a teaching-subject stub. Full reading-passage content
+// (text comprehension, grammar exercises) is deferred to v1.1 per the
+// project scope decision. See docs/REPORT.md §9.2 and README.md §Scope.
+// ─────────────────────────────────────────────────────────────
+const marathiLang: Topic = {
+  id: 'lang-marathi',
+  subject: 'lang',
+  title: {
+    en: 'Marathi Letters & Words (Language)',
+    hi: 'मराठी अक्षरे और शब्द (भाषा)',
+    mr: 'मराठी अक्षरे व शब्द (भाषा)',
+  },
+  theme: {
+    en: 'Reading and writing in Marathi',
+    hi: 'मराठी में पढ़ना और लिखना',  // reviewed: false
+    mr: 'मराठीत वाचणे आणि लिहिणे',   // reviewed: false
+  },
+  hook: {
+    en: 'Write a simple Marathi word on the board (e.g. आई). Ask each grade to read it, say its meaning, and use it in a sentence at their own level.',
+    hi: 'एक सरल मराठी शब्द बोर्ड पर लिखें (जैसे आई)। हर कक्षा को उसे पढ़ने, अर्थ बताने और अपने स्तर पर वाक्य बनाने को कहें।',  // reviewed: false
+    mr: 'फळ्यावर एक सोपा मराठी शब्द लिहा (उदा. आई). प्रत्येक इयत्तेला तो वाचायला, अर्थ सांगायला आणि त्यांच्या पातळीवर वाक्य बनवायला सांगा.', // reviewed: false
+  },
+  mapping: 'TO RESEARCH — Balbharati Marathi Language textbooks (Sulabhbharati / Kumarbharati) chapters not yet verified against physical copies.',
+  reviewed: { en: true, hi: false, mr: false },
+  grades: {
+    1: {
+      outcome: {
+        en: 'Identifies and traces 5 Marathi vowels (स्वर): अ, आ, इ, ई, उ; reads simple 2-letter words.',
+        hi: '5 मराठी स्वर (अ, आ, इ, ई, उ) पहचानता और लिखता है; 2 अक्षर के सरल शब्द पढ़ता है।',  // reviewed: false
+        mr: '५ मराठी स्वर (अ, आ, इ, ई, उ) ओळखतो व काढतो; साध्या दोन-अक्षरी शब्द वाचतो.',        // reviewed: false
+      },
+      teacher: {
+        title: { en: 'Vowel recognition: अ to उ', hi: 'स्वर पहचान: अ से उ', mr: 'स्वर ओळख: अ ते उ' },
+        minutes: 8,
+        steps: [
+          { en: 'Write each vowel large on the board: अ आ इ ई उ.', hi: 'बोर्ड पर प्रत्येक स्वर बड़े अक्षर में लिखें: अ आ इ ई उ।', mr: 'फळ्यावर प्रत्येक स्वर मोठ्या आकारात लिहा: अ आ इ ई उ.' },
+          { en: 'Say each vowel aloud; students repeat and trace in the air.', hi: 'प्रत्येक स्वर जोर से बोलें; विद्यार्थी दोहराएं और हवा में लिखें।', mr: 'प्रत्येक स्वर मोठ्याने म्हणा; विद्यार्थ्यांनी पुनरावृत्ती करून हवेत काढा.' },
+          { en: 'Show a picture for each: आई (mother), इमली (tamarind), उंट (camel).', hi: 'हर स्वर के लिए एक चित्र दिखाएं: आई, इमली, उंट।', mr: 'प्रत्येक स्वरासाठी चित्र दाखवा: आई, इमली, उंट.' },
+        ],
+      },
+      independent: {
+        title: { en: 'Trace and match vowels', hi: 'स्वर का अनुसरण करें और मिलाएं', mr: 'स्वर काढा आणि जुळवा' },
+        instructions: {
+          en: 'Trace each vowel letter. Draw a line from the vowel to its matching picture.',
+          hi: 'हर स्वर को ट्रेस करें। स्वर से उसके चित्र तक रेखा खींचें।',         // reviewed: false
+          mr: 'प्रत्येक स्वर काढा. स्वराशी जुळणाऱ्या चित्राला रेषेने जोडा.',        // reviewed: false
+        },
+        minutes: 8,
+        mode: 'solo',
+        materials: [
+          { en: 'printed vowel trace sheet', hi: 'स्वर ट्रेस शीट', mr: 'स्वर काढण्याची पत्रिका' },
+          { en: 'pencil', hi: 'पेंसिल', mr: 'पेन्सिल' },
+        ],
+      },
+      mapping: defaultMapping('Marathi Language (Sulabhbharati Grade 1)'),
+      earlyFinisher: {
+        en: 'Write each vowel 3 times and draw one picture for it.',
+        hi: 'प्रत्येक स्वर 3 बार लिखें और उसके लिए एक चित्र बनाएं।',  // reviewed: false
+        mr: 'प्रत्येक स्वर ३ वेळा लिहा आणि त्यासाठी एक चित्र काढा.',  // reviewed: false
+      },
+      checklist: [
+        { en: 'Can the student identify all 5 vowels when pointed to randomly?', hi: 'क्या बच्चा बेतरतीब ढंग से दिखाए जाने पर 5 स्वर पहचान सकता है?', mr: 'कोणताही स्वर दाखवला तर विद्यार्थी ओळखतो का?' },
+        { en: 'Can the student trace the vowels legibly?', hi: 'क्या बच्चा स्वरों को सुपाठ्य तरीके से लिख सकता है?', mr: 'विद्यार्थी स्वर स्पष्टपणे काढतो का?' },
+      ],
+      questions: [{ type: 'static', items: [
+        item(
+          { en: 'Which letter comes after अ? ______', hi: 'अ के बाद कौन सा अक्षर आता है? ______', mr: 'अ नंतर कोणते अक्षर येते? ______' },
+          { en: 'आ', hi: 'आ', mr: 'आ' },
+          {
+            support: [
+              { en: 'Circle the correct letter: अ or आ comes first?', hi: 'सही अक्षर पर गोला लगाएं: अ या आ पहले आता है?', mr: 'बरोबर अक्षरावर गोल करा: अ की आ आधी येते?' },
+              { en: 'अ', hi: 'अ', mr: 'अ' },
+            ],
+            stretch: [
+              { en: 'Write the 5 vowels in order: __, __, __, __, __', hi: '5 स्वर क्रम से लिखें: __, __, __, __, __', mr: '५ स्वर क्रमाने लिहा: __, __, __, __, __' },
+              { en: 'अ, आ, इ, ई, उ', hi: 'अ, आ, इ, ई, उ', mr: 'अ, आ, इ, ई, उ' },
+            ],
+          }
+        ),
+        item(
+          { en: 'Draw what आई means.', hi: 'आई का अर्थ चित्र में दिखाएं।', mr: 'आई म्हणजे काय ते चित्र काढा.' },
+          { en: 'Mother / आई', hi: 'माँ / आई', mr: 'आई' },
+          { kind: 'draw', sameAcrossTiers: true, sameReason: 'Visual drawing task equally accessible to all Grade 1 tiers; tests vocabulary recall, not writing skill.' }
+        ),
+        item(
+          { en: 'Which of these is a vowel (स्वर): क or इ?', hi: 'इनमें से स्वर कौन सा है: क या इ?', mr: 'यापैकी स्वर कोणता: क की इ?' },
+          { en: 'इ', hi: 'इ', mr: 'इ' },
+          {
+            support: [
+              { en: 'Is इ a vowel? Yes / No', hi: 'क्या इ एक स्वर है? हाँ / नहीं', mr: 'इ हा स्वर आहे का? होय / नाही' },
+              { en: 'Yes', hi: 'हाँ', mr: 'होय' },
+            ],
+            stretch: [
+              { en: 'Write 3 words that start with a vowel.', hi: '3 ऐसे शब्द लिखें जो स्वर से शुरू हों।', mr: 'स्वराने सुरू होणारे ३ शब्द लिहा.' },
+              { en: 'आम, इमली, उंट (or any correct answers)', hi: 'आम, इमली, उंट (या कोई सही उत्तर)', mr: 'आंबा, इमली, उंट (किंवा कोणतेही बरोबर उत्तर)' },
+            ],
+          }
+        ),
+      ] }],
+    },
+    2: {
+      outcome: {
+        en: 'Reads and writes simple 2-3 letter Marathi words (काका, माला, घर, पाणी); matches word to picture.',
+        hi: '2-3 अक्षरों के सरल मराठी शब्द पढ़ता और लिखता है (काका, माला, घर, पाणी); शब्द को चित्र से मिलाता है।', // reviewed: false
+        mr: 'सोपे २-३ अक्षरी मराठी शब्द वाचतो व लिहितो (काका, माला, घर, पाणी); शब्द चित्राशी जुळवतो.',                // reviewed: false
+      },
+      teacher: {
+        title: { en: 'Word wall: family and home words', hi: 'शब्द दीवार: परिवार और घर के शब्द', mr: 'शब्दभित्ती: कुटुंब आणि घर शब्द' },
+        minutes: 10,
+        steps: [
+          { en: 'Write on board: आई, बाबा, काका, घर, पाणी, दूध.', hi: 'बोर्ड पर लिखें: आई, बाबा, काका, घर, पाणी, दूध।', mr: 'फळ्यावर लिहा: आई, बाबा, काका, घर, पाणी, दूध.' },
+          { en: 'Point to each word; students read aloud in chorus.', hi: 'प्रत्येक शब्द की ओर इंगित करें; विद्यार्थी मिलकर पढ़ें।', mr: 'प्रत्येक शब्दाकडे बोट दाखवा; विद्यार्थी एकत्र मोठ्याने वाचतात.' },
+          { en: 'Show matching picture cards; students call out the word.', hi: 'मिलते-जुलते चित्र कार्ड दिखाएं; विद्यार्थी शब्द बोलें।', mr: 'जुळणारी चित्रकार्डे दाखवा; विद्यार्थी शब्द सांगतात.' },
+        ],
+      },
+      independent: {
+        title: { en: 'Write and match: family words', hi: 'लिखो और मिलाओ: परिवार शब्द', mr: 'लिहा आणि जुळवा: कुटुंब शब्द' },
+        instructions: {
+          en: 'Copy the words from the board into your notebook. Draw a line to the matching picture.',
+          hi: 'बोर्ड से शब्द कॉपी में लिखें। चित्र से रेखा खींचकर मिलाएं।',        // reviewed: false
+          mr: 'फळ्यावरील शब्द वहीत लिहा. चित्राशी रेषेने जुळवा.',                  // reviewed: false
+        },
+        minutes: 10,
+        mode: 'solo',
+        materials: [
+          { en: 'notebook', hi: 'कॉपी', mr: 'वही' },
+          { en: 'pencil', hi: 'पेंसिल', mr: 'पेन्सिल' },
+          { en: 'picture word cards', hi: 'चित्र शब्द कार्ड', mr: 'चित्र शब्द कार्डे' },
+        ],
+      },
+      mapping: defaultMapping('Marathi Language (Sulabhbharati Grade 2)'),
+      earlyFinisher: {
+        en: 'Write 3 more words for things you see at home.',
+        hi: 'घर में दिखने वाली 3 और चीजों के मराठी शब्द लिखें।',  // reviewed: false
+        mr: 'घरी दिसणाऱ्या आणखी ३ वस्तूंचे मराठी शब्द लिहा.',    // reviewed: false
+      },
+      checklist: [
+        { en: 'Can the student read each word card without sounding out every letter?', hi: 'क्या बच्चा हर अक्षर बिना बोले शब्द पढ़ सकता है?', mr: 'प्रत्येक अक्षर न मोजता विद्यार्थी शब्दकार्ड वाचतो का?' },
+        { en: 'Can the student copy the words with correct letter forms?', hi: 'क्या बच्चा शब्दों को सही अक्षर रूप में लिख सकता है?', mr: 'बरोबर अक्षरांसह शब्द लिहितो का?' },
+      ],
+      questions: [{ type: 'static', items: [
+        item(
+          { en: 'Write the Marathi word for "water": ______', hi: '"पानी" के लिए मराठी शब्द लिखें: ______', mr: '"पाणी" हा शब्द वहीत लिहा: ______' },
+          { en: 'पाणी', hi: 'पाणी', mr: 'पाणी' },
+          {
+            support: [
+              { en: 'Circle the correct word for water: पाणी / दूध', hi: '"पानी" के लिए सही शब्द पर गोला लगाएं: पाणी / दूध', mr: 'पाण्यासाठी बरोबर शब्दावर गोल करा: पाणी / दूध' },
+              { en: 'पाणी', hi: 'पाणी', mr: 'पाणी' },
+            ],
+            stretch: [
+              { en: 'Write a sentence using the word पाणी.', hi: 'पाणी शब्द का उपयोग करके एक वाक्य लिखें।', mr: 'पाणी हा शब्द वापरून एक वाक्य लिहा.' },
+              { en: 'Any correct sentence using पाणी', hi: 'पाणी शब्द का उपयोग करने वाला कोई भी वाक्य', mr: 'पाणी शब्द असलेले कोणतेही बरोबर वाक्य' },
+            ],
+          }
+        ),
+        item(
+          { en: 'Match: आई = ______', hi: 'मिलाएं: आई = ______', mr: 'जुळवा: आई = ______' },
+          { en: 'Mother', hi: 'माँ', mr: 'आई (माता)' },
+          {
+            support: [
+              { en: 'आई means: Sister / Mother (circle one)', hi: 'आई का मतलब: बहन / माँ (एक पर गोला लगाएं)', mr: 'आई म्हणजे: बहीण / माता (एकावर गोल करा)' },
+              { en: 'Mother / माँ / माता', hi: 'माँ', mr: 'माता' },
+            ],
+            stretch: [
+              { en: 'Write all 6 family words from the board and their English meaning.', hi: 'बोर्ड से सभी 6 परिवार शब्द और उनके हिंदी अर्थ लिखें।', mr: 'फळ्यावरील सर्व ६ कुटुंब शब्द आणि त्यांचा इंग्रजी अर्थ लिहा.' },
+              { en: 'आई–mother, बाबा–father, काका–uncle, घर–home, पाणी–water, दूध–milk', hi: 'आई–माँ, बाबा–पिता, काका–चाचा, घर–घर, पाणी–पानी, दूध–दूध', mr: 'आई–mother, बाबा–father, काका–uncle, घर–home, पाणी–water, दूध–milk' },
+            ],
+          }
+        ),
+        item(
+          { en: 'How many letters are in the word घर?', hi: '"घर" शब्द में कितने अक्षर हैं?', mr: '"घर" या शब्दात किती अक्षरे आहेत?' },
+          { en: '2', hi: '2', mr: '2' },
+          {
+            support: [
+              { en: 'Count the letters in घर: _ _ (write the count)', hi: 'घर के अक्षर गिनें: _ _ (संख्या लिखें)', mr: 'घर मधील अक्षरे मोजा: _ _ (संख्या लिहा)' },
+              { en: '2', hi: '2', mr: '2' },
+            ],
+            stretch: [
+              { en: 'Write one 2-letter word and one 3-letter word in Marathi.', hi: 'मराठी में एक 2-अक्षरी और एक 3-अक्षरी शब्द लिखें।', mr: 'मराठीत एक २-अक्षरी आणि एक ३-अक्षरी शब्द लिहा.' },
+              { en: 'E.g. घर (2), पाणी (4) or any correct answer', hi: 'जैसे घर (2), पाणी (4) या कोई सही उत्तर', mr: 'उदा. घर (2), पाणी (4) किंवा कोणतेही बरोबर उत्तर' },
+            ],
+          }
+        ),
+      ] }],
+    },
+    3: {
+      outcome: {
+        en: 'Reads a 4-6 word Marathi sentence aloud; fills in a missing word from context; copies the sentence.',
+        hi: '4-6 शब्दों का मराठी वाक्य जोर से पढ़ता है; संदर्भ से लुप्त शब्द भरता है; वाक्य नकल करता है।', // reviewed: false
+        mr: '४-६ शब्दांचे मराठी वाक्य मोठ्याने वाचतो; रिकाम्या जागी बरोबर शब्द घालतो; वाक्य उतरवतो.',   // reviewed: false
+      },
+      teacher: {
+        title: { en: 'Sentence reading: fill the gap', hi: 'वाक्य पठन: रिक्त स्थान भरें', mr: 'वाक्य वाचन: रिकामी जागा भरा' },
+        minutes: 12,
+        steps: [
+          { en: 'Write on board: "माझ्या घरी एक ______ आहे." (कुत्रा / मांजर / गाय)', hi: 'बोर्ड पर लिखें: "माझ्या घरी एक ______ आहे." (कुत्रा / मांजर / गाय)', mr: 'फळ्यावर लिहा: "माझ्या घरी एक ______ आहे." (कुत्रा / मांजर / गाय)' },
+          { en: 'Read the sentence together; call students to fill the blank with their animal.', hi: 'वाक्य एक साथ पढ़ें; विद्यार्थियों को अपने पशु से रिक्त स्थान भरने को कहें।', mr: 'वाक्य एकत्र वाचा; विद्यार्थ्यांना त्यांच्या प्राण्याने रिकामी जागा भरायला सांगा.' },
+          { en: 'Discuss: what other words could fit?', hi: 'चर्चा करें: और कौन से शब्द फिट हो सकते हैं?', mr: 'चर्चा करा: इतर कोणते शब्द येऊ शकतात?' },
+        ],
+      },
+      independent: {
+        title: { en: 'Fill the missing word', hi: 'रिक्त शब्द भरें', mr: 'रिकामी जागा भरा' },
+        instructions: {
+          en: 'Read each sentence. Fill in the missing word from the word box.',
+          hi: 'प्रत्येक वाक्य पढ़ें। शब्द बॉक्स से लुप्त शब्द भरें।',  // reviewed: false
+          mr: 'प्रत्येक वाक्य वाचा. शब्दपेटीतून रिकामी जागा भरा.',    // reviewed: false
+        },
+        minutes: 15,
+        mode: 'solo',
+        materials: [
+          { en: 'worksheet with 4 fill-in-the-blank sentences', hi: 'रिक्त स्थान भरने की वर्कशीट', mr: 'रिकामी जागा भरण्याची कार्यपत्रिका' },
+          { en: 'pencil', hi: 'पेंसिल', mr: 'पेन्सिल' },
+        ],
+      },
+      mapping: defaultMapping('Marathi Language (Sulabhbharati Grade 3)'),
+      earlyFinisher: {
+        en: 'Write 2 more sentences using words from the word box.',
+        hi: 'शब्द बॉक्स के शब्दों से 2 और वाक्य लिखें।',  // reviewed: false
+        mr: 'शब्दपेटीतील शब्द वापरून आणखी २ वाक्ये लिहा.', // reviewed: false
+      },
+      checklist: [
+        { en: 'Can the student read the sentence fluently (without stopping at each word)?', hi: 'क्या बच्चा वाक्य धाराप्रवाह पढ़ सकता है?', mr: 'विद्यार्थी अडखळल्याशिवाय वाक्य वाचतो का?' },
+        { en: 'Does the student choose a contextually correct missing word?', hi: 'क्या बच्चा संदर्भ के अनुसार सही शब्द चुनता है?', mr: 'विद्यार्थी संदर्भानुसार बरोबर शब्द निवडतो का?' },
+      ],
+      questions: [{ type: 'static', items: [
+        item(
+          { en: 'Fill in the blank: "माझे नाव ______ आहे."', hi: 'रिक्त स्थान भरें: "माझे नाव ______ आहे."', mr: 'रिकामी जागा भरा: "माझे नाव ______ आहे."' },
+          { en: 'Student writes their own name (any correct answer)', hi: 'विद्यार्थी अपना नाम लिखे (कोई भी सही उत्तर)', mr: 'विद्यार्थी स्वतःचे नाव लिहेल (कोणतेही बरोबर उत्तर)' },
+          {
+            support: [
+              { en: 'My name starts with which letter? Write it: ______', hi: 'मेरे नाम का पहला अक्षर कौन सा है? लिखें: ______', mr: 'माझ्या नावाचे पहिले अक्षर कोणते? लिहा: ______' },
+              { en: 'Student writes the first letter of their name', hi: 'विद्यार्थी अपने नाम का पहला अक्षर लिखे', mr: 'विद्यार्थी स्वतःच्या नावाचे पहिले अक्षर लिहेल' },
+            ],
+            stretch: [
+              { en: 'Write a full sentence: "माझे नाव ______ आहे. मी ______ गावात राहतो/राहते."', hi: 'पूरा वाक्य लिखें: "माझे नाव ______ आहे. मी ______ गावात राहतो/राहते."', mr: 'पूर्ण वाक्ये लिहा: "माझे नाव ______ आहे. मी ______ गावात राहतो/राहते."' },
+              { en: 'Student writes two sentences with their name and village', hi: 'विद्यार्थी अपना नाम और गाँव लिखकर दो वाक्य लिखे', mr: 'विद्यार्थी नाव व गाव वापरून दोन वाक्ये लिहेल' },
+            ],
+          }
+        ),
+        item(
+          { en: 'Fill in the blank: "आकाश ______ आहे." (निळे / लाल / हिरवे)', hi: 'रिक्त स्थान भरें: "आकाश ______ आहे." (निळे / लाल / हिरवे)', mr: 'रिकामी जागा भरा: "आकाश ______ आहे." (निळे / लाल / हिरवे)' },
+          { en: 'निळे (blue)', hi: 'निळे (नीला)', mr: 'निळे' },
+          {
+            support: [
+              { en: 'The sky is: निळे / लाल? Circle the correct word.', hi: 'आकाश: निळे / लाल? सही शब्द पर गोला लगाएं।', mr: 'आकाश: निळे / लाल? बरोबर शब्दावर गोल करा.' },
+              { en: 'निळे', hi: 'निळे', mr: 'निळे' },
+            ],
+            stretch: [
+              { en: 'Write a sentence about the colour of the grass.', hi: 'घास के रंग के बारे में एक वाक्य लिखें।', mr: 'गवताच्या रंगाबद्दल एक वाक्य लिहा.' },
+              { en: 'गवत हिरवे असते. (Grass is green.)', hi: 'गवत हिरवे असते।', mr: 'गवत हिरवे असते.' },
+            ],
+          }
+        ),
+        item(
+          { en: 'Copy this sentence: "सूर्य पूर्वेला उगवतो."', hi: 'इस वाक्य को नकल करें: "सूर्य पूर्वेला उगवतो।"', mr: 'हे वाक्य उतरवा: "सूर्य पूर्वेला उगवतो."' },
+          { en: 'सूर्य पूर्वेला उगवतो. (The sun rises in the east.)', hi: 'सूर्य पूर्वेला उगवतो।', mr: 'सूर्य पूर्वेला उगवतो.' },
+          {
+            support: [
+              { en: 'Copy the first 2 words only: "सूर्य पूर्वेला"', hi: 'केवल पहले 2 शब्द नकल करें: "सूर्य पूर्वेला"', mr: 'फक्त पहिले २ शब्द उतरवा: "सूर्य पूर्वेला"' },
+              { en: 'सूर्य पूर्वेला', hi: 'सूर्य पूर्वेला', mr: 'सूर्य पूर्वेला' },
+            ],
+            stretch: [
+              { en: 'Copy the sentence and write an opposite sentence about where the sun sets.', hi: 'वाक्य नकल करें और सूर्यास्त के बारे में एक विपरीत वाक्य लिखें।', mr: 'वाक्य उतरवा आणि सूर्यास्ताबद्दल विरुद्ध वाक्य लिहा.' },
+              { en: 'सूर्य पश्चिमेला मावळतो. (The sun sets in the west.)', hi: 'सूर्य पश्चिमेला मावळतो।', mr: 'सूर्य पश्चिमेला मावळतो.' },
+            ],
+          }
+        ),
+      ] }],
+    },
+    4: {
+      outcome: {
+        en: 'Reads a short Marathi paragraph (5-6 sentences) and answers 2 comprehension questions in writing.',
+        hi: 'एक छोटा मराठी अनुच्छेद (5-6 वाक्य) पढ़ता है और 2 लिखित प्रश्नों के उत्तर देता है।', // reviewed: false
+        mr: 'एक छोटा मराठी उतारा (५-६ वाक्ये) वाचतो आणि २ समजआधारित प्रश्नांची लेखी उत्तरे देतो.',   // reviewed: false
+      },
+      teacher: {
+        title: { en: 'Shared reading: our school', hi: 'साझा पठन: हमारी शाला', mr: 'सामायिक वाचन: आमची शाळा' },
+        minutes: 12,
+        steps: [
+          { en: 'Write a 5-sentence paragraph on the board about the school building, playground, and teacher.', hi: 'बोर्ड पर शाला भवन, मैदान और शिक्षक के बारे में 5 वाक्यों का अनुच्छेद लिखें।', mr: 'फळ्यावर शाळेची इमारत, मैदान आणि शिक्षक यांबद्दल ५ वाक्यांचा उतारा लिहा.' },
+          { en: 'Read aloud twice; students follow with finger.', hi: 'दो बार जोर से पढ़ें; विद्यार्थी उंगली से अनुसरण करें।', mr: 'दोनदा मोठ्याने वाचा; विद्यार्थी बोटाने अनुसरण करतात.' },
+          { en: 'Ask 2 oral comprehension questions; invite answers.', hi: '2 मौखिक प्रश्न पूछें; उत्तर आमंत्रित करें।', mr: '२ तोंडी प्रश्न विचारा; उत्तरांसाठी आमंत्रण द्या.' },
+        ],
+      },
+      independent: {
+        title: { en: 'Read and answer: our school', hi: 'पढ़ो और उत्तर दो: हमारी शाला', mr: 'वाचा आणि उत्तर द्या: आमची शाळा' },
+        instructions: {
+          en: 'Read the paragraph from the board carefully. Answer the 2 questions in full Marathi sentences.',
+          hi: 'बोर्ड से अनुच्छेद ध्यान से पढ़ें। 2 प्रश्नों के उत्तर पूरे मराठी वाक्यों में दें।', // reviewed: false
+          mr: 'फळ्यावरील उतारा काळजीपूर्वक वाचा. २ प्रश्नांची उत्तरे पूर्ण मराठी वाक्यांत द्या.',  // reviewed: false
+        },
+        minutes: 18,
+        mode: 'solo',
+        materials: [
+          { en: 'notebook', hi: 'कॉपी', mr: 'वही' },
+          { en: 'pencil', hi: 'पेंसिल', mr: 'पेन्सिल' },
+        ],
+      },
+      mapping: defaultMapping('Marathi Language (Sulabhbharati Grade 4)'),
+      earlyFinisher: {
+        en: 'Write 3 more sentences adding to the paragraph about what you like best at school.',
+        hi: 'स्कूल में आपको सबसे अच्छा क्या लगता है, इस पर 3 और वाक्य जोड़ें।',  // reviewed: false
+        mr: 'शाळेत तुम्हाला सर्वात आवडते काय यावर आणखी ३ वाक्ये जोडा.',          // reviewed: false
+      },
+      checklist: [
+        { en: 'Does the student re-read the paragraph before answering?', hi: 'क्या बच्चा उत्तर देने से पहले अनुच्छेद दोबारा पढ़ता है?', mr: 'उत्तर देण्यापूर्वी विद्यार्थी उतारा पुन्हा वाचतो का?' },
+        { en: 'Are the answers in complete Marathi sentences?', hi: 'क्या उत्तर पूरे मराठी वाक्यों में हैं?', mr: 'उत्तरे पूर्ण मराठी वाक्यांत आहेत का?' },
+      ],
+      questions: [{ type: 'static', items: [
+        item(
+          { en: 'Answer in Marathi: "आमची शाळा कुठे आहे?" (Answer: village name or "गावात")', hi: 'मराठी में उत्तर दें: "आमची शाळा कुठे आहे?"', mr: 'मराठीत उत्तर द्या: "आमची शाळा कुठे आहे?"' },
+          { en: 'Student writes their village or answers from the paragraph', hi: 'विद्यार्थी अपने गाँव का या अनुच्छेद से उत्तर लिखे', mr: 'विद्यार्थी त्यांच्या गावाचे किंवा उताऱ्यातील उत्तर लिहेल' },
+          {
+            support: [
+              { en: 'Circle the answer in the paragraph: शाळा कुठे आहे?', hi: 'अनुच्छेद में उत्तर पर गोला लगाएं: शाळा कुठे आहे?', mr: 'उताऱ्यात उत्तरावर गोल करा: शाळा कुठे आहे?' },
+              { en: 'Student circles the location in the paragraph', hi: 'विद्यार्थी अनुच्छेद में स्थान पर गोला लगाए', mr: 'विद्यार्थी उताऱ्यातील ठिकाण गोलाकार करेल' },
+            ],
+            stretch: [
+              { en: 'Write 2 sentences: one about where the school is, one about your favourite part of school.', hi: '2 वाक्य लिखें: एक शाला की स्थिति के बारे में, एक अपनी पसंदीदा बात के बारे में।', mr: '२ वाक्ये लिहा: एक शाळेच्या ठिकाणाबद्दल, एक आपल्या आवडत्या गोष्टीबद्दल.' },
+              { en: 'Student writes 2 complete sentences', hi: 'विद्यार्थी 2 पूरे वाक्य लिखे', mr: 'विद्यार्थी २ पूर्ण वाक्ये लिहेल' },
+            ],
+          }
+        ),
+        item(
+          { en: 'Fill in the blank from the paragraph: "मैदानात मुले ______ खेळतात."', hi: 'अनुच्छेद से रिक्त स्थान भरें: "मैदानात मुले ______ खेळतात।"', mr: 'उताऱ्यातून रिकामी जागा भरा: "मैदानात मुले ______ खेळतात."' },
+          { en: 'Answer depends on the paragraph written on the board (any appropriate sport/game)', hi: 'उत्तर बोर्ड पर लिखे अनुच्छेद पर निर्भर (कोई भी उचित खेल)', mr: 'उत्तर फळ्यावर लिहिलेल्या उताऱ्यावर अवलंबून (कोणताही उचित खेळ)' },
+          {
+            support: [
+              { en: 'What do children play in the field? Find the word in the paragraph.', hi: 'मैदान में बच्चे क्या खेलते हैं? अनुच्छेद में शब्द खोजें।', mr: 'मैदानात मुले काय खेळतात? उताऱ्यात शब्द शोधा.' },
+              { en: 'Student finds and copies word from paragraph', hi: 'विद्यार्थी अनुच्छेद से शब्द खोजकर लिखे', mr: 'विद्यार्थी उताऱ्यातून शब्द शोधून लिहेल' },
+            ],
+            stretch: [
+              { en: 'What games do you play at school? Write 3 in Marathi.', hi: 'आप स्कूल में कौन से खेल खेलते हैं? मराठी में 3 लिखें।', mr: 'तुम्ही शाळेत कोणते खेळ खेळता? मराठीत ३ लिहा.' },
+              { en: 'Student writes 3 games in Marathi from own knowledge', hi: 'विद्यार्थी अपने ज्ञान से 3 खेल लिखे', mr: 'विद्यार्थी स्वतःच्या माहितीतून ३ खेळ लिहेल' },
+            ],
+          }
+        ),
+        item(
+          { en: 'Write one sentence about what you see on your way to school.', hi: 'स्कूल जाते समय रास्ते में क्या दिखता है, एक वाक्य लिखें।', mr: 'शाळेच्या वाटेवर काय दिसते याबद्दल एक वाक्य लिहा.' },
+          { en: 'Any correct Marathi sentence based on student\'s experience', hi: 'विद्यार्थी के अनुभव पर आधारित कोई भी सही वाक्य', mr: 'विद्यार्थ्याच्या अनुभवावर आधारित कोणतेही बरोबर वाक्य' },
+          {
+            support: [
+              { en: 'Choose one: "वाटेत ______ दिसतो." (झाड / नदी / दुकान)', hi: 'एक चुनें: "वाटेत ______ दिसतो." (झाड / नदी / दुकान)', mr: 'एक निवडा: "वाटेत ______ दिसतो." (झाड / नदी / दुकान)' },
+              { en: 'Any correct word from the options', hi: 'दिए गए विकल्पों में से कोई सही शब्द', mr: 'पर्यायातील कोणताही बरोबर शब्द' },
+            ],
+            stretch: [
+              { en: 'Write 3 sentences describing your walk to school.', hi: 'स्कूल जाने के रास्ते का वर्णन करते हुए 3 वाक्य लिखें।', mr: 'शाळेच्या वाटेचे वर्णन करणारी ३ वाक्ये लिहा.' },
+              { en: 'Student writes 3 correct Marathi sentences', hi: 'विद्यार्थी 3 सही मराठी वाक्य लिखे', mr: 'विद्यार्थी ३ बरोबर मराठी वाक्ये लिहेल' },
+            ],
+          }
+        ),
+      ] }],
+    },
+    5: {
+      outcome: {
+        en: 'Writes a 5-6 sentence paragraph in Marathi on a familiar topic (family, school, village); uses correct punctuation.',
+        hi: 'परिचित विषय (परिवार, शाला, गाँव) पर 5-6 वाक्यों का मराठी अनुच्छेद लिखता है; सही विराम चिह्न उपयोग करता है।', // reviewed: false
+        mr: 'परिचित विषयावर (कुटुंब, शाळा, गाव) ५-६ वाक्यांचा मराठी उतारा लिहितो; विरामचिन्हे बरोबर वापरतो.',          // reviewed: false
+      },
+      teacher: {
+        title: { en: 'Paragraph writing: my village', hi: 'अनुच्छेद लेखन: माझे गाव', mr: 'उतारा लेखन: माझे गाव' },
+        minutes: 12,
+        steps: [
+          { en: 'Show a model paragraph on the board about a village (5 sentences). Point out the full stop (।) after each sentence.', hi: 'बोर्ड पर गाँव के बारे में एक नमूना अनुच्छेद दिखाएं (5 वाक्य)। हर वाक्य के बाद पूर्ण विराम (।) दर्शाएं।', mr: 'फळ्यावर गावाबद्दल एक नमुना उतारा दाखवा (५ वाक्ये). प्रत्येक वाक्यानंतर पूर्णविराम (।) दाखवा.' },
+          { en: 'Discuss the structure: topic sentence, detail sentences, closing.', hi: 'संरचना की चर्चा करें: विषय वाक्य, विस्तार वाक्य, समापन।', mr: 'रचनेची चर्चा करा: विषय वाक्य, तपशील वाक्ये, समारोप.' },
+          { en: 'Students plan their own paragraph (topic: their home / village).', hi: 'विद्यार्थी अपने अनुच्छेद की योजना बनाएं (विषय: अपना घर / गाँव)।', mr: 'विद्यार्थी स्वतःच्या उताऱ्याची आखणी करतात (विषय: घर / गाव).' },
+        ],
+      },
+      independent: {
+        title: { en: 'Write: माझे गाव', hi: 'लिखो: माझे गाव', mr: 'लिहा: माझे गाव' },
+        instructions: {
+          en: 'Write a paragraph of at least 5 sentences about your village or home. Use पूर्णविराम (।) after each sentence.',
+          hi: 'अपने गाँव या घर के बारे में कम से कम 5 वाक्यों का अनुच्छेद लिखें। हर वाक्य के बाद पूर्ण विराम (।) लगाएं।', // reviewed: false
+          mr: 'आपल्या गावाबद्दल किंवा घराबद्दल किमान ५ वाक्यांचा उतारा लिहा. प्रत्येक वाक्यानंतर पूर्णविराम (।) वापरा.', // reviewed: false
+        },
+        minutes: 22,
+        mode: 'solo',
+        materials: [
+          { en: 'notebook', hi: 'कॉपी', mr: 'वही' },
+          { en: 'pencil', hi: 'पेंसिल', mr: 'पेन्सिल' },
+        ],
+      },
+      mapping: defaultMapping('Marathi Language (Sulabhbharati Grade 5)'),
+      earlyFinisher: {
+        en: 'Write a second paragraph about what you would like to change or improve in your village.',
+        hi: 'अपने गाँव में क्या बदलना चाहेंगे उस पर एक और अनुच्छेद लिखें।',  // reviewed: false
+        mr: 'तुमच्या गावात काय बदलायचे आहे यावर आणखी एक उतारा लिहा.',         // reviewed: false
+      },
+      checklist: [
+        { en: 'Does the paragraph have at least 5 complete sentences?', hi: 'क्या अनुच्छेद में कम से कम 5 पूरे वाक्य हैं?', mr: 'उताऱ्यात किमान ५ पूर्ण वाक्ये आहेत का?' },
+        { en: 'Does the student use पूर्णविराम (।) correctly?', hi: 'क्या विद्यार्थी पूर्ण विराम (।) सही उपयोग करता है?', mr: 'विद्यार्थी पूर्णविराम (।) बरोबर वापरतो का?' },
+      ],
+      questions: [{ type: 'static', items: [
+        item(
+          { en: 'What punctuation mark (विरामचिन्ह) is used at the end of a sentence in Marathi?', hi: 'मराठी में वाक्य के अंत में कौन सा विराम चिह्न आता है?', mr: 'मराठीत वाक्याच्या शेवटी कोणते विरामचिन्ह वापरतात?' },
+          { en: 'पूर्णविराम (।)', hi: 'पूर्ण विराम (।)', mr: 'पूर्णविराम (।)' },
+          {
+            support: [
+              { en: 'Is (।) a full stop in Marathi? Yes / No', hi: '(।) मराठी का पूर्ण विराम है? हाँ / नहीं', mr: '(।) हे मराठी पूर्णविराम आहे का? होय / नाही' },
+              { en: 'Yes', hi: 'हाँ', mr: 'होय' },
+            ],
+            stretch: [
+              { en: 'Name 3 different विरामचिन्हे (punctuation marks) used in Marathi writing.', hi: 'मराठी लेखन में प्रयुक्त 3 विभिन्न विराम चिह्नों के नाम बताएं।', mr: 'मराठी लेखनात वापरण्यात येणाऱ्या ३ वेगळ्या विरामचिन्हांची नावे सांगा.' },
+              { en: 'पूर्णविराम (।), स्वल्पविराम (,), प्रश्नचिन्ह (?)', hi: 'पूर्ण विराम (।), अल्प विराम (,), प्रश्न चिह्न (?)', mr: 'पूर्णविराम (।), स्वल्पविराम (,), प्रश्नचिन्ह (?)' },
+            ],
+          }
+        ),
+        item(
+          { en: 'Write one topic sentence for a paragraph about "माझे गाव".', hi: '"माझे गाव" पर एक अनुच्छेद के लिए एक विषय वाक्य लिखें।', mr: '"माझे गाव" या विषयावरील उताऱ्यासाठी एक विषय वाक्य लिहा.' },
+          { en: 'Any correct topic sentence, e.g. "माझे गाव खूप सुंदर आहे."', hi: 'कोई भी सही विषय वाक्य, जैसे "माझे गाव खूप सुंदर आहे।"', mr: 'कोणतेही बरोबर विषय वाक्य, उदा. "माझे गाव खूप सुंदर आहे."' },
+          {
+            support: [
+              { en: 'Complete the sentence: "माझे गाव ______ आहे."', hi: 'वाक्य पूरा करें: "माझे गाव ______ आहे।"', mr: 'वाक्य पूर्ण करा: "माझे गाव ______ आहे."' },
+              { en: 'Any correct adjective, e.g. सुंदर, मोठे, लहान', hi: 'कोई भी सही विशेषण, जैसे सुंदर, मोठे, लहान', mr: 'कोणतेही बरोबर विशेषण, उदा. सुंदर, मोठे, लहान' },
+            ],
+            stretch: [
+              { en: 'Write the full 5-sentence paragraph about माझे गाव with a topic sentence, 3 details, and a closing sentence.', hi: '"माझे गाव" पर पूरा 5-वाक्य अनुच्छेद लिखें, जिसमें विषय वाक्य, 3 विस्तार और समापन वाक्य हो।', mr: '"माझे गाव" वर विषय वाक्य, ३ तपशील आणि समारोप वाक्यासह ५-वाक्यी उतारा लिहा.' },
+              { en: 'Student writes a complete 5-sentence paragraph', hi: 'विद्यार्थी 5 वाक्यों का पूरा अनुच्छेद लिखे', mr: 'विद्यार्थी ५ वाक्यांचा पूर्ण उतारा लिहेल' },
+            ],
+          }
+        ),
+        item(
+          { en: 'Put the correct विरामचिन्ह: "माझ्या गावात एक नदी आहे ___"', hi: 'सही विराम चिह्न लगाएं: "माझ्या गावात एक नदी आहे ___"', mr: 'बरोबर विरामचिन्ह लावा: "माझ्या गावात एक नदी आहे ___"' },
+          { en: '। (पूर्णविराम)', hi: '। (पूर्ण विराम)', mr: '। (पूर्णविराम)' },
+          {
+            support: [
+              { en: 'Which goes at the end of a statement: । or ?', hi: 'कथन के अंत में क्या लगता है: । या ?', mr: 'विधानाच्या शेवटी काय येते: । की ?' },
+              { en: '।', hi: '।', mr: '।' },
+            ],
+            stretch: [
+              { en: 'Rewrite this sentence as a question: "माझ्या गावात एक नदी आहे।"', hi: 'इस वाक्य को प्रश्न में बदलें: "माझ्या गावात एक नदी आहे।"', mr: 'हे वाक्य प्रश्नात रूपांतरित करा: "माझ्या गावात एक नदी आहे।"' },
+              { en: '"माझ्या गावात नदी आहे का?" or similar correct question form', hi: '"माझ्या गावात नदी आहे का?" या इसी प्रकार का प्रश्न वाक्य', mr: '"माझ्या गावात नदी आहे का?" किंवा तत्सम बरोबर प्रश्न वाक्य' },
+            ],
+          }
+        ),
+      ] }],
+    },
+  },
+};
+
+export const TOPICS: Topic[] = [water, market, shapes, body, plants, time, neighbourhood, fractions, animals, marathiLang];
 export const getTopic = (id: string): Topic => TOPICS.find((t) => t.id === id) ?? TOPICS[0];
 export type { GradePlan };

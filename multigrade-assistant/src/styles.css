@@ -320,6 +320,16 @@ input:focus {
   color: #6ee7b7;
 }
 
+.tag-lang {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+[data-theme='dark'] .tag-lang {
+  background: #451a03;
+  color: #fde68a;
+}
+
 .topic-chevron {
   opacity: 0.6;
   font-size: 0.75rem;

@@ -111,7 +111,7 @@ export function Planner({
                   </span>
                   {mode === 'multi_subject' && (
                     <span className={`subject-tag tag-${activeTopic.subject}`} style={{ fontSize: '0.75rem', fontWeight: 600 }}>
-                      {activeTopic.subject === 'math' ? '📐' : '🌱'} {cleanTitle}
+                      {activeTopic.subject === 'math' ? '📐' : activeTopic.subject === 'evs' ? '🌱' : '📖'} {cleanTitle}
                     </span>
                   )}
                   <span className="staircase-step-outcome">
@@ -176,12 +176,14 @@ export function Planner({
                   }}
                   title={lang === 'hi' ? 'विषय बदलें' : lang === 'mr' ? 'विषय बदला' : 'Change topic/subject'}
                 >
-                  <span>{activeTopic.subject === 'math' ? '📐' : '🌱'}</span>
+                  <span>{activeTopic.subject === 'math' ? '📐' : activeTopic.subject === 'evs' ? '🌱' : '📖'}</span>
                   <span>{cleanedTitle}</span>
                   <span className={`subject-tag tag-${activeTopic.subject}`} style={{ fontSize: '0.72rem' }}>
                     {activeTopic.subject === 'math'
                       ? lang === 'hi' ? 'गणित' : lang === 'mr' ? 'गणित' : 'Maths'
-                      : lang === 'hi' ? 'पर्यावरण' : lang === 'mr' ? 'परिसर' : 'EVS'}
+                      : activeTopic.subject === 'evs'
+                      ? lang === 'hi' ? 'पर्यावरण' : lang === 'mr' ? 'परिसर' : 'EVS'
+                      : lang === 'hi' ? 'भाषा' : lang === 'mr' ? 'भाषा' : 'Language'}
                   </span>
                   <span style={{ fontSize: '0.7rem' }}>✏️</span>
                 </button>

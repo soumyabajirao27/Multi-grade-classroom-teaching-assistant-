@@ -9,7 +9,7 @@ export function Sheet({ ws, lang, showKey }: { ws: Worksheet; lang: Lang; showKe
         Grade {ws.grade} · {ws.title}{' '}
         {ws.subject && (
           <span className={`subject-tag tag-${ws.subject}`} style={{ fontSize: '0.75rem', verticalAlign: 'middle', marginRight: 4 }}>
-            {ws.subject === 'math' ? '📐 Maths' : '🌱 EVS'}
+            {ws.subject === 'math' ? '📐 Maths' : ws.subject === 'evs' ? '🌱 EVS' : '📖 Language'}
           </span>
         )}
         <span className={`tier tier-${ws.tier}`}>{t(lang, `tier_${ws.tier}` as const)}</span>

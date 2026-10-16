@@ -358,7 +358,7 @@ export function App() {
               aria-label={`${t(lang, 'topic')}: ${cleanedTopicTitle}`}
             >
               <span className="topic-card-icon" aria-hidden="true">
-                {topic.subject === 'math' ? '📐' : '🌱'}
+                {topic.subject === 'math' ? '📐' : topic.subject === 'evs' ? '🌱' : '📖'}
               </span>
               <span>{cleanedTopicTitle}</span>
               <span className={`subject-tag tag-${topic.subject}`}>
@@ -368,11 +368,17 @@ export function App() {
                     : lang === 'mr'
                     ? 'गणित'
                     : 'Maths'
+                  : topic.subject === 'evs'
+                  ? lang === 'hi'
+                    ? 'पर्यावरण'
+                    : lang === 'mr'
+                    ? 'परिसर'
+                    : 'EVS'
                   : lang === 'hi'
-                  ? 'पर्यावरण'
+                  ? 'भाषा'
                   : lang === 'mr'
-                  ? 'परिसर'
-                  : 'EVS'}
+                  ? 'भाषा'
+                  : 'Language'}
               </span>
               <span className="topic-chevron" aria-hidden="true">▼</span>
             </button>
@@ -405,7 +411,7 @@ export function App() {
                     title={`Grade ${g}: Click to change subject/topic`}
                   >
                     <b style={{ color: `var(--g${g})` }}>G{g}</b>
-                    <span>{assignedTopic.subject === 'math' ? '📐' : '🌱'}</span>
+                    <span>{assignedTopic.subject === 'math' ? '📐' : assignedTopic.subject === 'evs' ? '🌱' : '📖'}</span>
                     <span>{title}</span>
                     <span style={{ fontSize: '0.7rem' }}>▼</span>
                   </button>

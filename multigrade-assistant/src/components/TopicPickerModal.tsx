@@ -10,7 +10,7 @@ interface TopicPickerModalProps {
   selectedTopicId: string;
   onSelectTopic: (id: string) => void;
   lang: Lang;
-  initialSubjectFilter?: 'all' | 'math' | 'evs';
+  initialSubjectFilter?: 'all' | 'math' | 'evs' | 'lang';
 }
 
 export function TopicPickerModal({
@@ -22,7 +22,7 @@ export function TopicPickerModal({
   initialSubjectFilter = 'all',
 }: TopicPickerModalProps) {
   const [search, setSearch] = useState('');
-  const [filterSubject, setFilterSubject] = useState<'all' | 'math' | 'evs'>('all');
+  const [filterSubject, setFilterSubject] = useState<'all' | 'math' | 'evs' | 'lang'>('all');
   const searchInputRef = useRef<HTMLInputElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
@@ -46,7 +46,12 @@ export function TopicPickerModal({
     const cleanTitle = cleanTopicTitle(tp.title[lang] || tp.title.en).toLowerCase();
     const rawTitle = (tp.title[lang] || '').toLowerCase();
     const rawEn = tp.title.en.toLowerCase();
-    const subjectLabel = tp.subject === 'math' ? 'maths गणित' : 'evs पर्यावरण परिसर अभ्यास';
+    const subjectLabel =
+      tp.subject === 'math'
+        ? 'maths गणित'
+        : tp.subject === 'evs'
+        ? 'evs पर्यावरण परिसर अभ्यास'
+        : 'lang language भाषा मराठी';
     return cleanTitle.includes(q) || rawTitle.includes(q) || rawEn.includes(q) || subjectLabel.includes(q);
   });
 
@@ -152,6 +157,14 @@ export function TopicPickerModal({
             >
               🌱 {lang === 'hi' ? 'पर्यावरण' : lang === 'mr' ? 'परिसर' : 'EVS'}
             </button>
+            <button
+              type="button"
+              className={filterSubject === 'lang' ? 'active' : ''}
+              onClick={() => setFilterSubject('lang')}
+              aria-pressed={filterSubject === 'lang'}
+            >
+              📖 {lang === 'hi' ? 'भाषा' : lang === 'mr' ? 'भाषा' : 'Language'}
+            </button>
           </div>
         </div>
 
@@ -164,7 +177,7 @@ export function TopicPickerModal({
           {filteredTopics.map((tp) => {
             const isSelected = tp.id === selectedTopicId;
             const cleanedTitle = cleanTopicTitle(tp.title[lang] || tp.title.en);
-            const icon = tp.subject === 'math' ? '📐' : '🌱';
+            const icon = tp.subject === 'math' ? '📐' : tp.subject === 'evs' ? '🌱' : '📖';
             const subjectTag =
               tp.subject === 'math'
                 ? lang === 'hi'
@@ -172,11 +185,17 @@ export function TopicPickerModal({
                   : lang === 'mr'
                   ? 'गणित'
                   : 'Maths'
+                : tp.subject === 'evs'
+                ? lang === 'hi'
+                  ? 'पर्यावरण'
+                  : lang === 'mr'
+                  ? 'परिसर अभ्यास'
+                  : 'EVS'
                 : lang === 'hi'
-                ? 'पर्यावरण'
+                ? 'भाषा'
                 : lang === 'mr'
-                ? 'परिसर अभ्यास'
-                : 'EVS';
+                ? 'भाषा'
+                : 'Language';
 
             return (
               <button

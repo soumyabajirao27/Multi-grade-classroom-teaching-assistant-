@@ -368,7 +368,7 @@ export function Rotation({
               : `${t(lang, 'nowTeaching')}: Grade ${cur?.grade}${cur?.pass ? ` · Pass ${cur.pass}` : ''} (${cur?.minutes} min)`}
             {cur?.topic && (
               <span className={`subject-tag tag-${cur.topic.subject}`} style={{ marginLeft: 8, fontSize: '0.75rem' }}>
-                {cur.topic.subject === 'math' ? '📐' : '🌱'} {cleanTopicTitle(cur.topic.title[lang] || cur.topic.title.en)}
+                {cur.topic.subject === 'math' ? '📐' : cur.topic.subject === 'evs' ? '🌱' : '📖'} {cleanTopicTitle(cur.topic.title[lang] || cur.topic.title.en)}
               </span>
             )}
           </span>
@@ -513,7 +513,7 @@ export function Rotation({
                       <b>{t(lang, 'teacherLed')}</b>
                       {mode === 'multi_subject' && (
                         <div className="small" style={{ fontSize: '0.75rem', marginTop: 2 }}>
-                          {gradeTopic.subject === 'math' ? '📐' : '🌱'} {cleanTopicTitle(gradeTopic.title[lang] || gradeTopic.title.en)}
+                          {gradeTopic.subject === 'math' ? '📐' : gradeTopic.subject === 'evs' ? '🌱' : '📖'} {cleanTopicTitle(gradeTopic.title[lang] || gradeTopic.title.en)}
                         </div>
                       )}
                     </td>
@@ -522,7 +522,7 @@ export function Rotation({
                       <span>{t(lang, 'selfWork')}</span>
                       {mode === 'multi_subject' && (
                         <div className="small" style={{ fontSize: '0.72rem', color: 'var(--mute)', marginTop: 2 }}>
-                          {gradeTopic.subject === 'math' ? '📐' : '🌱'} {cleanTopicTitle(gradeTopic.title[lang] || gradeTopic.title.en)}
+                          {gradeTopic.subject === 'math' ? '📐' : gradeTopic.subject === 'evs' ? '🌱' : '📖'} {cleanTopicTitle(gradeTopic.title[lang] || gradeTopic.title.en)}
                         </div>
                       )}
                     </td>
