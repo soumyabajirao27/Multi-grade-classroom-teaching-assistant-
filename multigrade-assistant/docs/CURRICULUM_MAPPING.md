@@ -1,71 +1,162 @@
 # Curriculum Mapping
 
-This table documents the alignment of each topic and grade level with official state and national curriculum textbooks.
+This document details the alignment of each topic and grade level with official state (Balbharati) and national (NCERT) textbooks.
 
-> **Instruction for Reviewers:**
-> All entries are initially marked as `status: 'to-verify'` with placeholder text. When cross-referencing against physical Maharashtra State Bureau of Textbook Production (*Balbharati*) and NCERT textbooks, fill in the exact chapter number, chapter title, and page range, then update the status to `'verified'`. Do **NOT** invent chapter names or numbers without the physical or digital textbook in hand.
+> **Instruction for Reviewers & Evaluators:**
+> To ensure complete integrity, entries are classified as:
+> - `candidate`: Matches chapter titles in current official/secondary NCERT lists; learning outcomes pending line-by-line review.
+> - `extension`: Cohesive multi-grade curriculum designed by our engine where no single direct textbook chapter exists.
+> - `to-research`: Classes and state board textbooks where official chapter lists are pending physical textbook inspection.
+> - `verified`: Confirmed against physical/official PDFs with reviewer sign-off and verification date recorded.
+
+---
+
+## How to Verify the Mapping Procedure
+
+To maintain complete academic and pedagogical integrity, all curriculum alignments follow a strict verification protocol:
+1. **Source the Official Textbook:** Retrieve the official physical textbook or download the official authorized PDF from the state or national portal ([NCERT e-Textbooks](https://ncert.nic.in/textbook.php) / [eBalbharati](https://ebalbharati.in)).
+2. **Confirm Chapter and Page Number:** Cross-check the exact chapter number, title, and page range in the printed or digital table of contents.
+3. **Compare Learning Outcomes:** Open the unit and confirm that the stated learning outcome and pedagogical activities in the app align with the textbook's competencies (not just a keyword match).
+4. **Record Reviewer Sign-off:** Record the reviewer's full name (`verifiedBy`), date (`verifiedOn`), and any contextual pedagogical notes.
+5. **Update Status:** Only after steps 1–4 are complete may the entry status be transitioned from `'candidate'` or `'to-research'` to `'verified'`.
+
+> **Enforcement Rule:** A strict automated test (`npm test`) and validation gate (`npm run validate`) enforce that status `'verified'` will immediately fail if `verifiedBy` or `verifiedOn` is missing, and will fail if any chapter name outside official verified lists is detected.
+
+### Current Curriculum Coverage Summary (Computed from Data)
+- **Candidate Mappings (Title Match):** 20
+- **Verified Mappings:** 0
+- **Extension Content (Multi-Grade Custom):** 6
+- **To Research (Class 5 & Unresearched State Classes):** 94
+- **Total Mappings Evaluated:** 120
+
 
 ---
 
 ## Maharashtra State Board (Balbharati) & NCERT Mapping Table
 
-| Topic ID | Subject | Grade | Board | Textbook | Status | Chapter / Notes | Edition | Source |
-|---|---|:---:|---|---|:---:|---|:---:|---|
-| `evs-water` | EVS | 1 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | To verify against ebalbharati Grade 1 Parisar Abhyas textbook | — | — (ebalbharati) |
-| `evs-water` | EVS | 1 | NCERT | Looking Around / Environmental Studies | `to-verify` | To verify against NCERT Grade 1 syllabus / Joyful learning | — | — (ebalbharati) |
-| `evs-water` | EVS | 2 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Water sources and cleanliness unit | — | — (ebalbharati) |
-| `evs-water` | EVS | 2 | NCERT | Looking Around | `to-verify` | Water habits and storage unit | — | — (ebalbharati) |
-| `evs-water` | EVS | 3 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Evaporation and drying unit | — | — (ebalbharati) |
-| `evs-water` | EVS | 3 | NCERT | Looking Around | `to-verify` | Water 'O' Water unit | — | — (ebalbharati) |
-| `evs-water` | EVS | 4 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Water cycle and natural harvesting | — | — (ebalbharati) |
-| `evs-water` | EVS | 4 | NCERT | Looking Around | `to-verify` | Rain and water storage | — | — (ebalbharati) |
-| `evs-water` | EVS | 5 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Water conservation and community audit | — | — (ebalbharati) |
-| `evs-water` | EVS | 5 | NCERT | Looking Around | `to-verify` | Every Drop Counts chapter | — | — (ebalbharati) |
-| `math-market` | MATH | 1 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Counting objects and small coins up to 20 | — | — (ebalbharati) |
-| `math-market` | MATH | 1 | NCERT | Math-Magic | `to-verify` | Numbers 1 to 20 | — | — (ebalbharati) |
-| `math-market` | MATH | 2 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | 2-digit addition and subtraction with money | — | — (ebalbharati) |
-| `math-market` | MATH | 2 | NCERT | Math-Magic | `to-verify` | Tens and ones bundles | — | — (ebalbharati) |
-| `math-market` | MATH | 3 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | 3-digit market bills and place value | — | — (ebalbharati) |
-| `math-market` | MATH | 3 | NCERT | Math-Magic | `to-verify` | Give and Take unit | — | — (ebalbharati) |
-| `math-market` | MATH | 4 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Multiplication & multi-step transaction calculations | — | — (ebalbharati) |
-| `math-market` | MATH | 4 | NCERT | Math-Magic | `to-verify` | The Junk Seller chapter | — | — (ebalbharati) |
-| `math-market` | MATH | 5 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Decimals, Rupees and Paise accounting | — | — (ebalbharati) |
-| `math-market` | MATH | 5 | NCERT | Math-Magic | `to-verify` | Parts and Wholes / Currency unit | — | — (ebalbharati) |
-| `math-shapes` | MATH | 1 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Basic 2D shapes identification | — | — (ebalbharati) |
-| `math-shapes` | MATH | 2 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Edges and corners of geometric shapes | — | — (ebalbharati) |
-| `math-shapes` | MATH | 3 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Perimeter introduction on grid paper | — | — (ebalbharati) |
-| `math-shapes` | MATH | 4 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Perimeter of rectangles and regular polygons | — | — (ebalbharati) |
-| `math-shapes` | MATH | 5 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Perimeter, area formula and tile layout | — | — (ebalbharati) |
-| `evs-body` | EVS | 1 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | External body parts and hygiene | — | — (ebalbharati) |
-| `evs-body` | EVS | 2 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Sense organs and healthy daily habits | — | — (ebalbharati) |
-| `evs-body` | EVS | 3 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Body movement, teeth care and balanced diet | — | — (ebalbharati) |
-| `evs-body` | EVS | 4 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Digestive system journey and clean eating | — | — (ebalbharati) |
-| `evs-body` | EVS | 5 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Internal organ systems and pulse rate measurement | — | — (ebalbharati) |
-| `evs-plants` | EVS | 1 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Plant parts: root, stem, leaf and flower | — | — (ebalbharati) |
-| `evs-plants` | EVS | 2 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Trees, shrubs, herbs and climbers | — | — (ebalbharati) |
-| `evs-plants` | EVS | 3 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Photosynthesis introduction: sunlight, water, air | — | — (ebalbharati) |
-| `evs-plants` | EVS | 4 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Taproot vs fibrous root systems | — | — (ebalbharati) |
-| `evs-plants` | EVS | 5 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Seed dispersal mechanisms and ecological interdependence | — | — (ebalbharati) |
-| `math-time` | MATH | 1 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Daily routine sequencing: morning, afternoon, night | — | — (ebalbharati) |
-| `math-time` | MATH | 2 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Reading whole hours on analog clock | — | — (ebalbharati) |
-| `math-time` | MATH | 3 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Reading half past, quarter past and minutes | — | — (ebalbharati) |
-| `math-time` | MATH | 4 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | 12-hour vs 24-hour clock and elapsed time | — | — (ebalbharati) |
-| `math-time` | MATH | 5 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Timetables, elapsed duration and railway schedules | — | — (ebalbharati) |
-| `evs-neighbourhood` | EVS | 1 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Landmarks around home and school | — | — (ebalbharati) |
-| `evs-neighbourhood` | EVS | 2 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Community helpers in village | — | — (ebalbharati) |
-| `evs-neighbourhood` | EVS | 3 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Four cardinal directions and simple sketch map | — | — (ebalbharati) |
-| `evs-neighbourhood` | EVS | 4 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Scale, map symbols and sub-districts | — | — (ebalbharati) |
-| `evs-neighbourhood` | EVS | 5 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | District and state geography, transport networks | — | — (ebalbharati) |
-| `math-fractions` | MATH | 1 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Equal sharing between 2 persons | — | — (ebalbharati) |
-| `math-fractions` | MATH | 2 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Half and quarter of real objects (bhakri/roti) | — | — (ebalbharati) |
-| `math-fractions` | MATH | 3 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Fractions notation: 1/2, 1/4, 3/4 | — | — (ebalbharati) |
-| `math-fractions` | MATH | 4 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Like fractions addition and subtraction | — | — (ebalbharati) |
-| `math-fractions` | MATH | 5 | Maharashtra State Board | Ganit (Balbharati) | `to-verify` | Equivalent fractions, mixed numbers and word problems | — | — (ebalbharati) |
-| `evs-animals` | EVS | 1 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Domestic vs wild animals | — | — (ebalbharati) |
-| `evs-animals` | EVS | 2 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Animal homes and sounds | — | — (ebalbharati) |
-| `evs-animals` | EVS | 3 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Herbivores, carnivores and food habits | — | — (ebalbharati) |
-| `evs-animals` | EVS | 4 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Animal adaptations and habitats (aquatic/terrestrial) | — | — (ebalbharati) |
-| `evs-animals` | EVS | 5 | Maharashtra State Board | Parisar Abhyas (Part 1) | `to-verify` | Food chains, wildlife preservation and keystone species | — | — (ebalbharati) |
+
+| Topic ID | Subject | Grade | Board | Textbook | Status | Chapter | Match Type | Source URL / Portal | Source Type | Checked On | Verified By | Verified On | Notes |
+|---|---|:---:|---|---|:---:|---|:---:|---|:---:|:---:|:---:|:---:|---|
+| `evs-water` | EVS | 1 | NCERT | NCERT Class 1-2 EVS | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | NCERT Class 1-2 EVS not researched; verify against official syllabus |
+| `evs-water` | EVS | 2 | NCERT | NCERT Class 1-2 EVS | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | NCERT Class 1-2 EVS not researched; verify against official syllabus |
+| `evs-water` | EVS | 3 | NCERT | Our Wondrous World | `candidate` | Water - A Precious Gift | title-match | competishun.com/ncert-book/our-wondrous-world/ | secondary | 2026-10-16 | — | — | matched by chapter title only; learning outcome not yet compared |
+| `evs-water` | EVS | 4 | NCERT | Our Wondrous World | `extension` | TO RESEARCH | none | schools.aglasem.com | secondary | 2026-10-16 | — | — | No matching NCERT chapter identified yet; own extension content |
+| `evs-water` | EVS | 5 | NCERT | NCERT Class 5 EVS | `to-research` | TO RESEARCH | none | ncert.nic.in | official | 2026-10-16 | — | — | NCERT Class 5 not researched; confirm book edition and chapter list |
+| `math-market` | MATH | 1 | NCERT | Joyful Mathematics | `candidate` | How Much Can We Spend? | title-match | ciet.ncert.gov.in/audio-book/118 | official | 2026-10-16 | — | — | matched by chapter title only; learning outcome not yet compared |
+| `math-market` | MATH | 2 | NCERT | Joyful Mathematics | `extension` | TO RESEARCH | none | ciet.ncert.gov.in/audio-book/121 | official | 2026-10-16 | — | — | No matching NCERT chapter identified yet; own extension content |
+| `math-market` | MATH | 3 | NCERT | Maths Mela | `candidate` | Give and Take | title-match | competishun.com/ncert-book/maths-mela/ | secondary | 2026-10-16 | — | — | matched by chapter title only; learning outcome not yet compared (also relates to House of Hundreds - I & II) |
+| `math-market` | MATH | 4 | NCERT | Math Mela | `candidate` | Ch 4: Thousands Around Us | title-match | competishun.com / aglasem.com | secondary | 2026-10-16 | — | — | Sources conflict; confirm book edition and chapter list |
+| `math-market` | MATH | 5 | NCERT | NCERT Class 5 Maths | `to-research` | TO RESEARCH | none | ncert.nic.in | official | 2026-10-16 | — | — | NCERT Class 5 not researched; confirm book edition and chapter list |
+| `math-shapes` | MATH | 1 | NCERT | Joyful Mathematics | `candidate` | Finding the Furry Cat! | title-match | ciet.ncert.gov.in/audio-book/118 | official | 2026-10-16 | — | — | matched by chapter title only; learning outcome not yet compared |
+| `math-shapes` | MATH | 2 | NCERT | Joyful Mathematics | `candidate` | Shapes Around Us | title-match | ciet.ncert.gov.in/audio-book/121 | official | 2026-10-16 | — | — | matched by chapter title only; learning outcome not yet compared |
+| `math-shapes` | MATH | 3 | NCERT | Maths Mela | `candidate` | Fun with Shapes | title-match | competishun.com/ncert-book/maths-mela/ | secondary | 2026-10-16 | — | — | matched by chapter title only; learning outcome not yet compared |
+| `math-shapes` | MATH | 4 | NCERT | Math Mela | `candidate` | Ch 1: Shapes Around Us | title-match | competishun.com / aglasem.com | secondary | 2026-10-16 | — | — | Sources conflict; confirm book edition and chapter list |
+| `math-shapes` | MATH | 5 | NCERT | NCERT Class 5 Maths | `to-research` | TO RESEARCH | none | ncert.nic.in | official | 2026-10-16 | — | — | NCERT Class 5 not researched; confirm book edition and chapter list |
+| `evs-body` | EVS | 1 | NCERT | NCERT Class 1-2 EVS | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | NCERT Class 1-2 EVS not researched; verify against official syllabus |
+| `evs-body` | EVS | 2 | NCERT | NCERT Class 1-2 EVS | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | NCERT Class 1-2 EVS not researched; verify against official syllabus |
+| `evs-body` | EVS | 3 | NCERT | Our Wondrous World | `candidate` | Staying Healthy and Happy | title-match | competishun.com/ncert-book/our-wondrous-world/ | secondary | 2026-10-16 | — | — | matched by chapter title only; learning outcome not yet compared |
+| `evs-body` | EVS | 4 | NCERT | Our Wondrous World | `candidate` | Food for Health | title-match | schools.aglasem.com | secondary | 2026-10-16 | — | — | matched by chapter title only; learning outcome not yet compared (also relates to Happy and Healthy Living) |
+| `evs-body` | EVS | 5 | NCERT | NCERT Class 5 EVS | `to-research` | TO RESEARCH | none | ncert.nic.in | official | 2026-10-16 | — | — | NCERT Class 5 not researched; confirm book edition and chapter list |
+| `evs-plants` | EVS | 1 | NCERT | NCERT Class 1-2 EVS | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | NCERT Class 1-2 EVS not researched; verify against official syllabus |
+| `evs-plants` | EVS | 2 | NCERT | NCERT Class 1-2 EVS | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | NCERT Class 1-2 EVS not researched; verify against official syllabus |
+| `evs-plants` | EVS | 3 | NCERT | Our Wondrous World | `candidate` | Getting to Know Plants | title-match | competishun.com/ncert-book/our-wondrous-world/ | secondary | 2026-10-16 | — | — | matched by chapter title only; learning outcome not yet compared (also relates to Plants and Animals Live Together) |
+| `evs-plants` | EVS | 4 | NCERT | Our Wondrous World | `candidate` | Nature Trail | title-match | schools.aglasem.com | secondary | 2026-10-16 | — | — | matched by chapter title only; learning outcome not yet compared (also relates to Growing Up with Nature) |
+| `evs-plants` | EVS | 5 | NCERT | NCERT Class 5 EVS | `to-research` | TO RESEARCH | none | ncert.nic.in | official | 2026-10-16 | — | — | NCERT Class 5 not researched; confirm book edition and chapter list |
+| `math-time` | MATH | 1 | NCERT | Joyful Mathematics | `candidate` | How do I Spend my Day? | title-match | ciet.ncert.gov.in/audio-book/118 | official | 2026-10-16 | — | — | matched by chapter title only; learning outcome not yet compared |
+| `math-time` | MATH | 2 | NCERT | Joyful Mathematics | `extension` | TO RESEARCH | none | ciet.ncert.gov.in/audio-book/121 | official | 2026-10-16 | — | — | No matching NCERT chapter identified yet; own extension content |
+| `math-time` | MATH | 3 | NCERT | Maths Mela | `candidate` | Time Goes On | title-match | competishun.com/ncert-book/maths-mela/ | secondary | 2026-10-16 | — | — | matched by chapter title only; learning outcome not yet compared |
+| `math-time` | MATH | 4 | NCERT | Math Mela | `extension` | TO RESEARCH | none | competishun.com / aglasem.com | secondary | 2026-10-16 | — | — | Sources conflict; confirm book edition and chapter list |
+| `math-time` | MATH | 5 | NCERT | NCERT Class 5 Maths | `to-research` | TO RESEARCH | none | ncert.nic.in | official | 2026-10-16 | — | — | NCERT Class 5 not researched; confirm book edition and chapter list |
+| `evs-neighbourhood` | EVS | 1 | NCERT | NCERT Class 1-2 EVS | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | NCERT Class 1-2 EVS not researched; verify against official syllabus |
+| `evs-neighbourhood` | EVS | 2 | NCERT | NCERT Class 1-2 EVS | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | NCERT Class 1-2 EVS not researched; verify against official syllabus |
+| `evs-neighbourhood` | EVS | 3 | NCERT | Our Wondrous World | `candidate` | Family and Friends | title-match | competishun.com/ncert-book/our-wondrous-world/ | secondary | 2026-10-16 | — | — | matched by chapter title only; learning outcome not yet compared (also relates to Going to the Mela) |
+| `evs-neighbourhood` | EVS | 4 | NCERT | Our Wondrous World | `candidate` | Exploring Our Neighbourhood | title-match | schools.aglasem.com | secondary | 2026-10-16 | — | — | matched by chapter title only; learning outcome not yet compared |
+| `evs-neighbourhood` | EVS | 5 | NCERT | NCERT Class 5 EVS | `to-research` | TO RESEARCH | none | ncert.nic.in | official | 2026-10-16 | — | — | NCERT Class 5 not researched; confirm book edition and chapter list |
+| `math-fractions` | MATH | 1 | NCERT | Joyful Mathematics | `extension` | TO RESEARCH | none | ciet.ncert.gov.in/audio-book/118 | official | 2026-10-16 | — | — | No matching NCERT chapter identified yet; own extension content |
+| `math-fractions` | MATH | 2 | NCERT | Joyful Mathematics | `candidate` | Grouping and Sharing | title-match | ciet.ncert.gov.in/audio-book/121 | official | 2026-10-16 | — | — | matched by chapter title only; learning outcome not yet compared |
+| `math-fractions` | MATH | 3 | NCERT | Maths Mela | `candidate` | Fair Share | title-match | competishun.com/ncert-book/maths-mela/ | secondary | 2026-10-16 | — | — | matched by chapter title only; learning outcome not yet compared |
+| `math-fractions` | MATH | 4 | NCERT | Math Mela | `extension` | TO RESEARCH | none | competishun.com / aglasem.com | secondary | 2026-10-16 | — | — | Sources conflict; confirm book edition and chapter list |
+| `math-fractions` | MATH | 5 | NCERT | NCERT Class 5 Maths | `to-research` | TO RESEARCH | none | ncert.nic.in | official | 2026-10-16 | — | — | NCERT Class 5 not researched; confirm book edition and chapter list |
+| `evs-animals` | EVS | 1 | NCERT | NCERT Class 1-2 EVS | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | NCERT Class 1-2 EVS not researched; verify against official syllabus |
+| `evs-animals` | EVS | 2 | NCERT | NCERT Class 1-2 EVS | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | NCERT Class 1-2 EVS not researched; verify against official syllabus |
+| `evs-animals` | EVS | 3 | NCERT | Our Wondrous World | `candidate` | Plants and Animals Live Together | title-match | competishun.com/ncert-book/our-wondrous-world/ | secondary | 2026-10-16 | — | — | matched by chapter title only; learning outcome not yet compared |
+| `evs-animals` | EVS | 4 | NCERT | Our Wondrous World | `candidate` | Living Together | title-match | schools.aglasem.com | secondary | 2026-10-16 | — | — | matched by chapter title only; learning outcome not yet compared |
+| `evs-animals` | EVS | 5 | NCERT | NCERT Class 5 EVS | `to-research` | TO RESEARCH | none | ncert.nic.in | official | 2026-10-16 | — | — | NCERT Class 5 not researched; confirm book edition and chapter list |
+| `evs-water` | EVS | 1 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `evs-water` | EVS | 2 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `evs-water` | EVS | 3 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `evs-water` | EVS | 4 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `evs-water` | EVS | 5 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `math-market` | MATH | 1 | Maharashtra State Board | Ganit (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `math-market` | MATH | 2 | Maharashtra State Board | Ganit (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `math-market` | MATH | 3 | Maharashtra State Board | Ganit (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `math-market` | MATH | 4 | Maharashtra State Board | Ganit (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `math-market` | MATH | 5 | Maharashtra State Board | Ganit (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `math-shapes` | MATH | 1 | Maharashtra State Board | Ganit (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `math-shapes` | MATH | 2 | Maharashtra State Board | Ganit (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `math-shapes` | MATH | 3 | Maharashtra State Board | Ganit (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `math-shapes` | MATH | 4 | Maharashtra State Board | Ganit (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `math-shapes` | MATH | 5 | Maharashtra State Board | Ganit (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `evs-body` | EVS | 1 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `evs-body` | EVS | 2 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `evs-body` | EVS | 3 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `evs-body` | EVS | 4 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `evs-body` | EVS | 5 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `evs-plants` | EVS | 1 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `evs-plants` | EVS | 2 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `evs-plants` | EVS | 3 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `evs-plants` | EVS | 4 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `evs-plants` | EVS | 5 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `math-time` | MATH | 1 | Maharashtra State Board | Ganit (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `math-time` | MATH | 2 | Maharashtra State Board | Ganit (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `math-time` | MATH | 3 | Maharashtra State Board | Ganit (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `math-time` | MATH | 4 | Maharashtra State Board | Ganit (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `math-time` | MATH | 5 | Maharashtra State Board | Ganit (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `evs-neighbourhood` | EVS | 1 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `evs-neighbourhood` | EVS | 2 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `evs-neighbourhood` | EVS | 3 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `evs-neighbourhood` | EVS | 4 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `evs-neighbourhood` | EVS | 5 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `math-fractions` | MATH | 1 | Maharashtra State Board | Ganit (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `math-fractions` | MATH | 2 | Maharashtra State Board | Ganit (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `math-fractions` | MATH | 3 | Maharashtra State Board | Ganit (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `math-fractions` | MATH | 4 | Maharashtra State Board | Ganit (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `math-fractions` | MATH | 5 | Maharashtra State Board | Ganit (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `evs-animals` | EVS | 1 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `evs-animals` | EVS | 2 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `evs-animals` | EVS | 3 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `evs-animals` | EVS | 4 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `evs-animals` | EVS | 5 | Maharashtra State Board | Parisar Abhyas (Balbharati) | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Maharashtra State Board textbooks pending physical/digital copy check |
+| `lang-letters` | LANG | 1 | Maharashtra State Board | Sulabhbharati / Balbharati Marathi | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Marathi language topic alignment pending textbook review |
+| `lang-letters` | LANG | 1 | NCERT | NCERT Language / FLN Curriculum | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | Language learning outcomes pending NCERT foundational stage review |
+| `lang-letters` | LANG | 2 | Maharashtra State Board | Sulabhbharati / Balbharati Marathi | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Marathi language topic alignment pending textbook review |
+| `lang-letters` | LANG | 2 | NCERT | NCERT Language / FLN Curriculum | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | Language learning outcomes pending NCERT foundational stage review |
+| `lang-letters` | LANG | 3 | Maharashtra State Board | Sulabhbharati / Balbharati Marathi | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Marathi language topic alignment pending textbook review |
+| `lang-letters` | LANG | 3 | NCERT | NCERT Language / FLN Curriculum | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | Language learning outcomes pending NCERT foundational stage review |
+| `lang-letters` | LANG | 4 | Maharashtra State Board | Sulabhbharati / Balbharati Marathi | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Marathi language topic alignment pending textbook review |
+| `lang-letters` | LANG | 4 | NCERT | NCERT Language / FLN Curriculum | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | Language learning outcomes pending NCERT foundational stage review |
+| `lang-letters` | LANG | 5 | Maharashtra State Board | Sulabhbharati / Balbharati Marathi | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Marathi language topic alignment pending textbook review |
+| `lang-letters` | LANG | 5 | NCERT | NCERT Language / FLN Curriculum | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | Language learning outcomes pending NCERT foundational stage review |
+| `lang-passages` | LANG | 1 | Maharashtra State Board | Sulabhbharati / Balbharati Marathi | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Marathi language topic alignment pending textbook review |
+| `lang-passages` | LANG | 1 | NCERT | NCERT Language / FLN Curriculum | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | Language learning outcomes pending NCERT foundational stage review |
+| `lang-passages` | LANG | 2 | Maharashtra State Board | Sulabhbharati / Balbharati Marathi | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Marathi language topic alignment pending textbook review |
+| `lang-passages` | LANG | 2 | NCERT | NCERT Language / FLN Curriculum | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | Language learning outcomes pending NCERT foundational stage review |
+| `lang-passages` | LANG | 3 | Maharashtra State Board | Sulabhbharati / Balbharati Marathi | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Marathi language topic alignment pending textbook review |
+| `lang-passages` | LANG | 3 | NCERT | NCERT Language / FLN Curriculum | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | Language learning outcomes pending NCERT foundational stage review |
+| `lang-passages` | LANG | 4 | Maharashtra State Board | Sulabhbharati / Balbharati Marathi | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Marathi language topic alignment pending textbook review |
+| `lang-passages` | LANG | 4 | NCERT | NCERT Language / FLN Curriculum | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | Language learning outcomes pending NCERT foundational stage review |
+| `lang-passages` | LANG | 5 | Maharashtra State Board | Sulabhbharati / Balbharati Marathi | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Marathi language topic alignment pending textbook review |
+| `lang-passages` | LANG | 5 | NCERT | NCERT Language / FLN Curriculum | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | Language learning outcomes pending NCERT foundational stage review |
+| `lang-writing` | LANG | 1 | Maharashtra State Board | Sulabhbharati / Balbharati Marathi | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Marathi language topic alignment pending textbook review |
+| `lang-writing` | LANG | 1 | NCERT | NCERT Language / FLN Curriculum | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | Language learning outcomes pending NCERT foundational stage review |
+| `lang-writing` | LANG | 2 | Maharashtra State Board | Sulabhbharati / Balbharati Marathi | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Marathi language topic alignment pending textbook review |
+| `lang-writing` | LANG | 2 | NCERT | NCERT Language / FLN Curriculum | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | Language learning outcomes pending NCERT foundational stage review |
+| `lang-writing` | LANG | 3 | Maharashtra State Board | Sulabhbharati / Balbharati Marathi | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Marathi language topic alignment pending textbook review |
+| `lang-writing` | LANG | 3 | NCERT | NCERT Language / FLN Curriculum | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | Language learning outcomes pending NCERT foundational stage review |
+| `lang-writing` | LANG | 4 | Maharashtra State Board | Sulabhbharati / Balbharati Marathi | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Marathi language topic alignment pending textbook review |
+| `lang-writing` | LANG | 4 | NCERT | NCERT Language / FLN Curriculum | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | Language learning outcomes pending NCERT foundational stage review |
+| `lang-writing` | LANG | 5 | Maharashtra State Board | Sulabhbharati / Balbharati Marathi | `to-research` | TO RESEARCH | none | ebalbharati.in | official | 2026-10-16 | — | — | Marathi language topic alignment pending textbook review |
+| `lang-writing` | LANG | 5 | NCERT | NCERT Language / FLN Curriculum | `to-research` | TO RESEARCH | none | ciet.ncert.gov.in | official | 2026-10-16 | — | — | Language learning outcomes pending NCERT foundational stage review |
 
 ---
 

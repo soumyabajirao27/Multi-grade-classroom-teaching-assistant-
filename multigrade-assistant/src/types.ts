@@ -18,8 +18,29 @@ export function resolveL10n(val: Localizable | undefined, lang: Lang): string {
   return val[lang] || val.en || '';
 }
 
-/** Curriculum mapping per topic and per grade (Maharashtra / State / NCERT boards). */
+export type MappingStatus = 'candidate' | 'verified' | 'extension' | 'to-research';
+export type MatchType = 'title-match' | 'outcome-match' | 'none';
+export type SourceType = 'official' | 'secondary';
+
+/** Curriculum mapping per topic and per grade (Maharashtra / NCERT boards). */
 export interface CurriculumMapping {
+  board: 'NCERT' | 'Maharashtra State Board';
+  classLevel: Grade;
+  book: string;
+  chapter: string;
+  chapterNo?: number;
+  matchType: MatchType;
+  status: MappingStatus;
+  source: string;
+  sourceType: SourceType;
+  checkedOn: string;
+  verifiedBy?: string;
+  verifiedOn?: string;
+  note?: string;
+}
+
+/** Legacy mapping format for migration backward-compatibility */
+export interface LegacyCurriculumMapping {
   board: string;
   textbook: string;
   chapter: string;

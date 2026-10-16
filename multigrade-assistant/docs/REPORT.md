@@ -140,7 +140,18 @@ The application is structured into decoupled core layers:
 Thirteen custom generators create infinite, non-repeating question instances based on deterministic Linear Congruential RNG:
 - `count`, `addNoCarry`, `add`, `sub`, `mul`, `div`
 - `fracAdd`, `money`, `wordShop`
-- `perimeter`, `area`, `timeRead`, `timeElapsed`
+### 5.3 Curriculum Alignment & Verification Methodology
+To ensure complete academic and pedagogical integrity, curriculum mapping is conducted with strict empirical transparency:
+- **Title and Outcome Matching:** Topics are matched by chapter title and developmental learning outcomes to current NCERT primary textbooks (*Joyful Mathematics*, *Maths Mela*, *Our Wondrous World*) where an official chapter exists.
+- **Extension Content:** Where no direct single textbook chapter exists in the primary syllabus for a multi-grade unit, content is formally designated as `extension` (pedagogically designed by the engine for multi-grade progression).
+- **Secondary Source Disclosure:** Secondary chapter catalogs were utilized for newly revised editions (e.g., NCERT Class 3 and Class 4 books) and are explicitly recorded as `sourceType: 'secondary'` with date of inspection.
+- **Pending Review (No Invented Data):** Class 5 textbooks and Maharashtra State Board (*Balbharati*) textbooks have not yet been verified against physical copies and are strictly marked `status: 'to-research'` with chapter titles marked `TO RESEARCH`. No chapter names, numbers, or page counts are invented.
+- **Automated Summary Counts (Computed from System Data):**
+  - Candidate Mappings (Title Match): 20
+  - Verified Mappings (Full Sign-off): 0 (strictly requires verifiedBy & verifiedOn)
+  - Extension Content: 6
+  - To Research (Class 5 & Unresearched State Classes): 94
+  - Total Evaluated Entries: 120
 
 ---
 

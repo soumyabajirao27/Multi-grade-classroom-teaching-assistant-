@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react';
 import { cleanTopicTitle } from '../cleanTitle';
+import { CurriculumCoverageModal, formatStatusLabel, getStatusBadgeStyle } from '../components/CurriculumCoverageModal';
 import { getTopic } from '../content/curriculum';
-import { getCurriculumSources, type CurriculumSourceEntry } from '../content/curriculumSources';
+import { getCurriculumSources } from '../content/curriculumSources';
 import { buildSessionPlan } from '../engine/planner';
 import { t } from '../i18n';
-import { resolveL10n, type Grade, type GradeTopicMap, type Lang, type SessionMode, type Topic } from '../types';
+import { resolveL10n, type CurriculumMapping, type Grade, type GradeTopicMap, type Lang, type SessionMode, type Topic } from '../types';
 
 interface PlannerProps {
   lang: Lang;
@@ -24,6 +25,7 @@ export function Planner({
   gradeTopics = {},
   onOpenTopicPickerForGrade,
 }: PlannerProps) {
+  const [showCoverageModal, setShowCoverageModal] = useState(false);
   const getTopicForGrade = useMemo(() => {
     return (g: Grade): Topic => {
       if (mode === 'multi_subject' && gradeTopics[g]) {
@@ -41,7 +43,7 @@ export function Planner({
   const [activeSourceModal, setActiveSourceModal] = useState<{
     grade: Grade;
     topic: Topic;
-    sources: CurriculumSourceEntry[];
+    sources: CurriculumMapping[];
   } | null>(null);
 
   if (!grades.length) return <p>{t(lang, 'noGrades')}</p>;
@@ -122,6 +124,18 @@ export function Planner({
         </div>
       )}
 
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 10 }}>
+        <button
+          type="button"
+          className="chip"
+          onClick={() => setShowCoverageModal(true)}
+          style={{ cursor: 'pointer', padding: '6px 14px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+        >
+          <span>📊</span>
+          <span>{t(lang, 'curriculumCoverage')}</span>
+        </button>
+      </div>
+
       {mode === 'theme' ? (
         <div className="card hook">
           <p><b>{t(lang, 'theme')}:</b> {resolveL10n(plan.theme, lang)}</p>
@@ -137,6 +151,10 @@ export function Planner({
       {plan.rows.map(({ grade, plan: p, buddy, topic: gradeTopic }, stepIdx) => {
         const activeTopic = gradeTopic || topic;
         const cleanedTitle = cleanTopicTitle(activeTopic.title[lang] || activeTopic.title.en);
+        const sources = getCurriculumSources(activeTopic.id, grade);
+        const primarySource = sources[0];
+        const badgeStyle = primarySource ? getStatusBadgeStyle(primarySource.status) : undefined;
+        const badgeLabel = primarySource ? formatStatusLabel(lang, primarySource.status) : '';
         return (
         <section key={grade} className={`card g${grade}`}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6 }}>
@@ -181,7 +199,6 @@ export function Planner({
                 type="button"
                 className="chip"
                 onClick={() => {
-                  const sources = getCurriculumSources(activeTopic.id, grade);
                   setActiveSourceModal({ grade, topic: activeTopic, sources });
                 }}
                 style={{
@@ -202,6 +219,49 @@ export function Planner({
             </div>
             {buddy && <span className="small">🤝 {t(lang, 'buddy')} {buddy}</span>}
           </div>
+
+          {/* Compact Curriculum Mapping Line */}
+          {primarySource && (
+            <div
+              style={{
+                marginTop: 6,
+                padding: '4px 8px',
+                background: 'var(--bg, #f9f9f9)',
+                borderRadius: 4,
+                fontSize: '0.8rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: 6,
+                border: '1px solid var(--line, #eee)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                <span style={{ fontWeight: 600 }}>📖 {primarySource.board}:</span>
+                <span>{primarySource.book}</span>
+                {primarySource.chapter && primarySource.chapter !== 'TO RESEARCH' && (
+                  <span style={{ fontStyle: 'italic' }}>· {primarySource.chapterNo ? `Ch ${primarySource.chapterNo}: ` : ''}{primarySource.chapter}</span>
+                )}
+              </div>
+              <span
+                style={{
+                  padding: '2px 6px',
+                  borderRadius: 4,
+                  fontSize: '0.72rem',
+                  fontWeight: 600,
+                  background: badgeStyle?.bg,
+                  color: badgeStyle?.text,
+                  border: `1px solid ${badgeStyle?.border}`,
+                }}
+              >
+                {primarySource.status === 'verified' && primarySource.verifiedBy
+                  ? `${t(lang, 'status_verified')} (${primarySource.verifiedBy})`
+                  : badgeLabel}
+              </span>
+            </div>
+          )}
+
           <p className="small" style={{ marginTop: 6 }}><b>{t(lang, 'outcome')}:</b> {resolveL10n(p.outcome, lang)}</p>
 
           <div className="two">
@@ -285,46 +345,56 @@ export function Planner({
               <p className="small">{lang === 'hi' ? 'कोई स्रोत प्रविष्टि उपलब्ध नहीं है।' : lang === 'mr' ? 'कोणतीही नोंद उपलब्ध नाही.' : 'No source entries recorded for this grade.'}</p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {activeSourceModal.sources.map((src, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      border: '1px solid var(--line)',
-                      borderRadius: 6,
-                      padding: 10,
-                      background: src.status === 'verified' ? '#f0f9f4' : 'var(--bg, #fbfbfb)',
-                    }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-                      <span style={{ fontWeight: 600 }}>{src.board} ({src.medium})</span>
-                      <span
-                        className="chip"
-                        style={{
-                          fontSize: '0.75rem',
-                          background: src.status === 'verified' ? '#d4edda' : '#fff3cd',
-                          color: src.status === 'verified' ? '#155724' : '#856404',
-                        }}
-                      >
-                        {src.status}
-                      </span>
+                {activeSourceModal.sources.map((src, i) => {
+                  const style = getStatusBadgeStyle(src.status);
+                  const label = formatStatusLabel(lang, src.status);
+                  return (
+                    <div
+                      key={i}
+                      style={{
+                        border: '1px solid var(--line)',
+                        borderRadius: 6,
+                        padding: 10,
+                        background: src.status === 'verified' ? '#f0f9f4' : 'var(--bg, #fbfbfb)',
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                        <span style={{ fontWeight: 600 }}>{src.board}</span>
+                        <span
+                          className="chip"
+                          style={{
+                            fontSize: '0.75rem',
+                            background: style.bg,
+                            color: style.text,
+                            border: `1px solid ${style.border}`,
+                          }}
+                        >
+                          {src.status === 'verified' && src.verifiedBy
+                            ? `${label} (${src.verifiedBy})`
+                            : label}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: '0.88rem' }}><strong>{src.book}</strong></div>
+                      {src.chapter && src.chapter !== 'TO RESEARCH' ? (
+                        <div style={{ fontSize: '0.85rem', marginTop: 2 }}>
+                          {src.chapterNo ? `Chapter ${src.chapterNo}: ` : ''}{src.chapter}
+                        </div>
+                      ) : (
+                        <div style={{ fontSize: '0.85rem', color: '#666', marginTop: 2 }}>
+                          {src.note || 'Alignment pending textbook chapter verification'}
+                        </div>
+                      )}
+                      {src.note && src.chapter !== 'TO RESEARCH' && (
+                        <div style={{ fontSize: '0.8rem', color: '#666', marginTop: 3 }}>
+                          <em>Note: {src.note}</em>
+                        </div>
+                      )}
+                      <div style={{ fontSize: '0.78rem', color: '#777', marginTop: 4 }}>
+                        <span>Source: {src.source} ({src.sourceType}) · Checked: {src.checkedOn}</span>
+                      </div>
                     </div>
-                    <div style={{ fontSize: '0.88rem' }}><strong>{src.textbook}</strong></div>
-                    {src.chapterNo !== undefined && src.chapterTitle ? (
-                      <div style={{ fontSize: '0.85rem', marginTop: 2 }}>
-                        Chapter {src.chapterNo}: {src.chapterTitle} {src.pageStart ? `(p. ${src.pageStart})` : ''}
-                      </div>
-                    ) : (
-                      <div style={{ fontSize: '0.85rem', color: '#666', marginTop: 2 }}>
-                        {src.notes || 'Alignment pending textbook chapter verification'}
-                      </div>
-                    )}
-                    {src.status === 'verified' && src.sourceUrl && (
-                      <div style={{ fontSize: '0.82rem', marginTop: 4 }}>
-                        <span style={{ color: 'var(--primary)' }}>Official portal source verified</span>
-                      </div>
-                    )}
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
 
@@ -340,6 +410,10 @@ export function Planner({
             </div>
           </div>
         </div>
+      )}
+
+      {showCoverageModal && (
+        <CurriculumCoverageModal lang={lang} onClose={() => setShowCoverageModal(false)} />
       )}
     </div>
   );

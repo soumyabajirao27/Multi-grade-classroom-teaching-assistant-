@@ -28,9 +28,11 @@ const item = (
 
 const gen = (g: GenSpec['gen'], count: number, o: Partial<GenSpec> = {}): GenSpec => ({ type: 'gen', gen: g, count, ...o });
 
+import { migrateCurriculumMapping } from './curriculumSources';
+
 const defaultMapping = (subject: string): CurriculumMapping[] => [
-  { board: 'Maharashtra State Board', textbook: `${subject} (Balbharati / State Board)`, chapter: 'TO VERIFY: Chapter name and number', status: 'to-verify' },
-  { board: 'NCERT', textbook: `${subject} (NCERT)`, chapter: 'TO VERIFY: Chapter name and number', status: 'to-verify' },
+  migrateCurriculumMapping({ board: 'Maharashtra State Board', textbook: `${subject} (Balbharati / State Board)`, chapter: 'TO RESEARCH', status: 'to-verify' }),
+  migrateCurriculumMapping({ board: 'NCERT', textbook: `${subject} (NCERT)`, chapter: 'TO RESEARCH', status: 'to-verify' }),
 ];
 
 const water: Topic = {

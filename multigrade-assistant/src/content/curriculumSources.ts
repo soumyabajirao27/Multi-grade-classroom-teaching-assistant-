@@ -1,609 +1,1014 @@
-import type { Grade, Subject } from '../types';
+import type { CurriculumMapping, Grade, MappingStatus, Subject } from '../types';
 
-export type CurriculumStatus = 'verified' | 'to-verify' | 'theme-mapped';
+export const OFFICIAL_NCERT_CHAPTERS: Record<string, string[]> = {
+  // NCERT Class 1 Maths "Joyful Mathematics" (official list at ciet.ncert.gov.in/audio-book/118)
+  'NCERT-Math-1': [
+    'Finding the Furry Cat!',
+    'What is Long?',
+    'Mango Treat',
+    'Making 10',
+    'How Many?',
+    'Vegetable Farm',
+    'Lina\'s Family',
+    'Fun with Numbers',
+    'Utsav',
+    'How do I Spend my Day?',
+    'How Many Times?',
+    'How Much Can We Spend?',
+    'So Many Toys',
+  ],
+  // NCERT Class 2 Maths "Joyful Mathematics" (official list at ciet.ncert.gov.in/audio-book/121)
+  'NCERT-Math-2': [
+    'A Day at the Beach',
+    'Shapes Around Us',
+    'Fun with Numbers',
+    'Shadow Story (Togalu)',
+    'Playing with Lines',
+    'Decoration for Festival',
+    'Rani\'s Gift',
+    'Grouping and Sharing',
+    'Which Season is it?',
+    'Fun at the Fair',
+    'Data Handling',
+  ],
+  // NCERT Class 3 Maths "Maths Mela" (secondary: competishun.com/ncert-book/maths-mela/)
+  'NCERT-Math-3': [
+    'What\'s in a Name',
+    'Toy Joy',
+    'Double Century',
+    'Vacation with My Nani Maa',
+    'Fun with Shapes',
+    'House of Hundreds - I',
+    'Raksha Bandhan',
+    'Fair Share',
+    'House of Hundreds - II',
+    'Fun at Class Party!',
+    'Filling and Lifting',
+    'Give and Take',
+    'Time Goes On',
+    'The Surajkund Fair',
+  ],
+  // NCERT Class 3 "The World Around Us" / "Our Wondrous World" (secondary: competishun.com/ncert-book/our-wondrous-world/)
+  'NCERT-EVS-3': [
+    'Family and Friends',
+    'Going to the Mela',
+    'Celebrating Festivals',
+    'Getting to Know Plants',
+    'Plants and Animals Live Together',
+    'Living in Harmony',
+    'Water - A Precious Gift',
+    'Food We Eat',
+    'Staying Healthy and Happy',
+    'This World of Things',
+    'Making Things',
+    'Taking Charge of Waste',
+  ],
+  // NCERT Class 4 "The World Around Us" / "Our Wondrous World" (secondary: schools.aglasem.com)
+  'NCERT-EVS-4': [
+    'Living Together',
+    'Exploring Our Neighbourhood',
+    'Nature Trail',
+    'Growing Up with Nature',
+    'Food for Health',
+    'Happy and Healthy Living',
+    'How Things Work',
+    'How Things Are Made',
+    'Different Lands, Different Lives',
+    'Our Sky',
+  ],
+  // NCERT Class 4 Maths "Math Mela" (secondary, CONFLICTING sources, confirmed-looking titles only)
+  'NCERT-Math-4': [
+    'Shapes Around Us',
+    'Hide and Seek',
+    'Pattern Around Us',
+    'Thousands Around Us',
+  ],
+};
 
-export interface CurriculumSourceEntry {
+export interface TopicGradeCurriculumSource {
   topicId: string;
   grade: Grade;
   subject: Subject;
-  board: 'Maharashtra State Board' | 'NCERT';
-  medium: 'Marathi' | 'English' | 'Hindi';
-  textbook: string;
-  editionYear?: number;
-  chapterNo?: number;
-  chapterTitle?: string;
-  pageStart?: number;
-  sourceUrl?: string;
-  verifiedBy?: string;
-  verifiedDate?: string;
-  status: CurriculumStatus;
-  notes?: string;
+  mapping: CurriculumMapping;
 }
 
 /**
- * CURRICULUM SOURCES DATASET
- *
- * Rule:
- * All entries default to 'to-verify' or 'theme-mapped' until manually verified against
- * physical or digital textbooks from ebalbharati.in or ncert.nic.in.
- * If status is 'verified', validation mandates: editionYear, chapterNo, and sourceUrl.
- * Chapter titles or numbers must NOT be invented.
+ * Migration helper to migrate older 'to-verify' CurriculumMapping or legacy format
+ * to the new rigorous CurriculumMapping specification.
  */
-export const CURRICULUM_SOURCES: CurriculumSourceEntry[] = [
-  // --- evs-water ---
+export function migrateCurriculumMapping(
+  rawLegacy: Record<string, any>,
+  fallbackGrade: Grade = 1
+): CurriculumMapping {
+  const legacy = rawLegacy as Record<string, any>;
+  const isNCERT = legacy.board === 'NCERT' || (typeof legacy.book === 'string' && legacy.book.includes('NCERT')) || (typeof legacy.textbook === 'string' && legacy.textbook.includes('NCERT'));
+  const board: 'NCERT' | 'Maharashtra State Board' = isNCERT ? 'NCERT' : 'Maharashtra State Board';
+  const classLevel: Grade = legacy.classLevel || fallbackGrade;
+  const book = legacy.book || legacy.textbook || (board === 'NCERT' ? 'NCERT Textbook' : 'Balbharati Textbook');
+  const chapter = legacy.chapter || 'TO RESEARCH';
+
+  let status: MappingStatus = 'to-research';
+  if (legacy.status === 'verified' && legacy.verifiedBy && legacy.verifiedOn) {
+    status = 'verified';
+  } else if (legacy.status === 'candidate') {
+    status = 'candidate';
+  } else if (legacy.status === 'extension') {
+    status = 'extension';
+  } else {
+    status = 'to-research';
+  }
+
+  return {
+    board,
+    classLevel,
+    book,
+    chapter,
+    chapterNo: legacy.chapterNo,
+    matchType: legacy.matchType || (chapter !== 'TO RESEARCH' && !chapter.startsWith('TO ') ? 'title-match' : 'none'),
+    status,
+    source: legacy.source || (board === 'NCERT' ? 'ciet.ncert.gov.in / ncert.nic.in' : 'ebalbharati.in'),
+    sourceType: legacy.sourceType || 'secondary',
+    checkedOn: legacy.checkedOn || '2026-10-16',
+    verifiedBy: legacy.verifiedBy,
+    verifiedOn: legacy.verifiedOn,
+    note: legacy.note,
+  };
+}
+
+export const CHECK_DATE = '2026-10-16';
+
+/**
+ * Master mapping entries for built-in curriculum topics (Grades 1-5).
+ * Strictly using only supplied chapter lists. Unresearched classes are marked 'to-research'.
+ * Extension topics are marked 'extension' with note "No matching NCERT chapter identified yet; own extension content".
+ */
+export const CURRICULUM_MAPPINGS: TopicGradeCurriculumSource[] = [
+  // ================= evs-water =================
   {
     topicId: 'evs-water',
     grade: 1,
     subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'To verify against ebalbharati Grade 1 Parisar Abhyas textbook',
-  },
-  {
-    topicId: 'evs-water',
-    grade: 1,
-    subject: 'evs',
-    board: 'NCERT',
-    medium: 'English',
-    textbook: 'Looking Around / Environmental Studies',
-    status: 'to-verify',
-    notes: 'To verify against NCERT Grade 1 syllabus / Joyful learning',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 1,
+      book: 'NCERT Class 1-2 EVS',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'to-research',
+      source: 'ciet.ncert.gov.in',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'NCERT Class 1-2 EVS not researched; verify against official syllabus',
+    },
   },
   {
     topicId: 'evs-water',
     grade: 2,
     subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'Water sources and cleanliness unit',
-  },
-  {
-    topicId: 'evs-water',
-    grade: 2,
-    subject: 'evs',
-    board: 'NCERT',
-    medium: 'English',
-    textbook: 'Looking Around',
-    status: 'to-verify',
-    notes: 'Water habits and storage unit',
-  },
-  {
-    topicId: 'evs-water',
-    grade: 3,
-    subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'Evaporation and drying unit',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 2,
+      book: 'NCERT Class 1-2 EVS',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'to-research',
+      source: 'ciet.ncert.gov.in',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'NCERT Class 1-2 EVS not researched; verify against official syllabus',
+    },
   },
   {
     topicId: 'evs-water',
     grade: 3,
     subject: 'evs',
-    board: 'NCERT',
-    medium: 'English',
-    textbook: 'Looking Around',
-    status: 'to-verify',
-    notes: 'Water \'O\' Water unit',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 3,
+      book: 'Our Wondrous World',
+      chapter: 'Water - A Precious Gift',
+      matchType: 'title-match',
+      status: 'candidate',
+      source: 'competishun.com/ncert-book/our-wondrous-world/',
+      sourceType: 'secondary',
+      checkedOn: CHECK_DATE,
+      note: 'matched by chapter title only; learning outcome not yet compared',
+    },
   },
   {
     topicId: 'evs-water',
     grade: 4,
     subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'Water cycle and natural harvesting',
-  },
-  {
-    topicId: 'evs-water',
-    grade: 4,
-    subject: 'evs',
-    board: 'NCERT',
-    medium: 'English',
-    textbook: 'Looking Around',
-    status: 'to-verify',
-    notes: 'Rain and water storage',
-  },
-  {
-    topicId: 'evs-water',
-    grade: 5,
-    subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'Water conservation and community audit',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 4,
+      book: 'Our Wondrous World',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'extension',
+      source: 'schools.aglasem.com',
+      sourceType: 'secondary',
+      checkedOn: CHECK_DATE,
+      note: 'No matching NCERT chapter identified yet; own extension content',
+    },
   },
   {
     topicId: 'evs-water',
     grade: 5,
     subject: 'evs',
-    board: 'NCERT',
-    medium: 'English',
-    textbook: 'Looking Around',
-    status: 'to-verify',
-    notes: 'Every Drop Counts chapter',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 5,
+      book: 'NCERT Class 5 EVS',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'to-research',
+      source: 'ncert.nic.in',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'NCERT Class 5 not researched; confirm book edition and chapter list',
+    },
   },
 
-  // --- math-market ---
+  // ================= math-market =================
   {
     topicId: 'math-market',
     grade: 1,
     subject: 'math',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Ganit (Balbharati)',
-    status: 'to-verify',
-    notes: 'Counting objects and small coins up to 20',
-  },
-  {
-    topicId: 'math-market',
-    grade: 1,
-    subject: 'math',
-    board: 'NCERT',
-    medium: 'English',
-    textbook: 'Math-Magic',
-    status: 'to-verify',
-    notes: 'Numbers 1 to 20',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 1,
+      book: 'Joyful Mathematics',
+      chapter: 'How Much Can We Spend?',
+      matchType: 'title-match',
+      status: 'candidate',
+      source: 'ciet.ncert.gov.in/audio-book/118',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'matched by chapter title only; learning outcome not yet compared',
+    },
   },
   {
     topicId: 'math-market',
     grade: 2,
     subject: 'math',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Ganit (Balbharati)',
-    status: 'to-verify',
-    notes: '2-digit addition and subtraction with money',
-  },
-  {
-    topicId: 'math-market',
-    grade: 2,
-    subject: 'math',
-    board: 'NCERT',
-    medium: 'English',
-    textbook: 'Math-Magic',
-    status: 'to-verify',
-    notes: 'Tens and ones bundles',
-  },
-  {
-    topicId: 'math-market',
-    grade: 3,
-    subject: 'math',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Ganit (Balbharati)',
-    status: 'to-verify',
-    notes: '3-digit market bills and place value',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 2,
+      book: 'Joyful Mathematics',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'extension',
+      source: 'ciet.ncert.gov.in/audio-book/121',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'No matching NCERT chapter identified yet; own extension content',
+    },
   },
   {
     topicId: 'math-market',
     grade: 3,
     subject: 'math',
-    board: 'NCERT',
-    medium: 'English',
-    textbook: 'Math-Magic',
-    status: 'to-verify',
-    notes: 'Give and Take unit',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 3,
+      book: 'Maths Mela',
+      chapter: 'Give and Take',
+      matchType: 'title-match',
+      status: 'candidate',
+      source: 'competishun.com/ncert-book/maths-mela/',
+      sourceType: 'secondary',
+      checkedOn: CHECK_DATE,
+      note: 'matched by chapter title only; learning outcome not yet compared (also relates to House of Hundreds - I & II)',
+    },
   },
   {
     topicId: 'math-market',
     grade: 4,
     subject: 'math',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Ganit (Balbharati)',
-    status: 'to-verify',
-    notes: 'Multiplication & multi-step transaction calculations',
-  },
-  {
-    topicId: 'math-market',
-    grade: 4,
-    subject: 'math',
-    board: 'NCERT',
-    medium: 'English',
-    textbook: 'Math-Magic',
-    status: 'to-verify',
-    notes: 'The Junk Seller chapter',
-  },
-  {
-    topicId: 'math-market',
-    grade: 5,
-    subject: 'math',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Ganit (Balbharati)',
-    status: 'to-verify',
-    notes: 'Decimals, Rupees and Paise accounting',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 4,
+      book: 'Math Mela',
+      chapter: 'Thousands Around Us',
+      chapterNo: 4,
+      matchType: 'title-match',
+      status: 'candidate',
+      source: 'competishun.com / aglasem.com',
+      sourceType: 'secondary',
+      checkedOn: CHECK_DATE,
+      note: 'Sources conflict; confirm book edition and chapter list',
+    },
   },
   {
     topicId: 'math-market',
     grade: 5,
     subject: 'math',
-    board: 'NCERT',
-    medium: 'English',
-    textbook: 'Math-Magic',
-    status: 'to-verify',
-    notes: 'Parts and Wholes / Currency unit',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 5,
+      book: 'NCERT Class 5 Maths',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'to-research',
+      source: 'ncert.nic.in',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'NCERT Class 5 not researched; confirm book edition and chapter list',
+    },
   },
 
-  // --- math-shapes ---
+  // ================= math-shapes =================
   {
     topicId: 'math-shapes',
     grade: 1,
     subject: 'math',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Ganit (Balbharati)',
-    status: 'to-verify',
-    notes: 'Basic 2D shapes identification',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 1,
+      book: 'Joyful Mathematics',
+      chapter: 'Finding the Furry Cat!',
+      matchType: 'title-match',
+      status: 'candidate',
+      source: 'ciet.ncert.gov.in/audio-book/118',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'matched by chapter title only; learning outcome not yet compared',
+    },
   },
   {
     topicId: 'math-shapes',
     grade: 2,
     subject: 'math',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Ganit (Balbharati)',
-    status: 'to-verify',
-    notes: 'Edges and corners of geometric shapes',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 2,
+      book: 'Joyful Mathematics',
+      chapter: 'Shapes Around Us',
+      matchType: 'title-match',
+      status: 'candidate',
+      source: 'ciet.ncert.gov.in/audio-book/121',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'matched by chapter title only; learning outcome not yet compared',
+    },
   },
   {
     topicId: 'math-shapes',
     grade: 3,
     subject: 'math',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Ganit (Balbharati)',
-    status: 'to-verify',
-    notes: 'Perimeter introduction on grid paper',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 3,
+      book: 'Maths Mela',
+      chapter: 'Fun with Shapes',
+      matchType: 'title-match',
+      status: 'candidate',
+      source: 'competishun.com/ncert-book/maths-mela/',
+      sourceType: 'secondary',
+      checkedOn: CHECK_DATE,
+      note: 'matched by chapter title only; learning outcome not yet compared',
+    },
   },
   {
     topicId: 'math-shapes',
     grade: 4,
     subject: 'math',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Ganit (Balbharati)',
-    status: 'to-verify',
-    notes: 'Perimeter of rectangles and regular polygons',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 4,
+      book: 'Math Mela',
+      chapter: 'Shapes Around Us',
+      chapterNo: 1,
+      matchType: 'title-match',
+      status: 'candidate',
+      source: 'competishun.com / aglasem.com',
+      sourceType: 'secondary',
+      checkedOn: CHECK_DATE,
+      note: 'Sources conflict; confirm book edition and chapter list',
+    },
   },
   {
     topicId: 'math-shapes',
     grade: 5,
     subject: 'math',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Ganit (Balbharati)',
-    status: 'to-verify',
-    notes: 'Perimeter, area formula and tile layout',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 5,
+      book: 'NCERT Class 5 Maths',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'to-research',
+      source: 'ncert.nic.in',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'NCERT Class 5 not researched; confirm book edition and chapter list',
+    },
   },
 
-  // --- evs-body ---
+  // ================= evs-body =================
   {
     topicId: 'evs-body',
     grade: 1,
     subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'External body parts and hygiene',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 1,
+      book: 'NCERT Class 1-2 EVS',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'to-research',
+      source: 'ciet.ncert.gov.in',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'NCERT Class 1-2 EVS not researched; verify against official syllabus',
+    },
   },
   {
     topicId: 'evs-body',
     grade: 2,
     subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'Sense organs and healthy daily habits',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 2,
+      book: 'NCERT Class 1-2 EVS',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'to-research',
+      source: 'ciet.ncert.gov.in',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'NCERT Class 1-2 EVS not researched; verify against official syllabus',
+    },
   },
   {
     topicId: 'evs-body',
     grade: 3,
     subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'Body movement, teeth care and balanced diet',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 3,
+      book: 'Our Wondrous World',
+      chapter: 'Staying Healthy and Happy',
+      matchType: 'title-match',
+      status: 'candidate',
+      source: 'competishun.com/ncert-book/our-wondrous-world/',
+      sourceType: 'secondary',
+      checkedOn: CHECK_DATE,
+      note: 'matched by chapter title only; learning outcome not yet compared',
+    },
   },
   {
     topicId: 'evs-body',
     grade: 4,
     subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'Digestive system journey and clean eating',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 4,
+      book: 'Our Wondrous World',
+      chapter: 'Food for Health',
+      matchType: 'title-match',
+      status: 'candidate',
+      source: 'schools.aglasem.com',
+      sourceType: 'secondary',
+      checkedOn: CHECK_DATE,
+      note: 'matched by chapter title only; learning outcome not yet compared (also relates to Happy and Healthy Living)',
+    },
   },
   {
     topicId: 'evs-body',
     grade: 5,
     subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'Internal organ systems and pulse rate measurement',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 5,
+      book: 'NCERT Class 5 EVS',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'to-research',
+      source: 'ncert.nic.in',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'NCERT Class 5 not researched; confirm book edition and chapter list',
+    },
   },
 
-  // --- evs-plants ---
+  // ================= evs-plants =================
   {
     topicId: 'evs-plants',
     grade: 1,
     subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'Plant parts: root, stem, leaf and flower',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 1,
+      book: 'NCERT Class 1-2 EVS',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'to-research',
+      source: 'ciet.ncert.gov.in',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'NCERT Class 1-2 EVS not researched; verify against official syllabus',
+    },
   },
   {
     topicId: 'evs-plants',
     grade: 2,
     subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'Trees, shrubs, herbs and climbers',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 2,
+      book: 'NCERT Class 1-2 EVS',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'to-research',
+      source: 'ciet.ncert.gov.in',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'NCERT Class 1-2 EVS not researched; verify against official syllabus',
+    },
   },
   {
     topicId: 'evs-plants',
     grade: 3,
     subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'Photosynthesis introduction: sunlight, water, air',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 3,
+      book: 'Our Wondrous World',
+      chapter: 'Getting to Know Plants',
+      matchType: 'title-match',
+      status: 'candidate',
+      source: 'competishun.com/ncert-book/our-wondrous-world/',
+      sourceType: 'secondary',
+      checkedOn: CHECK_DATE,
+      note: 'matched by chapter title only; learning outcome not yet compared (also relates to Plants and Animals Live Together)',
+    },
   },
   {
     topicId: 'evs-plants',
     grade: 4,
     subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'Taproot vs fibrous root systems',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 4,
+      book: 'Our Wondrous World',
+      chapter: 'Nature Trail',
+      matchType: 'title-match',
+      status: 'candidate',
+      source: 'schools.aglasem.com',
+      sourceType: 'secondary',
+      checkedOn: CHECK_DATE,
+      note: 'matched by chapter title only; learning outcome not yet compared (also relates to Growing Up with Nature)',
+    },
   },
   {
     topicId: 'evs-plants',
     grade: 5,
     subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'Seed dispersal mechanisms and ecological interdependence',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 5,
+      book: 'NCERT Class 5 EVS',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'to-research',
+      source: 'ncert.nic.in',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'NCERT Class 5 not researched; confirm book edition and chapter list',
+    },
   },
 
-  // --- math-time ---
+  // ================= math-time =================
   {
     topicId: 'math-time',
     grade: 1,
     subject: 'math',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Ganit (Balbharati)',
-    status: 'to-verify',
-    notes: 'Daily routine sequencing: morning, afternoon, night',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 1,
+      book: 'Joyful Mathematics',
+      chapter: 'How do I Spend my Day?',
+      matchType: 'title-match',
+      status: 'candidate',
+      source: 'ciet.ncert.gov.in/audio-book/118',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'matched by chapter title only; learning outcome not yet compared',
+    },
   },
   {
     topicId: 'math-time',
     grade: 2,
     subject: 'math',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Ganit (Balbharati)',
-    status: 'to-verify',
-    notes: 'Reading whole hours on analog clock',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 2,
+      book: 'Joyful Mathematics',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'extension',
+      source: 'ciet.ncert.gov.in/audio-book/121',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'No matching NCERT chapter identified yet; own extension content',
+    },
   },
   {
     topicId: 'math-time',
     grade: 3,
     subject: 'math',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Ganit (Balbharati)',
-    status: 'to-verify',
-    notes: 'Reading half past, quarter past and minutes',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 3,
+      book: 'Maths Mela',
+      chapter: 'Time Goes On',
+      matchType: 'title-match',
+      status: 'candidate',
+      source: 'competishun.com/ncert-book/maths-mela/',
+      sourceType: 'secondary',
+      checkedOn: CHECK_DATE,
+      note: 'matched by chapter title only; learning outcome not yet compared',
+    },
   },
   {
     topicId: 'math-time',
     grade: 4,
     subject: 'math',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Ganit (Balbharati)',
-    status: 'to-verify',
-    notes: '12-hour vs 24-hour clock and elapsed time',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 4,
+      book: 'Math Mela',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'extension',
+      source: 'competishun.com / aglasem.com',
+      sourceType: 'secondary',
+      checkedOn: CHECK_DATE,
+      note: 'Sources conflict; confirm book edition and chapter list',
+    },
   },
   {
     topicId: 'math-time',
     grade: 5,
     subject: 'math',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Ganit (Balbharati)',
-    status: 'to-verify',
-    notes: 'Timetables, elapsed duration and railway schedules',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 5,
+      book: 'NCERT Class 5 Maths',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'to-research',
+      source: 'ncert.nic.in',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'NCERT Class 5 not researched; confirm book edition and chapter list',
+    },
   },
 
-  // --- evs-neighbourhood ---
+  // ================= evs-neighbourhood =================
   {
     topicId: 'evs-neighbourhood',
     grade: 1,
     subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'Landmarks around home and school',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 1,
+      book: 'NCERT Class 1-2 EVS',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'to-research',
+      source: 'ciet.ncert.gov.in',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'NCERT Class 1-2 EVS not researched; verify against official syllabus',
+    },
   },
   {
     topicId: 'evs-neighbourhood',
     grade: 2,
     subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'Community helpers in village',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 2,
+      book: 'NCERT Class 1-2 EVS',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'to-research',
+      source: 'ciet.ncert.gov.in',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'NCERT Class 1-2 EVS not researched; verify against official syllabus',
+    },
   },
   {
     topicId: 'evs-neighbourhood',
     grade: 3,
     subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'Four cardinal directions and simple sketch map',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 3,
+      book: 'Our Wondrous World',
+      chapter: 'Family and Friends',
+      matchType: 'title-match',
+      status: 'candidate',
+      source: 'competishun.com/ncert-book/our-wondrous-world/',
+      sourceType: 'secondary',
+      checkedOn: CHECK_DATE,
+      note: 'matched by chapter title only; learning outcome not yet compared (also relates to Going to the Mela)',
+    },
   },
   {
     topicId: 'evs-neighbourhood',
     grade: 4,
     subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'Scale, map symbols and sub-districts',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 4,
+      book: 'Our Wondrous World',
+      chapter: 'Exploring Our Neighbourhood',
+      matchType: 'title-match',
+      status: 'candidate',
+      source: 'schools.aglasem.com',
+      sourceType: 'secondary',
+      checkedOn: CHECK_DATE,
+      note: 'matched by chapter title only; learning outcome not yet compared',
+    },
   },
   {
     topicId: 'evs-neighbourhood',
     grade: 5,
     subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'District and state geography, transport networks',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 5,
+      book: 'NCERT Class 5 EVS',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'to-research',
+      source: 'ncert.nic.in',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'NCERT Class 5 not researched; confirm book edition and chapter list',
+    },
   },
 
-  // --- math-fractions ---
+  // ================= math-fractions =================
   {
     topicId: 'math-fractions',
     grade: 1,
     subject: 'math',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Ganit (Balbharati)',
-    status: 'to-verify',
-    notes: 'Equal sharing between 2 persons',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 1,
+      book: 'Joyful Mathematics',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'extension',
+      source: 'ciet.ncert.gov.in/audio-book/118',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'No matching NCERT chapter identified yet; own extension content',
+    },
   },
   {
     topicId: 'math-fractions',
     grade: 2,
     subject: 'math',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Ganit (Balbharati)',
-    status: 'to-verify',
-    notes: 'Half and quarter of real objects (bhakri/roti)',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 2,
+      book: 'Joyful Mathematics',
+      chapter: 'Grouping and Sharing',
+      matchType: 'title-match',
+      status: 'candidate',
+      source: 'ciet.ncert.gov.in/audio-book/121',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'matched by chapter title only; learning outcome not yet compared',
+    },
   },
   {
     topicId: 'math-fractions',
     grade: 3,
     subject: 'math',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Ganit (Balbharati)',
-    status: 'to-verify',
-    notes: 'Fractions notation: 1/2, 1/4, 3/4',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 3,
+      book: 'Maths Mela',
+      chapter: 'Fair Share',
+      matchType: 'title-match',
+      status: 'candidate',
+      source: 'competishun.com/ncert-book/maths-mela/',
+      sourceType: 'secondary',
+      checkedOn: CHECK_DATE,
+      note: 'matched by chapter title only; learning outcome not yet compared',
+    },
   },
   {
     topicId: 'math-fractions',
     grade: 4,
     subject: 'math',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Ganit (Balbharati)',
-    status: 'to-verify',
-    notes: 'Like fractions addition and subtraction',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 4,
+      book: 'Math Mela',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'extension',
+      source: 'competishun.com / aglasem.com',
+      sourceType: 'secondary',
+      checkedOn: CHECK_DATE,
+      note: 'Sources conflict; confirm book edition and chapter list',
+    },
   },
   {
     topicId: 'math-fractions',
     grade: 5,
     subject: 'math',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Ganit (Balbharati)',
-    status: 'to-verify',
-    notes: 'Equivalent fractions, mixed numbers and word problems',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 5,
+      book: 'NCERT Class 5 Maths',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'to-research',
+      source: 'ncert.nic.in',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'NCERT Class 5 not researched; confirm book edition and chapter list',
+    },
   },
 
-  // --- evs-animals ---
+  // ================= evs-animals =================
   {
     topicId: 'evs-animals',
     grade: 1,
     subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'Domestic vs wild animals',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 1,
+      book: 'NCERT Class 1-2 EVS',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'to-research',
+      source: 'ciet.ncert.gov.in',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'NCERT Class 1-2 EVS not researched; verify against official syllabus',
+    },
   },
   {
     topicId: 'evs-animals',
     grade: 2,
     subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'Animal homes and sounds',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 2,
+      book: 'NCERT Class 1-2 EVS',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'to-research',
+      source: 'ciet.ncert.gov.in',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'NCERT Class 1-2 EVS not researched; verify against official syllabus',
+    },
   },
   {
     topicId: 'evs-animals',
     grade: 3,
     subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'Herbivores, carnivores and food habits',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 3,
+      book: 'Our Wondrous World',
+      chapter: 'Plants and Animals Live Together',
+      matchType: 'title-match',
+      status: 'candidate',
+      source: 'competishun.com/ncert-book/our-wondrous-world/',
+      sourceType: 'secondary',
+      checkedOn: CHECK_DATE,
+      note: 'matched by chapter title only; learning outcome not yet compared',
+    },
   },
   {
     topicId: 'evs-animals',
     grade: 4,
     subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'Animal adaptations and habitats (aquatic/terrestrial)',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 4,
+      book: 'Our Wondrous World',
+      chapter: 'Living Together',
+      matchType: 'title-match',
+      status: 'candidate',
+      source: 'schools.aglasem.com',
+      sourceType: 'secondary',
+      checkedOn: CHECK_DATE,
+      note: 'matched by chapter title only; learning outcome not yet compared',
+    },
   },
   {
     topicId: 'evs-animals',
     grade: 5,
     subject: 'evs',
-    board: 'Maharashtra State Board',
-    medium: 'Marathi',
-    textbook: 'Parisar Abhyas (Part 1)',
-    status: 'to-verify',
-    notes: 'Food chains, wildlife preservation and keystone species',
+    mapping: {
+      board: 'NCERT',
+      classLevel: 5,
+      book: 'NCERT Class 5 EVS',
+      chapter: 'TO RESEARCH',
+      matchType: 'none',
+      status: 'to-research',
+      source: 'ncert.nic.in',
+      sourceType: 'official',
+      checkedOn: CHECK_DATE,
+      note: 'NCERT Class 5 not researched; confirm book edition and chapter list',
+    },
   },
+
+  // ================= Maharashtra State Board (Balbharati) All Classes: NOT RESEARCHED =================
+  ...([
+    'evs-water',
+    'math-market',
+    'math-shapes',
+    'evs-body',
+    'evs-plants',
+    'math-time',
+    'evs-neighbourhood',
+    'math-fractions',
+    'evs-animals',
+  ] as const).flatMap((topicId) => {
+    const subject: Subject = topicId.startsWith('math') ? 'math' : 'evs';
+    const bookTitle = subject === 'math' ? 'Ganit (Balbharati)' : 'Parisar Abhyas (Balbharati)';
+    return ([1, 2, 3, 4, 5] as Grade[]).map((grade): TopicGradeCurriculumSource => ({
+      topicId,
+      grade,
+      subject,
+      mapping: {
+        board: 'Maharashtra State Board',
+        classLevel: grade,
+        book: bookTitle,
+        chapter: 'TO RESEARCH',
+        matchType: 'none',
+        status: 'to-research',
+        source: 'ebalbharati.in',
+        sourceType: 'official',
+        checkedOn: CHECK_DATE,
+        note: 'Maharashtra State Board textbooks pending physical/digital copy check',
+      },
+    }));
+  }),
+
+  // ================= Language Marathi Topics (Task 2 preview placeholders: status 'to-research') =================
+  ...(['lang-letters', 'lang-passages', 'lang-writing'] as const).flatMap((topicId) => {
+    return ([1, 2, 3, 4, 5] as Grade[]).flatMap((grade): TopicGradeCurriculumSource[] => [
+      {
+        topicId,
+        grade,
+        subject: 'lang' as Subject,
+        mapping: {
+          board: 'Maharashtra State Board',
+          classLevel: grade,
+          book: 'Sulabhbharati / Balbharati Marathi',
+          chapter: 'TO RESEARCH',
+          matchType: 'none',
+          status: 'to-research',
+          source: 'ebalbharati.in',
+          sourceType: 'official',
+          checkedOn: CHECK_DATE,
+          note: 'Marathi language topic alignment pending textbook review',
+        },
+      },
+      {
+        topicId,
+        grade,
+        subject: 'lang' as Subject,
+        mapping: {
+          board: 'NCERT',
+          classLevel: grade,
+          book: 'NCERT Language / FLN Curriculum',
+          chapter: 'TO RESEARCH',
+          matchType: 'none',
+          status: 'to-research',
+          source: 'ciet.ncert.gov.in',
+          sourceType: 'official',
+          checkedOn: CHECK_DATE,
+          note: 'Language learning outcomes pending NCERT foundational stage review',
+        },
+      },
+    ]);
+  }),
 ];
 
 /**
  * Returns curriculum sources for a specific topic and grade.
  */
-export function getCurriculumSources(topicId: string, grade: Grade): CurriculumSourceEntry[] {
-  return CURRICULUM_SOURCES.filter((s) => s.topicId === topicId && s.grade === grade);
+export function getCurriculumSources(topicId: string, grade: Grade): CurriculumMapping[] {
+  return CURRICULUM_MAPPINGS
+    .filter((s) => s.topicId === topicId && s.grade === grade)
+    .map((s) => s.mapping);
 }
 
 /**
@@ -613,14 +1018,93 @@ export function formatCurriculumFooter(topicId: string, grade: Grade): string {
   const sources = getCurriculumSources(topicId, grade);
   if (!sources.length) return '';
   const first = sources[0];
-  const parts: string[] = [first.board, first.textbook];
-  if (first.chapterNo !== undefined && first.chapterTitle) {
-    parts.push(`Ch ${first.chapterNo}: ${first.chapterTitle}`);
+  const parts: string[] = [first.board, first.book];
+  if (first.chapter && first.chapter !== 'TO RESEARCH' && !first.chapter.startsWith('TO ')) {
+    const chNo = first.chapterNo ? `Ch ${first.chapterNo}: ` : '';
+    parts.push(`${chNo}${first.chapter}`);
   }
-  if (first.status === 'to-verify') {
-    parts.push('(Curriculum alignment: To-verify against official textbook)');
+  if (first.status === 'candidate') {
+    parts.push('(Curriculum alignment: Candidate title match)');
+  } else if (first.status === 'extension') {
+    parts.push('(Curriculum alignment: Extension content)');
+  } else if (first.status === 'to-research') {
+    parts.push('(Curriculum alignment: To research against official textbook)');
   } else if (first.status === 'verified') {
-    parts.push(`(Verified: ${first.verifiedBy || 'Reviewer'}, ${first.verifiedDate || ''})`);
+    parts.push(`(Verified: ${first.verifiedBy || 'Reviewer'}, ${first.verifiedOn || ''})`);
   }
   return parts.join(' · ');
+}
+
+export interface CurriculumCoverageCounts {
+  candidate: number;
+  verified: number;
+  extension: number;
+  toResearch: number;
+  total: number;
+}
+
+/**
+ * Computes coverage statistics dynamically across all mappings.
+ */
+export function getCurriculumCoverageCounts(topicIds?: string[]): CurriculumCoverageCounts {
+  const items = topicIds
+    ? CURRICULUM_MAPPINGS.filter((m) => topicIds.includes(m.topicId))
+    : CURRICULUM_MAPPINGS;
+
+  let candidate = 0;
+  let verified = 0;
+  let extension = 0;
+  let toResearch = 0;
+
+  for (const item of items) {
+    if (item.mapping.status === 'candidate') candidate++;
+    else if (item.mapping.status === 'verified') verified++;
+    else if (item.mapping.status === 'extension') extension++;
+    else if (item.mapping.status === 'to-research') toResearch++;
+  }
+
+  return {
+    candidate,
+    verified,
+    extension,
+    toResearch,
+    total: items.length,
+  };
+}
+
+/**
+ * Exports curriculum mapping to standard CSV.
+ */
+export function exportCurriculumMappingToCsv(topicIds?: string[]): string {
+  const items = topicIds
+    ? CURRICULUM_MAPPINGS.filter((m) => topicIds.includes(m.topicId))
+    : CURRICULUM_MAPPINGS;
+
+  const header = ['Topic ID', 'Subject', 'Class Level', 'Board', 'Book', 'Chapter', 'Chapter No', 'Match Type', 'Status', 'Source', 'Source Type', 'Checked On', 'Verified By', 'Verified On', 'Note'];
+  
+  const escapeCsv = (val?: string | number) => {
+    if (val === undefined || val === null) return '""';
+    const str = String(val).replace(/"/g, '""');
+    return `"${str}"`;
+  };
+
+  const rows = items.map((item) => [
+    escapeCsv(item.topicId),
+    escapeCsv(item.subject.toUpperCase()),
+    escapeCsv(item.grade),
+    escapeCsv(item.mapping.board),
+    escapeCsv(item.mapping.book),
+    escapeCsv(item.mapping.chapter),
+    escapeCsv(item.mapping.chapterNo ?? ''),
+    escapeCsv(item.mapping.matchType),
+    escapeCsv(item.mapping.status),
+    escapeCsv(item.mapping.source),
+    escapeCsv(item.mapping.sourceType),
+    escapeCsv(item.mapping.checkedOn),
+    escapeCsv(item.mapping.verifiedBy ?? ''),
+    escapeCsv(item.mapping.verifiedOn ?? ''),
+    escapeCsv(item.mapping.note ?? ''),
+  ].join(','));
+
+  return [header.join(','), ...rows].join('\r\n');
 }

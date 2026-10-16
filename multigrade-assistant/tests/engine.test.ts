@@ -4,6 +4,7 @@ import fs from 'node:fs';
 // @ts-ignore
 import path from 'node:path';
 import { TOPICS } from '../src/content/curriculum';
+import { CURRICULUM_MAPPINGS, OFFICIAL_NCERT_CHAPTERS, getCurriculumCoverageCounts, migrateCurriculumMapping } from '../src/content/curriculumSources';
 import { createRng } from '../src/engine/rng';
 import { buildWorksheet } from '../src/engine/worksheet';
 import { buildSessionPlan } from '../src/engine/planner';
@@ -275,12 +276,74 @@ describe('curriculum mapping', () => {
         expect(plan.mapping!.length).toBeGreaterThan(0);
         for (const m of plan.mapping!) {
           expect(m.board).toBeTruthy();
-          expect(m.textbook).toBeTruthy();
+          expect(m.book || (m as any).textbook).toBeTruthy();
           expect(m.chapter).toBeTruthy();
-          expect(['verified', 'to-verify']).toContain(m.status);
+          expect(['candidate', 'verified', 'extension', 'to-research', 'to-verify']).toContain(m.status);
         }
       }
     }
+  });
+
+  it('migration helper migrates legacy to-verify records backward-compatibly', () => {
+    const legacy = {
+      board: 'NCERT',
+      textbook: 'Joyful Mathematics',
+      chapter: 'Finding the Furry Cat!',
+      status: 'to-verify' as const,
+    };
+    const migrated = migrateCurriculumMapping(legacy, 1);
+    expect(migrated.board).toBe('NCERT');
+    expect(migrated.classLevel).toBe(1);
+    expect(migrated.book).toBe('Joyful Mathematics');
+    expect(migrated.chapter).toBe('Finding the Furry Cat!');
+    expect(migrated.status).toBe('to-research');
+  });
+
+  it('verified status strictly requires verifiedBy and verifiedOn', () => {
+    // Missing verifiedBy & verifiedOn cannot be verified
+    const unverifiedAttempt = {
+      board: 'NCERT' as const,
+      textbook: 'Maths Mela',
+      chapter: 'Time Goes On',
+      status: 'verified' as const,
+    };
+    const migrated = migrateCurriculumMapping(unverifiedAttempt, 3);
+    expect(migrated.status).not.toBe('verified');
+    expect(migrated.status).toBe('to-research');
+
+    // Valid verified mapping with credentials
+    const validVerified = {
+      board: 'NCERT' as const,
+      book: 'Maths Mela',
+      chapter: 'Time Goes On',
+      status: 'verified' as const,
+      verifiedBy: 'Smt. S. Patil',
+      verifiedOn: '2026-10-16',
+    };
+    const migratedValid = migrateCurriculumMapping(validVerified, 3);
+    expect(migratedValid.status).toBe('verified');
+    expect(migratedValid.verifiedBy).toBe('Smt. S. Patil');
+    expect(migratedValid.verifiedOn).toBe('2026-10-16');
+  });
+
+  it('no candidate row has a chapter name outside the supplied official/secondary lists', () => {
+    const allSuppliedTitles = new Set(Object.values(OFFICIAL_NCERT_CHAPTERS).flat());
+    for (const item of CURRICULUM_MAPPINGS) {
+      const m = item.mapping;
+      if (m.chapter && m.chapter !== 'TO RESEARCH' && !m.chapter.startsWith('TO ')) {
+        expect(allSuppliedTitles.has(m.chapter)).toBe(true);
+      }
+    }
+  });
+
+  it('coverage counts computed from data correctly reflect candidate, extension, and to-research counts', () => {
+    const counts = getCurriculumCoverageCounts();
+    expect(counts.total).toBe(CURRICULUM_MAPPINGS.length);
+    expect(counts.candidate + counts.verified + counts.extension + counts.toResearch).toBe(counts.total);
+    expect(counts.candidate).toBeGreaterThan(0);
+    expect(counts.extension).toBeGreaterThan(0);
+    expect(counts.toResearch).toBeGreaterThan(0);
+    expect(counts.verified).toBe(0); // None verified until reviewer sign-off
   });
 });
 
