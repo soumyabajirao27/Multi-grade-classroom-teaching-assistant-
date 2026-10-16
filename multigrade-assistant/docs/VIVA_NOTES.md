@@ -30,3 +30,23 @@
    - Compare the pedagogical learning outcomes.
    - Record the reviewer's name (`verifiedBy`) and date (`verifiedOn`).
    Automated unit tests enforce that missing any of these fields causes build and test failures immediately.
+
+---
+
+### Common Scope Questions
+
+#### Q: "Why only Grades 1–5? Why not Grades 6–8?"
+**Defensible Answer:**
+Grades 1–5 map to the NIPUN Bharat / FLN (Foundational Literacy & Numeracy) mandate for primary classrooms — the tier where single-teacher multi-grade rooms are most common in rural India. Grades 6–9 require a separate curriculum mapping exercise (different NCERT textbook series, different cognitive task design, and a different subject-specialist review). These are deferred to v1.1 to keep v1.0 well-scoped and demoed on a single, realistic use-case.
+
+#### Q: "Why is there no Marathi language subject (reading/writing) topic?"
+**Defensible Answer:**
+The app translates its *interface* into Marathi (UI strings, activity instructions, word-problem generators) — but Marathi as a *curriculum subject area* (reading comprehension, grammar, script-level scaffolding) requires a fundamentally different content type: text passages, fill-in-the-blank sentences, and dictation. Designing and verifying those with a native Marathi primary teacher is planned for v1.1. In v1.0, the `Subject` union is `'math' | 'evs'`; adding `'lang'` requires new generators and reviewed content that cannot be invented.
+
+#### Q: "Can teachers add their own topics or custom questions?"
+**Defensible Answer:**
+Not in v1.0. The topic list is authored and fully tested; freeform teacher input would bypass tier-differentiation and curriculum-mapping guarantees enforced by the test suite. A custom topic builder storing teacher-authored topics in IndexedDB is the first v1.1 milestone. The `Topic` and `GradePlan` TypeScript interfaces are designed to accommodate it.
+
+#### Q: "How many automated tests exist and what do they cover?"
+**Defensible Answer:**
+62 Vitest tests across 10 `describe` suites: RNG determinism, content library integrity, worksheet arithmetic, session planner edge cases, shape and time generators, curriculum mapping schema and coverage counts, content differentiation rules, accessibility/contrast, theme resolution, topic title cleaning, rotation timing, and multi-grade Mode A + Mode B scenarios.

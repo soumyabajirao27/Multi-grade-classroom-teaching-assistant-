@@ -26,7 +26,7 @@ UI languages: English, Hindi, Marathi (`src/i18n.ts`). Worksheets, teacher steps
 ```bash
 npm install        # or npm ci
 npm run dev        # http://localhost:5173 (dev server)
-npm test           # engine unit & integration tests (46 tests)
+npm test           # engine unit & integration tests (62 tests)
 npm run typecheck  # TypeScript check (tsc --noEmit)
 npm run check:report # verifies docs/REPORT.md integrity (no fabricated stats)
 npm run validate   # complete validation gate (check:report + typecheck + test + build)
@@ -70,7 +70,8 @@ A `render.yaml` specification is included in the project root:
 
 ## Topics Included (9 Complete Multi-Grade Units)
 
-All 9 topics are fully translated into English, Hindi, and Marathi across all 5 grades. All Hindi and Marathi translations are marked in the system as **needs native-speaker teacher review**:
+All 9 topics span Grades 1–5 and are fully translated into English, Hindi, and Marathi.
+> **Translation note:** All Hindi and Marathi classroom strings are marked `reviewed: false` in the source; native-speaker primary school teacher review is required before district deployment.
 
 1. **Water (EVS - `evs-water`)**: Sources, clean water habits, evaporation, water cycle, and village water auditing.
 2. **Numbers in the Market (Maths - `math-market`)**: Counting, 2-digit add/sub, place-value bills, multiplication ledgers, and money/fractions.
@@ -82,6 +83,29 @@ All 9 topics are fully translated into English, Hindi, and Marathi across all 5 
 8. **Fractions & Sharing (Maths - `math-fractions`)**: Equal parts, halves/quarters, fractions of collections, equivalent fractions, and mixed numbers.
 9. **Animals & Their Habitats (EVS - `evs-animals`)**: Animal sounds/homes, domestic vs wild, herbivore/carnivore diets, adaptations, and forest food webs.
 
+## Scope & Out-of-Scope
+
+### In Scope (v1.0)
+- Grades 1–5, subjects: Mathematics and EVS (Environmental Studies)
+- Single teacher, single classroom, 9 authored multi-grade topics
+- Three UI languages: English, Hindi, Marathi (translation review pending)
+- Offline-first PWA for Android/desktop tablets (8-inch+); no cloud, no accounts
+- Four modules: Planner, Worksheet Generator, Rotation Timer, Progress Tracker
+
+### Explicitly Out of Scope (v1.0)
+- **Grades 6–9 (Upper Primary):** Content, curriculum, and UX for upper-primary classes are not included. The data model is forward-compatible (Grade type can be extended) but no Grade 6+ topics exist.
+- **Language / Marathi Language (subject):** Marathi as a *teaching subject* (reading, writing, grammar) is not modelled as a content area in v1.0. The three UI language strings (EN/HI/MR) are interface-only. A Marathi-subject topic stub and lesson generator are deferred to v1.1.
+- **Real-time sync / multi-device:** IndexedDB is device-local; multi-device sync requires manual JSON export/import.
+- **Camera / OCR for worksheet marking:** Optical marking of printed worksheets is deferred.
+- **Empirical field-trial data:** The evaluation protocol in `docs/EVALUATION.md` defines the SUS and pedagogical quality scorecards; empirical scores will be filled in after the district trial.
+
+### Future Work (v1.1+)
+- Marathi language subject area with reading-comprehension activity templates and level-differentiated writing prompts (Grades 1–5)
+- Custom topic builder: teacher-authored topic and question sets stored in IndexedDB
+- Grades 6–9 expansion (Upper Primary; requires new curriculum mapping)
+- Browser Web Speech API audio read-aloud in Marathi and Hindi
+- Local offline peer-to-peer roster sync via Web Bluetooth or local Wi-Fi
+
 ## Structure
 
 ```
@@ -91,7 +115,7 @@ src/content/    curriculum library (9 topics with curriculum mapping), generator
 src/db/         IndexedDB (Dexie): students, records, undo stack, schema v1 validation
 src/features/   Planner, Worksheets (with Quick Start A4, Print Pack & PDF fallback), Rotation, Progress (CSV export)
 src/i18n.ts     en / hi / mr translations (trilingual interface)
-tests/          46 automated unit & integration tests
+tests/          62 automated unit & integration tests
 docs/           REPORT.md, CURRICULUM_MAPPING.md, EVALUATION.md, ARCHITECTURE.md, DEMO_SCRIPT.md
 samples/        regenerated printable HTML worksheets for curriculum topics
 render.yaml     Render Blueprint static site deployment spec with PWA cache headers
@@ -99,7 +123,7 @@ render.yaml     Render Blueprint static site deployment spec with PWA cache head
 
 ## Production & Verification Status
 
-- **Automated Tests:** 50/50 passing (`npm test`)
+- **Automated Tests:** 62/62 passing (`npm test`)
 - **PWA Production Build:** Zero TypeScript errors, service worker precached (`npm run build`)
 - **Validation Gate:** `npm run validate` runs report check, typecheck, tests, and build.
 - **Field Usability & SUS Evaluation:** Evaluation protocol defined in `docs/EVALUATION.md`; empirical trial data: `[TO VERIFY - pending field trial deployment]`

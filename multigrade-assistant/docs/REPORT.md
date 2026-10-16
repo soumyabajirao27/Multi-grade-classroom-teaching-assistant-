@@ -17,7 +17,7 @@ Across primary schools in rural and semi-urban India, a single educator is routi
 
 The **Multi-Grade Classroom Teaching Assistant** is an offline-first Progressive Web Application (PWA) engineered specifically to address this pedagogical challenge. The system automates four core operational workflows:
 1. **Thematic Session Planning:** Synthesizes a shared cross-grade opening hook while differentiating grade-level learning outcomes, teacher-led instruction, and peer-buddy assignments.
-2. **Deterministic Tiered Worksheets:** Algorithmic question generation seeded for exact reproducibility, automatically generating Support, Core, and Stretch difficulty tiers across 7 primary school curriculum topics.
+2. **Deterministic Tiered Worksheets:** Algorithmic question generation seeded for exact reproducibility, automatically generating Support, Core, and Stretch difficulty tiers across 9 primary school curriculum topics.
 3. **Equitable Rotation Scheduling:** Distributes teacher-led instruction time using a largest-remainder allocation algorithm, featuring a synchronized circular timer, audio transitions, and mobile screen wake-lock.
 4. **Offline Mastery Tracking:** Leverages IndexedDB (Dexie) for local persistence, student mastery progression, automated tier recommendation, and SVG data visualization without requiring cloud connectivity or logins.
 
@@ -104,7 +104,7 @@ The application is structured into decoupled core layers:
                                 |
 +--------------------------------------------------------------+
 |                  Content & Generators                        |
-|    curriculum.ts (7 Topics)  <--->  generators.ts (13 gens)  |
+|    curriculum.ts (9 Topics)  <--->  generators.ts (13 gens)  |
 +--------------------------------------------------------------+
                                 |
 +--------------------------------------------------------------+
@@ -135,6 +135,8 @@ The application is structured into decoupled core layers:
 5. **Plants Around Us (EVS - `evs-plants`):** Theme: *The Neem Tree in our School*. Covers plant parts (G1), types of plants (G2), photosynthesis (G3), seed dispersal (G4), and ecosystems/food chains (G5).
 6. **Time & Calendar (Math - `math-time`):** Theme: *The Village Fair is Next Week*. Covers days/months (G1), clock face reading (G2), AM/PM & duration (G3), 24-hour clocks (G4), and railway timetable word problems (G5).
 7. **Our Neighbourhood (EVS - `evs-neighbourhood`):** Theme: *Map of our Village*. Covers spatial orientation (G1), cardinal directions (G2), classroom sketch mapping (G3), map legends/symbols (G4), and scale calculations (G5).
+8. **Fractions & Sharing (Maths - `math-fractions`):** Theme: *Sharing at the Village Fair*. Covers equal parts (G1), halves/quarters (G2), fractions of collections (G3), equivalent fractions (G4), and mixed numbers (G5).
+9. **Animals & Their Habitats (EVS - `evs-animals`):** Theme: *Forest and Farm Animals*. Covers animal sounds/homes (G1), domestic vs wild (G2), herbivore/carnivore diets (G3), adaptations (G4), and forest food webs (G5).
 
 ### 5.2 Algorithmic Problem Generators (`generators.ts`)
 Thirteen custom generators create infinite, non-repeating question instances based on deterministic Linear Congruential RNG:
@@ -173,7 +175,7 @@ To ensure complete academic and pedagogical integrity, curriculum mapping is con
 ## Chapter 7: Verification & Automated Testing
 
 ### 7.1 Test Strategy & Test Suite (`tests/engine.test.ts`)
-The project enforces a 25-case automated Vitest suite validating core engine contracts:
+The project enforces a 62-case automated Vitest suite validating core engine contracts:
 - **RNG Determinism:** Confirms identical seeds yield identical question sets; distinct seeds yield varied outputs.
 - **Curriculum Integrity:** Validates that all 7 topics possess valid plans, positive teacher steps, and bounded solo minutes across all 5 grades.
 - **Arithmetic Accuracy (480-Sheet Stress Test):** Programmatically verifies that all generated addition, subtraction, multiplication, and division answer keys are mathematically exact and non-negative.
@@ -181,6 +183,10 @@ The project enforces a 25-case automated Vitest suite validating core engine con
 - **Tier Invariant:** Confirms support tier operands remain strictly smaller than stretch tier operands.
 - **Planner Edge Cases:** Verifies peer-buddy assignment rules for single-grade, empty-grade, and 5-grade selections.
 - **Rotation Math:** Confirms the largest-remainder allocation tiles the period without dead time.
+- **Curriculum Mapping Integrity:** Confirms all mapping entries conform to the `CurriculumMapping` schema; verified status strictly requires `verifiedBy` + `verifiedOn`; candidate chapter names must appear in the official/secondary supplied title lists.
+- **Coverage Counts:** Coverage totals (candidate, extension, to-research, verified) are computed from live data and their sum equals the total entries count.
+- **Mode A / Mode B Scenarios:** 3-grade, 4-grade, and 5-grade scenario plans and rotation schedules verified for correctness and contiguity.
+- **Student-Count Weighted Rotation:** Confirms weighted allocation gives larger cohorts proportionally more teacher time while guaranteeing all grades get > 0 minutes.
 
 ### 7.2 Build Verification
 ```bash
@@ -278,20 +284,38 @@ This section outlines technical enhancements and differentiation features implem
 
 ---
 
-## Chapter 9: Limitations & Practical Field Constraints
+## Chapter 9: Scope & Out-of-Scope (v1.0)
 
-### 9.1 Known Practical and Architectural Constraints
+### 9.1 In Scope
+- **Grades 1–5** (Classes 1–5 primary), subjects: Mathematics and EVS (Environmental Studies)
+- **9 authored multi-grade topic units** (see Chapter 5) with trilingual content (EN/HI/MR) marked for native-speaker review
+- **Offline-first PWA** for Android/desktop tablets (8-inch+); no cloud, no accounts, no analytics
+- **Four functional modules**: Session Planner (M1), Worksheet Generator (M2), Rotation Timer (M3), Progress Tracker (M4)
+- **Curriculum alignment**: title-match candidate mappings against NCERT Class 1–4 chapter catalogs; all unverified entries marked `to-research`
+
+### 9.2 Explicitly Out of Scope (v1.0)
+1. **Grades 6–9 (Upper Primary):** No content, curriculum mapping, or UX for Classes 6–9. The `Grade` TypeScript union type is bounded to `1|2|3|4|5`; extending it to 6–9 is a deliberate v1.1 decision requiring separate curriculum mapping work.
+2. **Marathi as a Teaching Subject:** Marathi as a *curriculum subject area* (reading, writing, grammar, poetry) is not modelled in v1.0. The three UI language strings (EN / HI / MR) translate the *interface* only. A dedicated Marathi-language topic with reading-comprehension templates is planned for v1.1.
+3. **Custom Teacher-Authored Topics:** Teachers cannot yet define their own topic, questions, or activities. A custom topic builder (stored in IndexedDB) is a v1.1 feature.
+4. **Real-Time Multi-Device Sync:** IndexedDB persistence is strictly device-local. Multi-device sync requires manual JSON export/import; Bluetooth/Wi-Fi P2P sync is a future enhancement.
+5. **Camera / OCR Worksheet Marking:** Optical character recognition for printed worksheet answers is architecturally deferred.
+6. **Empirical Field-Trial Data:** The evaluation protocol in `docs/EVALUATION.md` defines the SUS and pedagogical quality scorecards; all evaluation cells remain `[TO VERIFY]` until the district trial is executed.
+
+### 9.3 Limitations & Known Constraints
 1. **Acoustic Noise Bleed Across Grade Stations:** When 3 to 5 grades share a single physical classroom room without partitions, oral reading or partner math practice in independent groups can generate acoustic noise that competes with direct teacher instruction. The app mitigates this with non-verbal tasks (sketches, manipulative counters, written worksheets), but physical layout arrangements remain vital.
 2. **Draft Language Translations:** While core UI controls and common prompts are fully translated into Marathi and Hindi, several advanced extension tasks and narrative problem items carry draft translations awaiting formal editorial review by native language educators. The app displays explicit translation review warnings where applicable.
 3. **Screen Wake-Lock Hardware & Browser Limits:** The Screen Wake Lock API is supported on modern mobile Chromium browsers (Chrome, Edge) but is unavailable or restricted in older Android WebViews, low-end browsers, or devices with aggressive OS battery saver policies. In such cases, the rotation timer displays a non-intrusive notification reminding teachers to adjust their display timeout manually.
 4. **Fixed Pedagogical Weights vs. Adaptive Cohort Sizes:** Baseline rotation time allocation uses age-weighted pedagogy (Grade 1 receives greater teacher touchpoints than Grade 5). While student-count adaptive weighting now incorporates roster size (`TEACHER_WEIGHT[g] * (1 + 0.1 * min(count, 15))`), extreme cohort imbalances in real schools (e.g., 18 first graders and 2 fifth graders) still require manual teacher adjustments via the override controls.
 5. **Cross-Device Synchronization:** IndexedDB storage is strictly local to the teacher's individual tablet or laptop. Synchronizing student rosters or records across multiple devices requires manual JSON backup/restore or local wireless synchronization.
 
-### 9.2 Roadmap & Future Enhancements
-- Integrating browser Web Speech API for voice prompts and audio read-aloud in Marathi and Hindi.
-- Adding camera-based optical paper-checking for printed worksheets using local WebAssembly.
-- Offline peer-to-peer classroom sync via local Wi-Fi or WebRTC data channels for two-teacher schools.
-- Expanding curriculum repository to 20 topics covering Upper Primary (Classes 6–8).
+### 9.4 Future Enhancements (v1.1+)
+- Marathi language subject area with reading-comprehension activity templates and level-differentiated writing prompts (Grades 1–5)
+- Custom topic builder: teacher-authored topic and question sets stored in IndexedDB
+- Grades 6–9 expansion (Upper Primary; requires separate NCERT/State Board curriculum mapping)
+- Browser Web Speech API audio read-aloud for worksheet instructions in Marathi and Hindi
+- Adding camera-based optical paper-checking for printed worksheets using local WebAssembly
+- Offline peer-to-peer classroom sync via local Wi-Fi or WebRTC data channels for two-teacher schools
+- Expanding curriculum repository to 20 topics covering Upper Primary (Classes 6–8)
 
 ---
 
@@ -302,6 +326,6 @@ The **Multi-Grade Classroom Teaching Assistant** demonstrates how thoughtful sof
 ---
 
 ## Appendix
-- **Appendix A:** Automated Unit Test Log (25 passing test suites)
+- **Appendix A:** Automated Unit Test Log (62 passing tests across 10 describe suites)
 - **Appendix B:** Sample Differentiated Worksheets (`samples/evs-water.html`, `samples/math-market.html`)
 - **Appendix C:** System Usability Scale (SUS) Raw Response Scorecards
